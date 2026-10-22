@@ -1,0 +1,27 @@
+# Configuración de Codex CLI a nivel proyecto.
+#
+# Reutiliza el mismo script que ya usa Claude Code (.claude/hooks/block-push-to-protected.sh)
+# para bloquear pushes directos a ramas protegidas (ver AGENTS.md). El script es compatible:
+# Codex le pasa el mismo payload JSON por stdin (incluido tool_input.command para comandos
+# de shell) y entiende el mismo contrato de denegación ({"hookSpecificOutput": {...
+# "permissionDecision": "deny" ...}}).
+
+[features]
+# Los hooks de Codex están atrás de este feature flag: sin esto, hooks.PreToolUse no corre.
+hooks = true
+
+[hooks]
+
+[[hooks.PreToolUse]]
+# El matcher de Codex es una regex contra el NOMBRE del tool, no contra el comando.
+# El nombre del tool de shell cambia según qué feature flags tenga habilitados el usuario
+# (puede ser "Bash", "unified_exec" o "shell"), así que matcheamos todo con '.' y dejamos
+# que el script decida: es seguro porque sale en silencio (sin bloquear) cuando el comando
+# no es un `git push` a una rama protegida. No lo cambies a algo tipo '^Bash$', porque con
+# otro nombre de tool el hook deja de dispararse y el bloqueo de push a main/master no corre.
+matcher = '.'
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = 'bash .claude/hooks/block-push-to-protected.sh'
+statusMessage = "Verificando rama de destino del push..."

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/block-push-to-protected.sh\"",
+            "timeout": 10,
+            "statusMessage": "Verificando rama de destino del push..."
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && command -v engram >/dev/null 2>&1 && engram sync >/dev/null 2>&1 || true",
+            "timeout": 60,
+            "statusMessage": "Exportando memoria de engram..."
+          }
+        ]
+      }
+    ]
+  }
+}

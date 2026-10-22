@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Hook pre-push de git: bloquea cualquier push que escriba sobre una rama protegida.
+# Enforza AGENTS.md: "Nunca se trabaja ni se pushea directo a main".
+#
+# Este hook es independiente del hook de agente (.claude/hooks/block-push-to-protected.sh):
+# ese otro corre en Claude Code y lee el comando de shell antes de ejecutarlo; este corre
+# dentro del propio git (cualquier `git push`, de cualquier cliente o persona) y usa el
+# contrato estándar de pre-push (ver `man githooks`):
+#   - Argumentos: $1 = nombre del remote, $2 = URL del remote.
+#   - Stdin: una línea por cada ref a pushear, con formato
+#       <local_ref> <local_sha> <remote_ref> <remote_sha>
+#   - Un borrado de rama se ve como local_sha en ceros.
+#   - Para bloquear: salir con código distinto de 0 e imprimir el motivo en stderr.
+#
+# Como git nos pasa por stdin los refs reales que se van a actualizar en el remoto,
+# esto cubre gratis los casos `git push --all` y `git push --mirror`: no hace falta
+# parsear flags, solo mirar remote_ref línea por línea.
+set -euo pipefail
+
+# Ramas protegidas. Para agregar o quitar una, editá este array.
+PROTECTED=("main" "master")
+
+is_protected() {
+  local branch=$1 p
+  for p in "${PROTECTED[@]}"; do
+    [[ "$branch" == "$p" ]] && return 0
+  done
+  return 1
+}
+
+blocked=0
+
+# El `|| [[ -n ... ]]` cubre una última línea sin newline final: `read` la carga en las
+# variables pero devuelve 1, y sin esto el loop cortaría sin evaluarla.
+while read -r local_ref local_sha remote_ref remote_sha || [[ -n "${remote_ref:-}" ]]; do
+  [[ -n "${remote_ref:-}" ]] || continue
+
+  # Solo nos interesan ramas (refs/heads/...); dejamos pasar tags y otros refs.
+  [[ "$remote_ref" == refs/heads/* ]] || continue
+
+  branch=${remote_ref#refs/heads/}
+
+  if is_protected "$branch"; then
+    if [[ "$local_sha" =~ ^0+$ ]]; then
+      echo "Bloqueado por el hook del repo: no podés borrar la rama protegida '$branch' por push. Ver AGENTS.md." >&2
+    else
+      echo "Bloqueado por el hook del repo: estás intentando pushear a '$branch', que es una rama protegida. Nunca se pushea directo a main/master. Creá una rama step/NN-nombre-corto y abrí un PR. Ver AGENTS.md." >&2
+    fi
+    blocked=1
+  fi
+done
+
+# --- Memoria de engram ---------------------------------------------------------
+# Exporta las memorias nuevas de ESTE proyecto a .engram/ y exige que estén
+# commiteadas antes de pushear, para que el código y la memoria viajen juntos.
+# Corre acá (y no en un hook de agente) para ser agnóstico de quién trabajó:
+# Claude Code, Codex o a mano.
+if [[ $blocked -eq 0 ]]; then
+  if command -v engram >/dev/null 2>&1; then
+    repo_root=$(git rev-parse --show-toplevel)
+
+    # Scope por directorio: exporta solo el proyecto de este repo.
+    # NUNCA agregar --all (la base de engram es global y tiene otros proyectos)
+    # ni --include-prompts (compartiría los prompts crudos en el repo).
+    ( cd "$repo_root" && engram sync >/dev/null 2>&1 ) || true
+
+    if [[ -n "$(git -C "$repo_root" status --porcelain -- .engram 2>/dev/null)" ]]; then
+      echo "Bloqueado por el hook del repo: hay memoria de engram sin commitear en .engram/." >&2
+      echo "Corré 'git add .engram && git commit -m \"chore: sync engram memory\"' y volvé a pushear." >&2
+      blocked=1
+    fi
+  else
+    echo "Aviso: engram no está instalado, se saltea el export de memoria. Ver step 01." >&2
+  fi
+fi
+
+exit $blocked
