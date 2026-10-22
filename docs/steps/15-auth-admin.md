@@ -6,12 +6,14 @@
 
 Proteger el panel con Supabase Auth: solo los administradores creados por el equipo pueden entrar. Hay un solo rol.
 
+Este step se hace completo contra el Auth local del step 02. Las cuentas reales de los brokers se crean en el step 26 (staging) y en el step 25 (producción).
+
 ## Tareas
 
-- [ ] Instalar `@supabase/supabase-js` y `@supabase/ssr`. Variables `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y `SUPABASE_SECRET_KEY` en `.env.example` (si el proyecto usa las claves legacy, `anon` y `service_role` cumplen el mismo rol; documentarlo).
+- [ ] Instalar `@supabase/supabase-js` y `@supabase/ssr`. Las variables `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y `SUPABASE_SECRET_KEY` ya están en `.env.example` con los valores locales (step 02); verificá que alcancen y, si el proyecto usa las claves legacy, documentá que `anon` y `service_role` cumplen el mismo rol.
 - [ ] `src/lib/supabase/server.ts` y `client.ts` según la guía oficial vigente de Supabase para Next.js (App Router, cookies).
 - [ ] Página `/admin/login` con email y contraseña (formulario con Zod). Mensaje de error genérico ("Email o contraseña incorrectos"). Sin registro ni "crear cuenta".
-- [ ] Recuperación de contraseña por email con la función de Supabase (página para definir la nueva contraseña).
+- [ ] Recuperación de contraseña por email con la función de Supabase (página para definir la nueva contraseña). En local, los mails se ven en el buzón de prueba que levanta la CLI de Supabase (no fijar su nombre: cambia entre versiones). La configuración de Site URL y Redirect URLs del dominio real se hace en el step 25.
 - [ ] Protección de rutas en `src/proxy.ts`: refresca la sesión y redirige a `/admin/login` toda ruta `/admin/*` sin sesión. Componer con la lógica de atribución del step 12 sin romperla.
 - [ ] `src/server/auth.ts`: `requireAdmin()` que obtiene el usuario con `supabase.auth.getUser()` (no `getSession()`) y lanza o redirige si no hay usuario. Devuelve `{ id, email }` para registrar quién hizo cada cambio.
 - [ ] Layout `src/app/admin/(protected)/layout.tsx`: llama a `requireAdmin()`, muestra navegación (Leads, Estadísticas), email del usuario y botón "Cerrar sesión".

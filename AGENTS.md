@@ -63,7 +63,7 @@ Los comandos de base de datos y otros scripts se agregan en sus steps. Usá siem
 - Ramas: `<tipo>/<descripción>`, o `<tipo>/<NN>-<descripción>` cuando el trabajo es un step del spec. El tipo es uno de `feat`, `fix`, `refactor`, `chore`, `docs`, `test` — los mismos de los commits. La descripción va en inglés, en minúsculas, con palabras separadas por guiones, y tiene que nombrar el cambio concreto: `fix/premium-rounding-on-annual-plans`, no `fix/bug`. El hook `pre-push` rechaza los nombres que no cumplen. Detalle y ejemplos: `.claude/skills/git-branch-naming/`.
 - Commits con Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`.
 - Título del PR: `Step NN — Título del step`. La descripción enlaza al archivo del step.
-- Un step equivale a un PR. El PR necesita CI en verde y la revisión de otro integrante.
+- Un step equivale a un PR. El PR necesita CI en verde.
 
 ## Seguridad
 
