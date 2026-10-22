@@ -1,0 +1,9 @@
+pnpm-lock.yaml
+.next/
+node_modules/
+coverage/
+.engram/
+
+# La documentación la escribimos a mano: SPEC.md, AGENTS.md y docs/ no los reformatea
+# Prettier, porque reescribe tablas y listas y ensucia los diffs de los steps.
+*.md
