@@ -15,7 +15,7 @@ Tener el repositorio protegido, los proyectos de Supabase de staging y producci�
 ## Tareas
 
 **GitHub**
-- [ ] Protección de `main`: requiere PR, 1 aprobación, CI en verde (workflow del step 03) y sin push directo. El hook `.githooks/pre-push` ya bloquea el push directo a `main` en cada clon local; esta protección es la capa definitiva, del lado del servidor, y no se puede saltear con `--no-verify`.
+- [ ] Protección de `main`: requiere PR, CI en verde (workflow del step 03) y sin push directo. Sin exigir aprobaciones: el equipo es chico y `AGENTS.md` no pide revisión de otra persona. El hook `.githooks/pre-push` ya bloquea el push directo a `main` en cada clon local; esta protección es la capa definitiva, del lado del servidor, y no se puede saltear con `--no-verify`.
 
 **Supabase** (cuentas productivas a nombre del cliente, ver Google Doc sección 10)
 - [ ] Crear dos proyectos: `miseguro-staging` y `miseguro-prod`, en la región más cercana disponible (São Paulo). El desarrollo no necesita un tercer proyecto: usa el entorno local del step 02.
