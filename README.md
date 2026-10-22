@@ -16,8 +16,66 @@ para el seguimiento de los leads.
 | [pnpm](https://pnpm.io) | 12 o mayor | gestor de paquetes (nunca npm ni yarn) |
 | [engram](https://github.com/engram-ai/engram) | 3.5.2 o mayor | memoria compartida del proyecto |
 
-Con [nvm](https://github.com/nvm-sh/nvm): `nvm install` toma la versión de `.nvmrc`.
-pnpm se instala con `npm install -g pnpm` o con `corepack enable pnpm`.
+Para Node, lo más simple es [fnm](https://github.com/Schniz/fnm): anda en Linux, macOS y
+Windows, lee `.nvmrc` y con `--use-on-cd` cambia de versión solo al entrar a la carpeta.
+`nvm` también sirve en Linux y macOS, pero ojo: `nvm-windows` es otro programa y no lee
+`.nvmrc`. pnpm se instala con `npm install -g pnpm` o con `corepack enable pnpm`.
+
+Desde el step 02 hace falta además **Docker** corriendo, para levantar Supabase local.
+
+## Entorno por sistema operativo
+
+El equipo trabaja en los tres sistemas y el repo está preparado para eso. Lo único que
+cambia es cómo se instalan Node y Docker.
+
+**Linux**
+
+```bash
+curl -fsSL https://fnm.vercel.app/install | bash   # Node
+# Docker Engine nativo, desde el gestor de paquetes de tu distro
+```
+
+**macOS**
+
+```bash
+brew install fnm
+brew install --cask docker   # o OrbStack, que es más liviano
+```
+
+**Windows: usá WSL2, no Windows a secas**
+
+```powershell
+wsl --install                      # Ubuntu sobre WSL2
+winget install Schniz.fnm          # (o dentro de WSL, con el script de Linux)
+winget install Docker.DockerDesktop
+```
+
+Dos cosas que importan más de lo que parecen:
+
+- **El repo tiene que vivir adentro del filesystem de WSL2** (`~/proyectos/seguros`), nunca
+  en `/mnt/c/Users/...`. Cruzar entre los dos filesystems hace que `pnpm install`, el watch
+  de Next y los tests vayan varias veces más lento. Es el error más común.
+- En Docker Desktop, activá el **backend de WSL2** (Settings → General) y el acceso desde tu
+  distro (Settings → Resources → WSL integration).
+
+Con VS Code, abrí el proyecto con la extensión **Remote - WSL**: de ahí en adelante la
+terminal, git y los scripts corren todos del lado de Linux y la máquina se comporta igual
+que las demás.
+
+### Dos detalles entre sistemas
+
+**Finales de línea.** Los maneja `.gitattributes`: todo viaja en LF. No configures
+`core.autocrlf` a mano — si git en Windows convierte a CRLF, los hooks de `.githooks/` dejan
+de correr en silencio (bash falla con `bad interpreter: bash^M`) y quien los pierde se queda
+sin la protección de `main`.
+
+**Mayúsculas en los imports.** Linux distingue mayúsculas y minúsculas en los nombres de
+archivo; macOS y Windows, por defecto, no. Un `@/components/UI/button` compila en esas dos
+máquinas y falla en Linux y en el CI. Si el CI se pone en rojo con un módulo que "existe",
+mirá las mayúsculas del import.
+
+Los tests corren siempre en UTC (está fijado en `vitest.config.mts`), así que las fechas dan
+el mismo resultado en las tres máquinas y en el CI.
 
 ## Instalación
 

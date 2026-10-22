@@ -1,0 +1,34 @@
+# Finales de línea: LF adentro del repo, siempre, venga de donde venga.
+#
+# Sin esto, git en Windows hace checkout con CRLF y pasan dos cosas. La molesta: los diffs
+# de los PRs muestran archivos enteros como modificados. La silenciosa y peor: los hooks de
+# .githooks/ dejan de correr, porque bash falla con "bad interpreter: bash^M" por el \r que
+# queda al final del shebang. Quien los pierde se queda sin la protección de `main` y sin el
+# chequeo de nombres de rama, y no se entera.
+#
+# Con esta configuración nadie tiene que tocar `core.autocrlf` en su clon.
+* text=auto eol=lf
+
+# Los ejecuta bash: LF sí o sí.
+.githooks/* text eol=lf
+*.sh        text eol=lf
+
+# Binarios: git no los normaliza ni intenta diffearlos.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.avif  binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
+*.pdf   binary
+*.gz    binary
+
+# La memoria de engram viaja comprimida (ver AGENTS.md). Ya la cubre `*.gz`, pero queda
+# explícito: normalizarla la corrompe.
+.engram/chunks/*.jsonl.gz binary
+
+# Lo genera pnpm. Se versiona, pero GitHub lo colapsa en la vista del PR.
+pnpm-lock.yaml linguist-generated=true
