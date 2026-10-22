@@ -39,13 +39,13 @@ Flujo principal:
 | UI | Tailwind CSS + shadcn/ui; gráficos con los charts de shadcn/ui (Recharts) |
 | Formularios | React Hook Form + Zod (mismo esquema en navegador y servidor) |
 | ORM | Prisma (conexión con pooler para la app y conexión directa para migraciones) |
-| Base de datos | Supabase PostgreSQL, con RLS activado en todas las tablas |
+| Base de datos | Supabase PostgreSQL, con RLS activado en todas las tablas. En desarrollo, Supabase local con la CLI (Docker) |
 | Autenticación del panel | Supabase Auth con `@supabase/ssr` (email y contraseña) |
 | Anti-spam | Cloudflare Turnstile + límite de envíos por IP en la base + honeypot |
 | Tests | Vitest, solo tests unitarios por ahora |
 | Medición | Google Tag Manager + GA4, Search Console |
 | Errores en producción | Sentry (plan gratuito) |
-| Hosting y CI | Vercel (previews por PR) y GitHub Actions |
+| Hosting y CI | Vercel (previews por PR, se conecta en el step 26) y GitHub Actions |
 
 Se usan siempre los planes gratuitos; se pasa a un plan pago solo si el uso lo exige.
 
@@ -84,22 +84,24 @@ docs/
 
 | Entorno | Base de datos | Deploy |
 | --- | --- | --- |
-| Local | Proyecto de Supabase de desarrollo | `pnpm dev` |
+| Local | Supabase local (CLI, Docker) | `pnpm dev` |
 | Staging | Proyecto de Supabase de staging | Preview de Vercel por cada PR |
 | Producción | Proyecto de Supabase de producción | Deploy automático al mergear a `main` |
+
+Staging y producción no existen hasta el step 26, porque crear esas cuentas requiere definirlas con el cliente (step 00). Mientras tanto, todo el desarrollo y la verificación se hacen en local (step 02).
 
 Variables (cada step agrega las suyas a `.env.example`, con un comentario de qué son y dónde se obtienen):
 
 | Variable | Uso | Step |
 | --- | --- | --- |
-| `DATABASE_URL` | Conexión con pooler (app) | 04 |
-| `DIRECT_URL` | Conexión directa (migraciones) | 04 |
+| `DATABASE_URL` | Conexión con pooler (app) | 02, 04 |
+| `DIRECT_URL` | Conexión directa (migraciones) | 02, 04 |
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | 01 |
 | `WHATSAPP_NUMBER` | Número de los brokers, solo dígitos (`5493794057190`) | 14 |
 | `IP_HASH_SALT` | Sal para guardar el hash de la IP | 11 |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Captcha | 11 |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Auth | 15 |
-| `SUPABASE_SECRET_KEY` | Solo servidor y scripts (crear administradores) | 15 |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Auth | 02 |
+| `SUPABASE_SECRET_KEY` | Solo servidor y scripts (crear administradores) | 02 |
 | `NEXT_PUBLIC_GTM_ID` | Google Tag Manager | 21 |
 | `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_AUTH_TOKEN` / `SENTRY_ORG` / `SENTRY_PROJECT` | Sentry | 23 |
 
@@ -127,13 +129,15 @@ Provisorios actuales: patente opcional para 0 km, rango de años, versión opcio
 
 ## 9. Índice de steps
 
+Estrategia: el desarrollo arranca contra el entorno local del step 02, y las cuentas en la nube se crean en el step 26, después de hablar con el cliente.
+
 Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 
 | # | Step | Etapa | Depende de | Estado |
 | --- | --- | --- | --- | --- |
 | 00 | [Relevamiento con el cliente](docs/steps/00-relevamiento-cliente.md) | 0. Relevamiento | — | PENDIENTE |
 | 01 | [Setup del proyecto](docs/steps/01-setup-proyecto.md) | 1. Base | — | PENDIENTE |
-| 02 | [Cuentas e infraestructura](docs/steps/02-infraestructura-cuentas.md) | 1. Base | 01 | PENDIENTE |
+| 02 | [Entorno de desarrollo local](docs/steps/02-entorno-local.md) | 1. Base | 01 | PENDIENTE |
 | 03 | [CI con GitHub Actions](docs/steps/03-ci.md) | 1. Base | 01 | PENDIENTE |
 | 04 | [Modelo de datos y Prisma](docs/steps/04-modelo-datos.md) | 1. Base | 01, 02 | PENDIENTE |
 | 05 | [Seed del catálogo de vehículos](docs/steps/05-seed-vehiculos.md) | 1. Base | 04 | PENDIENTE |
@@ -154,8 +158,11 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 20 | [Estadísticas](docs/steps/20-panel-estadisticas.md) | 4. Panel | 17 | PENDIENTE |
 | 21 | [Analítica con GTM y GA4](docs/steps/21-analitica-ga4.md) | 5. Lanzamiento | 09, 14 | PENDIENTE |
 | 22 | [SEO técnico](docs/steps/22-seo-tecnico.md) | 5. Lanzamiento | 07, 08 | PENDIENTE |
-| 23 | [Monitoreo de errores con Sentry](docs/steps/23-sentry.md) | 5. Lanzamiento | 02 | PENDIENTE |
-| 24 | [Backups y restauración](docs/steps/24-backups.md) | 5. Lanzamiento | 04 | PENDIENTE |
-| 25 | [Lanzamiento a producción](docs/steps/25-lanzamiento.md) | 5. Lanzamiento | 00 a 24 | PENDIENTE |
+| 23 | [Monitoreo de errores con Sentry](docs/steps/23-sentry.md) | 5. Lanzamiento | 01, 26 | PENDIENTE |
+| 24 | [Backups y restauración](docs/steps/24-backups.md) | 5. Lanzamiento | 04, 26 | PENDIENTE |
+| 25 | [Lanzamiento a producción](docs/steps/25-lanzamiento.md) | 5. Lanzamiento | 00 a 24 y 26 | PENDIENTE |
+| 26 | [Cuentas e infraestructura (Supabase y Vercel)](docs/steps/26-infraestructura-cuentas.md) | 5. Lanzamiento | 00, 01 | PENDIENTE |
 
 Steps que se pueden hacer en paralelo una vez terminado el 01: 02, 03, 06, 07 y 13.
+
+En la etapa 5 el orden de ejecución lo da la columna "Depende de", no el número: el step 26 va antes del 23, el 24 y el 25.

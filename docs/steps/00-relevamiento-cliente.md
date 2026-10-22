@@ -2,7 +2,7 @@
 
 **Etapa:** 0. Relevamiento · **Depende de:** — · **Leer:** `SPEC.md` secciones 7 y 8; `docs/reglas-negocio.md` (todo lo marcado [PROVISORIO])
 
-Step de gestión, no de código. **No bloquea el desarrollo:** los demás steps avanzan con los valores provisorios. Solo bloquea el step 25 (lanzamiento).
+Step de gestión, no de código. **No bloquea el desarrollo:** los demás steps avanzan con los valores provisorios. Bloquea los steps 25 (lanzamiento) y 26 (cuentas e infraestructura) — por eso la infra se movió al final del plan, en lugar de ser un prerequisito temprano.
 
 ## Objetivo
 
@@ -14,7 +14,7 @@ Obtener del cliente las respuestas, el contenido y los accesos que hacen falta p
 - [ ] Reunión o intercambio con el cliente; registrar las respuestas.
 - [ ] Recibir el contenido: logo, paleta y tipografía (o acordar que se diseñan), textos de la landing, matrícula del productor ante la SSN, dirección y datos de contacto, política de privacidad.
 - [ ] Definir el dominio. Si ya tiene un sitio con tráfico, relevar sus URLs (Search Console o rastreo) y armar el plan de redirecciones 301 en `docs/redirecciones.md` (tabla origen → destino).
-- [ ] Confirmar quién crea y a nombre de quién quedan las cuentas (ver step 02 y sección 10 del Google Doc).
+- [ ] Confirmar quién crea y a nombre de quién quedan las cuentas (ver step 26 y sección 10 del Google Doc).
 - [ ] Confirmar zonas donde operan los brokers y horario de atención.
 - [ ] Volcar las respuestas en `docs/reglas-negocio.md` (quitando las marcas [PROVISORIO] que correspondan).
 - [ ] Por cada respuesta que cambie código ya implementado, agregar un step nuevo al final del índice de `SPEC.md`.

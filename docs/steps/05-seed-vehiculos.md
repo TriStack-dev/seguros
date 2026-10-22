@@ -35,7 +35,7 @@ No existe una fuente gratuita y completa (las bases completas, como InfoAuto, so
 
 ## Criterios de aceptación
 
-- `pnpm db:seed` carga el catálogo en `miseguro-dev`; correrlo dos veces deja la misma cantidad de filas.
+- `pnpm db:seed` carga el catálogo en la base local (step 02); correrlo dos veces deja la misma cantidad de filas.
 - El test de validación del JSON pasa y cubre los mínimos de marcas.
 - El catálogo incluye los 10 autos y las 10 motos más patentados del último año disponible.
 

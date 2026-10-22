@@ -1,6 +1,6 @@
 # Step 25 — Lanzamiento a producción
 
-**Etapa:** 5. Lanzamiento · **Depende de:** 00 a 24 · **Leer:** `SPEC.md` secciones 5, 7 y 8; `docs/redirecciones.md` (si existe)
+**Etapa:** 5. Lanzamiento · **Depende de:** 00 a 24 y 26 · **Leer:** `SPEC.md` secciones 5, 7 y 8; `docs/redirecciones.md` (si existe)
 
 ## Objetivo
 
@@ -9,6 +9,7 @@ Publicar el sitio en el dominio del cliente con todo configurado, medido y verif
 ## Tareas
 
 **Antes**
+- [ ] Confirmar que el step 26 está cerrado (cuentas, protección de `main`, Vercel y los proyectos de Supabase existen).
 - [ ] Confirmar que no quedan [PROVISORIO] sin decisión del cliente que bloqueen el lanzamiento (como mínimo: datos del productor, política de privacidad aprobada, texto del mensaje de WhatsApp).
 - [ ] Quitar el aviso de borrador de `/privacidad` si el cliente la aprobó.
 - [ ] Aplicar las migraciones en producción (`pnpm db:deploy`) y cargar el catálogo (`pnpm db:seed`). **No** cargar leads de prueba.

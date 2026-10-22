@@ -1,0 +1,45 @@
+{
+  "version": 2,
+  "chunks": [
+    {
+      "id": "466e33ef",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T20:47:47.567013892Z",
+      "sessions": 1,
+      "memories": 3,
+      "prompts": 0
+    },
+    {
+      "id": "d44a4213",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T20:50:27.793058856Z",
+      "sessions": 1,
+      "memories": 0,
+      "prompts": 0
+    },
+    {
+      "id": "56c2dec1",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T20:55:04.396428861Z",
+      "sessions": 1,
+      "memories": 1,
+      "prompts": 0
+    },
+    {
+      "id": "2b598f89",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T21:03:56.416995447Z",
+      "sessions": 1,
+      "memories": 1,
+      "prompts": 0
+    },
+    {
+      "id": "54294a6c",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T21:30:48.62618316Z",
+      "sessions": 1,
+      "memories": 2,
+      "prompts": 0
+    }
+  ]
+}
