@@ -1,10 +1,12 @@
 # Step 23 — Monitoreo de errores con Sentry
 
-**Etapa:** 5. Lanzamiento · **Depende de:** 02 · **Leer:** `AGENTS.md` sección "Seguridad"
+**Etapa:** 5. Lanzamiento · **Depende de:** 01, 26 · **Leer:** `AGENTS.md` sección "Seguridad"
 
 ## Objetivo
 
 Recibir un aviso por email cuando algo falla en producción (en el navegador o en el servidor), con el detalle necesario para corregirlo, usando el plan gratuito de Sentry.
+
+Sentry necesita un deploy real para verificarse (source maps, previews, alertas), así que este step depende de la infraestructura del step 26 aunque su número sea anterior.
 
 ## Tareas
 
