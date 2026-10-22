@@ -136,7 +136,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | # | Step | Etapa | Depende de | Estado |
 | --- | --- | --- | --- | --- |
 | 00 | [Relevamiento con el cliente](docs/steps/00-relevamiento-cliente.md) | 0. Relevamiento | — | PENDIENTE |
-| 01 | [Setup del proyecto](docs/steps/01-setup-proyecto.md) | 1. Base | — | PENDIENTE |
+| 01 | [Setup del proyecto](docs/steps/01-setup-proyecto.md) | 1. Base | — | DONE · 2026-10-22 · Walter · #6 |
 | 02 | [Entorno de desarrollo local](docs/steps/02-entorno-local.md) | 1. Base | 01 | PENDIENTE |
 | 03 | [CI con GitHub Actions](docs/steps/03-ci.md) | 1. Base | 01 | PENDIENTE |
 | 04 | [Modelo de datos y Prisma](docs/steps/04-modelo-datos.md) | 1. Base | 01, 02 | PENDIENTE |
