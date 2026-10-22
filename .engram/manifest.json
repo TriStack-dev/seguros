@@ -64,6 +64,30 @@
       "sessions": 1,
       "memories": 0,
       "prompts": 0
+    },
+    {
+      "id": "017b52ad",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T22:03:32.211461724Z",
+      "sessions": 1,
+      "memories": 1,
+      "prompts": 0
+    },
+    {
+      "id": "4e89f3b4",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T22:03:34.247694083Z",
+      "sessions": 1,
+      "memories": 0,
+      "prompts": 0
+    },
+    {
+      "id": "4ce388c6",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T22:04:50.773951091Z",
+      "sessions": 1,
+      "memories": 0,
+      "prompts": 0
     }
   ]
 }
