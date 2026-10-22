@@ -28,9 +28,10 @@ Dejar un proyecto Next.js vacío pero completo en herramientas, que cualquier in
 - Con el repo recién clonado: `pnpm install && pnpm dev` levanta la página en `localhost:3000`.
 - `pnpm lint`, `pnpm typecheck`, `pnpm test` y `pnpm build` pasan sin errores.
 - No hay credenciales en el repo.
-- Con `core.hooksPath` configurado, `git push origin main` se rechaza antes de contactar al remoto, y el push de una rama `step/NN-nombre-corto` pasa.
+- Con `core.hooksPath` configurado, `git push origin main` se rechaza antes de contactar al remoto, y el push de una rama `feat/NN-nombre-corto` pasa.
+- El push de una rama con un nombre fuera de convención (por ejemplo `fix/bug`) se rechaza explicando la forma esperada.
 - `git check-ignore .engram` no devuelve nada (la memoria del proyecto no está ignorada).
-- Con memoria nueva sin commitear, el push de una rama `step/NN-nombre-corto` se rechaza pidiendo commitear `.engram/`.
+- Con memoria nueva sin commitear, el push de una rama `feat/NN-nombre-corto` se rechaza pidiendo commitear `.engram/`.
 
 ## Fuera de alcance
 

@@ -8,7 +8,7 @@ Contexto del producto, stack e índice de steps: `SPEC.md`. Reglas de negocio: `
 1. Leé el índice de `SPEC.md` (sección 9) y el archivo del step en `docs/steps/`. No leas los demás steps salvo que el tuyo lo pida.
 2. Verificá que las dependencias del step estén `DONE`. Si no lo están, avisá y no empieces.
 3. Leé solo las secciones de `docs/reglas-negocio.md` que el step indique.
-4. Trabajá en una rama `step/NN-nombre-corto` creada desde `main` actualizado.
+4. Trabajá en una rama `<tipo>/NN-nombre-corto` creada desde `main` actualizado (por ejemplo `feat/04-data-model`). Ver "Git y PR".
 5. Hacé solo lo que pide el step. Si encontrás algo necesario fuera de su alcance, anotalo en "Pendientes" de las notas de implementación; no lo resuelvas.
 6. Antes de dar el step por terminado, corré `pnpm lint`, `pnpm typecheck`, `pnpm test` y `pnpm build`. Todo tiene que pasar.
 7. Verificá cada criterio de aceptación del step.
@@ -60,6 +60,7 @@ Los comandos de base de datos y otros scripts se agregan en sus steps. Usá siem
 ## Git y PR
 
 - Nunca se trabaja ni se pushea directo a `main`.
+- Ramas: `<tipo>/<descripción>`, o `<tipo>/<NN>-<descripción>` cuando el trabajo es un step del spec. El tipo es uno de `feat`, `fix`, `refactor`, `chore`, `docs`, `test` — los mismos de los commits. La descripción va en inglés, en minúsculas, con palabras separadas por guiones, y tiene que nombrar el cambio concreto: `fix/premium-rounding-on-annual-plans`, no `fix/bug`. El hook `pre-push` rechaza los nombres que no cumplen. Detalle y ejemplos: `.claude/skills/git-branch-naming/`.
 - Commits con Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`.
 - Título del PR: `Step NN — Título del step`. La descripción enlaza al archivo del step.
 - Un step equivale a un PR. El PR necesita CI en verde y la revisión de otro integrante.
