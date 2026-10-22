@@ -28,6 +28,70 @@ is_protected() {
   return 1
 }
 
+# Convención de nombres de rama: <tipo>/<descripción> o <tipo>/<NN>-<descripción>.
+# Los tipos son los mismos de Conventional Commits que usan los commits del repo, a
+# propósito. Ver AGENTS.md y la skill .claude/skills/git-branch-naming/.
+BRANCH_TYPES="feat|fix|refactor|chore|docs|test"
+BRANCH_RE="^(${BRANCH_TYPES})/([0-9]{2}-)?[a-z0-9]+(-[a-z0-9]+)+$"
+BRANCH_SLUG_MIN=6
+BRANCH_SLUG_MAX=50
+
+# Palabras que no describen ningún cambio. Solo se rechaza si TODAS las palabras de la
+# descripción están acá: `feat/temp-file-cleanup` es un nombre legítimo y tiene que pasar,
+# mientras que `feat/misc-stuff` no dice nada.
+VAGUE=("wip" "stuff" "things" "thing" "misc" "temp" "tmp" "foo" "bar" "asdf" "todo" "varios" "prueba" "pruebas" "cosas" "test")
+
+is_vague_word() {
+  local w=$1 v
+  for v in "${VAGUE[@]}"; do
+    [[ "$w" == "$v" ]] && return 0
+  done
+  return 1
+}
+
+# Imprime en stderr el motivo y devuelve 1 si el nombre no cumple la convención.
+check_branch_name() {
+  local branch=$1
+
+  if [[ ! "$branch" =~ $BRANCH_RE ]]; then
+    echo "Bloqueado por el hook del repo: la rama '$branch' no sigue la convención de nombres." >&2
+    echo "  Forma esperada: <tipo>/<descripcion>  (o <tipo>/<NN>-<descripcion> para un step del spec)" >&2
+    echo "  Tipos:          ${BRANCH_TYPES//|/, }" >&2
+    echo "  Descripción:    en inglés, minúsculas, palabras separadas por guiones, dos palabras o más." >&2
+    echo "  Ejemplos:       feat/04-data-model, fix/premium-rounding-on-annual-plans, chore/update-ci-node-version" >&2
+    return 1
+  fi
+
+  # Sacamos el tipo y el prefijo opcional NN- para quedarnos con la descripción sola.
+  local slug=${branch#*/}
+  slug=${slug#[0-9][0-9]-}
+
+  if (( ${#slug} < BRANCH_SLUG_MIN )); then
+    echo "Bloqueado por el hook del repo: la descripción de la rama '$branch' es demasiado corta." >&2
+    echo "  Tiene que decir qué cambia el diff, no solo la categoría del trabajo." >&2
+    return 1
+  fi
+
+  if (( ${#slug} > BRANCH_SLUG_MAX )); then
+    echo "Bloqueado por el hook del repo: la descripción de la rama '$branch' pasa los $BRANCH_SLUG_MAX caracteres." >&2
+    echo "  Acortala para que el nombre entre completo en la UI de GitHub." >&2
+    return 1
+  fi
+
+  local word all_vague=1
+  IFS='-' read -r -a words <<< "$slug"
+  for word in "${words[@]}"; do
+    is_vague_word "$word" || { all_vague=0; break; }
+  done
+  if (( all_vague == 1 )); then
+    echo "Bloqueado por el hook del repo: la descripción de la rama '$branch' no dice qué cambia." >&2
+    echo "  Nombrá el cambio concreto: 'fix/premium-rounding-on-annual-plans', no 'fix/misc-stuff'." >&2
+    return 1
+  fi
+
+  return 0
+}
+
 blocked=0
 
 # El `|| [[ -n ... ]]` cubre una última línea sin newline final: `read` la carga en las
@@ -47,6 +111,11 @@ while read -r local_ref local_sha remote_ref remote_sha || [[ -n "${remote_ref:-
       echo "Bloqueado por el hook del repo: estás intentando pushear a '$branch', que es una rama protegida. Nunca se pushea directo a main/master. Creá una rama step/NN-nombre-corto y abrí un PR. Ver AGENTS.md." >&2
     fi
     blocked=1
+  elif [[ ! "$local_sha" =~ ^0+$ ]]; then
+    # Solo validamos el nombre cuando se crea o actualiza la rama. Un borrado
+    # (local_sha en ceros) tiene que poder pasar: si quedó una rama vieja mal
+    # nombrada en el remoto, el hook no puede ser lo que impide limpiarla.
+    check_branch_name "$branch" || blocked=1
   fi
 done
 
