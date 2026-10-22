@@ -40,6 +40,14 @@
       "sessions": 1,
       "memories": 2,
       "prompts": 0
+    },
+    {
+      "id": "7c956713",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-22T21:46:40.74027548Z",
+      "sessions": 1,
+      "memories": 2,
+      "prompts": 0
     }
   ]
 }
