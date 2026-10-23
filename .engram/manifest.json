@@ -104,6 +104,14 @@
       "sessions": 1,
       "memories": 3,
       "prompts": 0
+    },
+    {
+      "id": "33895152",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-23T00:04:48.472076148Z",
+      "sessions": 1,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }
