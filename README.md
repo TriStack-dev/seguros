@@ -14,7 +14,7 @@ para el seguimiento de los leads.
 | --- | --- | --- |
 | [Node](https://nodejs.org) | 24 LTS (está fijada en `.nvmrc`) | runtime |
 | [pnpm](https://pnpm.io) | 12 o mayor | gestor de paquetes (nunca npm ni yarn) |
-| [engram](https://github.com/engram-ai/engram) | 3.5.2 o mayor | memoria compartida del proyecto |
+| [engram](https://github.com/Gentleman-Programming/engram) | 3.5.2 o mayor | memoria compartida del proyecto |
 
 Para Node, lo más simple es [fnm](https://github.com/Schniz/fnm): anda en Linux, macOS y
 Windows, lee `.nvmrc` y con `--use-on-cd` cambia de versión solo al entrar a la carpeta.
@@ -100,14 +100,34 @@ cada persona en su clon. Los hooks de [`.githooks/`](.githooks) hacen dos cosas:
   la convención y los pushes con memoria de engram sin commitear.
 - `post-merge` importa la memoria de engram después de cada `git pull`.
 
-### Importar la memoria del proyecto (una vez después de clonar)
+### Instalar e importar la memoria del proyecto (una vez después de clonar)
+
+La memoria de las sesiones anteriores viaja versionada en [`.engram/`](.engram): son los
+contextos, decisiones y descubrimientos que los agentes (Claude Code, Codex) fueron
+acumulando. Para traértela a tu base local hace falta el binario de
+[engram](https://github.com/Gentleman-Programming/engram), **3.5.2 o mayor**:
+
+```bash
+# macOS y Linux (incluido WSL2)
+brew install gentleman-programming/tap/engram
+
+# Alternativa si tenés Go, en cualquier sistema
+go install github.com/Gentleman-Programming/engram/v3/cmd/engram@latest
+```
+
+El detalle por plataforma, incluido Windows nativo, está en la
+[guía de instalación](https://github.com/Gentleman-Programming/engram/blob/main/docs/INSTALLATION.md).
+Con el binario andando, una sola vez:
 
 ```bash
 engram sync --import
 ```
 
-La memoria de las sesiones anteriores viaja versionada en [`.engram/`](.engram). De ahí en
-adelante el hook `post-merge` la importa solo en cada `git pull`.
+De ahí en adelante el hook `post-merge` la importa solo en cada `git pull`.
+
+**No bloquea nada el primer día.** El hook `post-merge` es best-effort: si engram no está
+instalado se saltea sin romper el merge. Podés clonar, levantar el proyecto y trabajar sin
+él, y sumarlo cuando quieras.
 
 ## Variables de entorno
 
