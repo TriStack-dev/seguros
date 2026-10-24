@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Dummy values so build doesn't require real credentials
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      DATABASE_URL: postgresql://user:password@localhost:5432/seguros
+      DIRECT_URL: postgresql://user:password@localhost:5432/seguros
+      SUPABASE_URL: https://dummy.supabase.co
+      SUPABASE_ANON_KEY: dummy-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: dummy-service-role-key
+      NEXT_PUBLIC_SUPABASE_URL: https://dummy.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key
+      TURNSTILE_SECRET_KEY: 0x4AAAAAAA
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 0x4AAAAAAA
+      SENTRY_DSN: https://dummy@sentry.io/123456
+      NEXT_PUBLIC_SENTRY_DSN: https://dummy@sentry.io/123456
+      SENTRY_AUTH_TOKEN: dummy
+      SENTRY_ORG: dummy
+      SENTRY_PROJECT: dummy
+      GA4_MEASUREMENT_ID: G-DUMMY
+      GTM_ID: GTM-DUMMY
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Generate Prisma Client
+        run: pnpm prisma generate || true
+
+      - name: Build
+        run: pnpm build

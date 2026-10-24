@@ -146,6 +146,12 @@ cumplir git (`.githooks/`), así que valen para cualquier agente y para los push
 Los tres avisos llaman al mismo script, `.claude/hooks/block-push-to-protected.sh`. En Codex
 hay que confiar en el proyecto para que lea `.codex/config.toml`.
 
+## CI
+
+El workflow de GitHub Actions (`.github/workflows/ci.yml`) corre en `pull_request` hacia `main` y en `push` a `main`. Ejecuta `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` y requiere las dependencias instaladas con `pnpm install --frozen-lockfile`.
+
+**El check "CI" es obligatorio.** Quien administre el repo debe marcarlo como requerido en la protección de rama de `main` (Settings → Branches → Branch protection rules → Require status checks to pass before merging → seleccionar "CI").
+
 ## Variables de entorno
 
 Se declaran en [`.env.example`](.env.example) con un comentario de qué son y dónde se
