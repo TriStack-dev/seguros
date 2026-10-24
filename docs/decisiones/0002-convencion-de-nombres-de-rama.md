@@ -26,7 +26,7 @@ Se enforza en dos capas, con roles distintos:
   minúsculas con guiones, dos palabras o más, largo entre 6 y 50 caracteres, y rechaza las
   descripciones armadas solo con palabras vacías (`misc`, `stuff`, `wip`, …). Un borrado de
   rama no se valida, para no trabar la limpieza de nombres viejos.
-- **`.claude/skills/git-branch-naming/`** le explica a los agentes el **criterio**: qué tipo
+- **`.agents/skills/git-branch-naming/`** le explica a los agentes el **criterio**: qué tipo
   corresponde, qué significa que la descripción sea informativa, y ejemplos buenos y malos.
 
 La división es deliberada: el hook puede verificar la forma pero no puede juzgar si el nombre
