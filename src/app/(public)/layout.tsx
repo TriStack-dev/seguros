@@ -1,0 +1,60 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { Logo } from "@/components/logo";
+import { Button } from "@/components/ui/button";
+import { landingContent as content } from "@/content/landing";
+
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="public-site">
+      <a className="skip-link" href="#contenido">
+        {content.skipLink}
+      </a>
+      <header className="site-header">
+        <div className="site-container header-inner">
+          <Logo />
+          <nav aria-label="Principal" className="desktop-navigation">
+            {content.navigation.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <Button asChild className="quote-button">
+            <Link href="/#cotizar">
+              {content.quoteCta}
+              <ArrowUpRight aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
+      </header>
+      {children}
+      <footer className="site-footer">
+        <div className="site-container">
+          <div className="footer-grid">
+            <div>
+              <Logo />
+              <p>{content.footer.description}</p>
+            </div>
+            <div>
+              <h2>{content.footer.contactLabel}</h2>
+              <p>{content.footer.contact}</p>
+              <p>{content.trust.license}</p>
+            </div>
+            <div>
+              <h2>{content.footer.addressLabel}</h2>
+              <p>{content.footer.address}</p>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>
+              © {new Date().getFullYear()} {content.brand}
+            </p>
+            <p>{content.footer.provisionalNote}</p>
+            <Link href="/privacidad">{content.footer.privacy}</Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
