@@ -1,28 +1,32 @@
 import { z } from "zod";
-import {
-  VEHICLE_TYPES,
-  USAGE_TYPES,
-  USAGE_BY_VEHICLE,
-  MIN_YEAR,
-} from "@/lib/constants";
+import { VEHICLE_TYPES, USAGE_TYPES, USAGE_BY_VEHICLE, MIN_YEAR } from "@/lib/constants";
 import { isValidPlate } from "@/lib/validation/plate";
-import { normalizeName, normalizeDni, normalizePlate, normalizePostalCode, normalizePhone } from "@/lib/validation/normalizers";
+import {
+  normalizeName,
+  normalizeDni,
+  normalizePlate,
+  normalizePostalCode,
+  normalizePhone,
+} from "@/lib/validation/normalizers";
 
 const nameSchema = z
   .string()
   .transform((v) => normalizeName(v))
-  .refine((v) => {
-    if (!v) return false;
-    if (v.length > 100) return false;
-    // at least 2 words of 2 or more letters
-    const words = v.split(/\s+/).filter(Boolean);
-    if (words.length < 2) return false;
-    return words.every((w) => {
-      // allow letters with accents, ñ, apostrophe, hyphen
-      const cleaned = w.replace(/['-]/g, "");
-      return /^[A-Za-zÁÉÍÓÚáéíóúÑñ]{2,}$/.test(cleaned);
-    });
-  }, { message: "Ingresá nombre y apellido válidos (mínimo 2 palabras de 2 letras)" });
+  .refine(
+    (v) => {
+      if (!v) return false;
+      if (v.length > 100) return false;
+      // at least 2 words of 2 or more letters
+      const words = v.split(/\s+/).filter(Boolean);
+      if (words.length < 2) return false;
+      return words.every((w) => {
+        // allow letters with accents, ñ, apostrophe, hyphen
+        const cleaned = w.replace(/['-]/g, "");
+        return /^[A-Za-zÁÉÍÓÚáéíóúÑñ]{2,}$/.test(cleaned);
+      });
+    },
+    { message: "Ingresá nombre y apellido válidos (mínimo 2 palabras de 2 letras)" },
+  );
 
 const emailSchema = z
   .string()
@@ -32,20 +36,26 @@ const emailSchema = z
 const dniSchema = z
   .string()
   .transform((v) => normalizeDni(v))
-  .refine((v) => {
-    if (!/^\d+$/.test(v)) return false;
-    return v.length === 7 || v.length === 8;
-  }, { message: "Ingresá un DNI válido (7 u 8 dígitos)" });
+  .refine(
+    (v) => {
+      if (!/^\d+$/.test(v)) return false;
+      return v.length === 7 || v.length === 8;
+    },
+    { message: "Ingresá un DNI válido (7 u 8 dígitos)" },
+  );
 
 const postalCodeSchema = z
   .string()
   .transform((v) => normalizePostalCode(v))
-  .refine((v) => {
-    // 4 digits or CPA like S2000ABC (1 letter + 4 digits + 3 letters)
-    if (/^\d{4}$/.test(v)) return true;
-    if (/^[A-Z]\d{4}[A-Z]{3}$/.test(v)) return true;
-    return false;
-  }, { message: "Ingresá un código postal válido" });
+  .refine(
+    (v) => {
+      // 4 digits or CPA like S2000ABC (1 letter + 4 digits + 3 letters)
+      if (/^\d{4}$/.test(v)) return true;
+      if (/^[A-Z]\d{4}[A-Z]{3}$/.test(v)) return true;
+      return false;
+    },
+    { message: "Ingresá un código postal válido" },
+  );
 
 const versionSchema = z
   .string()
@@ -64,9 +74,17 @@ export const leadFormSchema = z
     isZeroKm: z.boolean().optional().default(false),
     plate: z.string().optional().or(z.literal("")),
     brandId: z.string().optional().or(z.literal("")),
-    brandOther: z.string().max(40, { message: "La marca puede tener hasta 40 caracteres" }).optional().or(z.literal("")),
+    brandOther: z
+      .string()
+      .max(40, { message: "La marca puede tener hasta 40 caracteres" })
+      .optional()
+      .or(z.literal("")),
     modelId: z.string().optional().or(z.literal("")),
-    modelOther: z.string().max(60, { message: "El modelo puede tener hasta 60 caracteres" }).optional().or(z.literal("")),
+    modelOther: z
+      .string()
+      .max(60, { message: "El modelo puede tener hasta 60 caracteres" })
+      .optional()
+      .or(z.literal("")),
     version: versionSchema,
     year: z.coerce.number({
       message: "Ingresá el año del vehículo",
@@ -74,7 +92,9 @@ export const leadFormSchema = z
     hasGnc: z.boolean().nullable().optional(),
     postalCode: postalCodeSchema,
     usage: z.enum(USAGE_TYPES, { message: "Seleccioná el tipo de uso" }),
-    consent: z.boolean().refine((v) => v === true, { message: "Tenés que aceptar la política de privacidad" }),
+    consent: z
+      .boolean()
+      .refine((v) => v === true, { message: "Tenés que aceptar la política de privacidad" }),
     website: z.string().optional().default(""), // honeypot
   })
   .superRefine((data, ctx) => {
@@ -148,7 +168,10 @@ export const leadFormSchema = z
         path: ["brandId"],
       });
     }
-    if (hasBrandOther && (!data.brandOther || data.brandOther.trim().length < 2 || data.brandOther.trim().length > 40)) {
+    if (
+      hasBrandOther &&
+      (!data.brandOther || data.brandOther.trim().length < 2 || data.brandOther.trim().length > 40)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "La marca debe tener entre 2 y 40 caracteres",
@@ -167,7 +190,10 @@ export const leadFormSchema = z
           path: ["modelOther"],
         });
       }
-      if (hasModelOther && (data.modelOther!.trim().length < 1 || data.modelOther!.trim().length > 60)) {
+      if (
+        hasModelOther &&
+        (data.modelOther!.trim().length < 1 || data.modelOther!.trim().length > 60)
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "El modelo debe tener entre 1 y 60 caracteres",
@@ -182,7 +208,10 @@ export const leadFormSchema = z
           path: ["modelId"],
         });
       }
-      if (hasModelOther && (data.modelOther!.trim().length < 1 || data.modelOther!.trim().length > 60)) {
+      if (
+        hasModelOther &&
+        (data.modelOther!.trim().length < 1 || data.modelOther!.trim().length > 60)
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "El modelo debe tener entre 1 y 60 caracteres",
