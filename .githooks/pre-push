@@ -140,7 +140,10 @@ if [[ $blocked -eq 0 && $has_updates -eq 1 ]]; then
     # Scope por directorio: exporta solo el proyecto de este repo.
     # NUNCA agregar --all (la base de engram es global y tiene otros proyectos)
     # ni --include-prompts (compartiría los prompts crudos en el repo).
-    ( cd "$repo_root" && engram sync >/dev/null 2>&1 ) || true
+    if ! ( cd "$repo_root" && engram sync ); then
+      echo "Bloqueado: no se pudo exportar la memoria de Engram. Corregí el error y reintentá el push." >&2
+      exit 1
+    fi
 
     if [[ -n "$(git -C "$repo_root" status --porcelain -- .engram 2>/dev/null)" ]]; then
       echo "Bloqueado por el hook del repo: hay memoria de engram sin commitear en .engram/." >&2
@@ -148,7 +151,8 @@ if [[ $blocked -eq 0 && $has_updates -eq 1 ]]; then
       blocked=1
     fi
   else
-    echo "Aviso: engram no está instalado, se saltea el export de memoria. Ver step 01." >&2
+    echo "Bloqueado: instalá Engram para compartir la memoria antes de pushear. Ver README.md." >&2
+    blocked=1
   fi
 fi
 

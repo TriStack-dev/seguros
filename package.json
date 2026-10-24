@@ -16,7 +16,7 @@
     "db:down": "supabase stop",
     "db:restart": "supabase stop && supabase start",
     "db:status": "supabase status",
-    "prepare": "git config core.hooksPath .githooks || true"
+    "prepare": "git config core.hooksPath .githooks && bash .githooks/import-engram"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -uo pipefail
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+bash "$repo_root/.githooks/import-engram"

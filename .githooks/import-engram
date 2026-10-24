@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Importación compartida por merge, rebase, checkout y prepare.
+set -uo pipefail
+
+if ! command -v engram >/dev/null 2>&1; then
+  echo "engram: no se importó la memoria; instalá Engram y corré 'engram sync --import'." >&2
+  exit 0
+fi
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+[[ -d "$repo_root/.engram" ]] || exit 0
+
+if ( cd "$repo_root" && engram sync --import ); then
+  echo "engram: memoria del proyecto importada a tu base local."
+else
+  echo "engram: falló la importación. Corré 'engram sync --import' para reintentar." >&2
+fi
+# El código ya se actualizó: un error de memoria no revierte Git.
+exit 0
