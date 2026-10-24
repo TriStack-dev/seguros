@@ -9,6 +9,8 @@ const eslintConfig = defineConfig([
   // Último de la lista: apaga las reglas de ESLint que chocan con el formato de Prettier.
   // El formato lo decide Prettier (`pnpm format`), ESLint solo mira la calidad del código.
   prettier,
+  // Skills de agentes instaladas desde otros repos: no son código del proyecto.
+  globalIgnores([".agents/**"]),
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

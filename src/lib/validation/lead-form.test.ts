@@ -126,7 +126,11 @@ describe("leadFormSchema", () => {
   });
 
   it("validates phone with leading 0 in area and 15 in number", () => {
-    const result = leadFormSchema.safeParse({ ...validBase, phoneArea: "0341", phoneNumber: "154123456" });
+    const result = leadFormSchema.safeParse({
+      ...validBase,
+      phoneArea: "0341",
+      phoneNumber: "154123456",
+    });
     expect(result.success).toBe(true);
     if (result.success) {
       expect((result.data as Record<string, unknown>).phone).toBe("5493414123456");
@@ -134,9 +138,14 @@ describe("leadFormSchema", () => {
   });
 
   it("rejects auto plate format for moto and vice versa", () => {
-    const motoWithAutoPlate = leadFormSchema.safeParse({ ...validBase, vehicleType: "MOTO", plate: "AA123BB", usage: "PARTICULAR" });
+    const motoWithAutoPlate = leadFormSchema.safeParse({
+      ...validBase,
+      vehicleType: "MOTO",
+      plate: "AA123BB",
+      usage: "PARTICULAR",
+    });
     expect(motoWithAutoPlate.success).toBe(false);
-    
+
     const autoWithMotoPlate = leadFormSchema.safeParse({ ...validBase, plate: "123AAA" });
     expect(autoWithMotoPlate.success).toBe(false);
   });

@@ -31,7 +31,8 @@ export function normalizePostalCode(value: string): string {
 }
 
 export function normalizePhone(area: string, number: string): string {
-  if (!area && !number) throw new ValidationError("Ingresá el código de área sin el 0", "phone_area_required");
+  if (!area && !number)
+    throw new ValidationError("Ingresá el código de área sin el 0", "phone_area_required");
   // remove non-digits
   let a = (area || "").replace(/\D/g, "");
   let n = (number || "").replace(/\D/g, "");
@@ -53,11 +54,16 @@ export function normalizePhone(area: string, number: string): string {
     n = n.slice(2);
   }
 
-  if (a.length < 2 || a.length > 4) throw new ValidationError("Ingresá el código de área sin el 0", "phone_area_invalid");
-  if (n.length < 6 || n.length > 8) throw new ValidationError("Ingresá el número sin el 15", "phone_number_invalid");
+  if (a.length < 2 || a.length > 4)
+    throw new ValidationError("Ingresá el código de área sin el 0", "phone_area_invalid");
+  if (n.length < 6 || n.length > 8)
+    throw new ValidationError("Ingresá el número sin el 15", "phone_number_invalid");
   if (a.length + n.length !== 10) {
     // try to be strict per rules
-    throw new ValidationError("El teléfono debe tener 10 dígitos entre área y número", "phone_length_invalid");
+    throw new ValidationError(
+      "El teléfono debe tener 10 dígitos entre área y número",
+      "phone_length_invalid",
+    );
   }
 
   return `549${a}${n}`;

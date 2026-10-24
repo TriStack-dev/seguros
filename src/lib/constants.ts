@@ -1,12 +1,7 @@
 export const VEHICLE_TYPES = ["AUTO", "MOTO"] as const;
 export type VehicleType = (typeof VEHICLE_TYPES)[number];
 
-export const USAGE_TYPES = [
-  "PARTICULAR",
-  "COMMERCIAL",
-  "RIDE_HAILING",
-  "DELIVERY",
-] as const;
+export const USAGE_TYPES = ["PARTICULAR", "COMMERCIAL", "RIDE_HAILING", "DELIVERY"] as const;
 export type UsageType = (typeof USAGE_TYPES)[number];
 
 export const USAGE_LABELS: Record<UsageType, string> = {
@@ -24,13 +19,7 @@ export const USAGE_BY_VEHICLE: Record<VehicleType, UsageType[]> = {
 export const MIN_YEAR = 1990;
 export const CURRENT_YEAR_PLUS_ONE = new Date().getFullYear() + 1;
 
-export const LEAD_STATUSES = [
-  "NEW",
-  "CONTACTED",
-  "QUOTED",
-  "ISSUED",
-  "LOST",
-] as const;
+export const LEAD_STATUSES = ["NEW", "CONTACTED", "QUOTED", "ISSUED", "LOST"] as const;
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 
 export const LOST_REASONS = [

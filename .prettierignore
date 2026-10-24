@@ -8,3 +8,7 @@ src/generated/
 # La documentación la escribimos a mano: SPEC.md, AGENTS.md y docs/ no los reformatea
 # Prettier, porque reescribe tablas y listas y ensucia los diffs de los steps.
 *.md
+
+# Skills de agentes instaladas desde otros repos: no son código del proyecto y se actualizan
+# con su propio instalador, así que no las reformateamos.
+.agents/

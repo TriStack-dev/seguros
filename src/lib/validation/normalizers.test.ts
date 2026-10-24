@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { normalizePhone, normalizeDni, normalizePlate, normalizePostalCode, normalizeName, ValidationError } from "./normalizers";
+import {
+  normalizePhone,
+  normalizeDni,
+  normalizePlate,
+  normalizePostalCode,
+  normalizeName,
+  ValidationError,
+} from "./normalizers";
 
 describe("normalizers", () => {
   it("normalizeName trims and collapses spaces", () => {
