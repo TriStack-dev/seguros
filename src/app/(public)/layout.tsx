@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { business } from "@/content/business";
 import { landingContent as content } from "@/content/landing";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -38,19 +39,23 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             </div>
             <div>
               <h2>{content.footer.contactLabel}</h2>
-              <p>{content.footer.contact}</p>
-              <p>{content.trust.license}</p>
+              <p>{business.producerName}</p>
+              <p>{business.license}</p>
+              <p>{business.phone}</p>
+              <p>{business.email}</p>
+              <p>{business.hours}</p>
             </div>
             <div>
               <h2>{content.footer.addressLabel}</h2>
-              <p>{content.footer.address}</p>
+              <p>{business.legalName}</p>
+              <p>{business.address}</p>
             </div>
           </div>
           <div className="footer-bottom">
             <p>
               © {new Date().getFullYear()} {content.brand}
             </p>
-            <p>{content.footer.provisionalNote}</p>
+            <p>{business.provisionalNote}</p>
             <Link href="/privacidad">{content.footer.privacy}</Link>
           </div>
         </div>

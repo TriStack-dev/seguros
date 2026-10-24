@@ -16,6 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { business } from "@/content/business";
 import { landingContent as content } from "@/content/landing";
 
 const benefitIcons = [MessagesSquare, Building2, CarFront];
@@ -136,8 +137,8 @@ export default function LandingPage() {
             <p>{content.trust.description}</p>
             <dl className="producer-details">
               <dt>{content.trust.producerLabel}</dt>
-              <dd>{content.trust.producer}</dd>
-              <dd>{content.trust.license}</dd>
+              <dd>{business.producerName}</dd>
+              <dd>{business.license}</dd>
             </dl>
           </div>
           <div className="reviews-placeholder">
