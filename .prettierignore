@@ -3,6 +3,7 @@ pnpm-lock.yaml
 node_modules/
 coverage/
 .engram/
+src/generated/
 
 # La documentación la escribimos a mano: SPEC.md, AGENTS.md y docs/ no los reformatea
 # Prettier, porque reescribe tablas y listas y ensucia los diffs de los steps.

@@ -1,3 +1,6 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  # Prisma descarga el schema engine (lo usan migrate y studio) en su postinstall.
+  "@prisma/engines": true
+  prisma: true

@@ -1,0 +1,145 @@
+// Modelo de datos de MiSeguro. Los nombres de enums y valores tienen que coincidir con
+// docs/reglas-negocio.md. La URL de conexión está en prisma.config.ts.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum VehicleType {
+  AUTO
+  MOTO
+}
+
+enum UsageType {
+  PARTICULAR
+  COMMERCIAL
+  RIDE_HAILING
+  DELIVERY
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUOTED
+  ISSUED
+  LOST
+}
+
+enum LostReason {
+  PRICE
+  NO_RESPONSE
+  WENT_ELSEWHERE
+  JUST_ASKING
+  INVALID_DATA
+  OTHER
+}
+
+model Lead {
+  id            String   @id @default(uuid()) @db.Uuid
+  requestNumber Int      @unique @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  vehicleType VehicleType
+  fullName    String
+  phone       String // 549 + área + número, solo dígitos
+  email       String
+  dni         String
+  isZeroKm    Boolean       @default(false)
+  plate       String?
+  brandId     String?       @db.Uuid
+  brand       VehicleBrand? @relation(fields: [brandId], references: [id])
+  brandName   String // copia del nombre (catálogo u "Otro")
+  modelId     String?       @db.Uuid
+  model       VehicleModel? @relation(fields: [modelId], references: [id])
+  modelName   String
+  version     String?
+  year        Int
+  hasGnc      Boolean?
+  postalCode  String
+  usage       UsageType
+  consentAt   DateTime
+
+  status            LeadStatus  @default(NEW)
+  lostReason        LostReason?
+  firstContactedAt  DateTime?
+  whatsappClickedAt DateTime?
+
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
+  gclid       String?
+  landingPage String?
+  referrer    String?
+
+  statusChanges LeadStatusChange[]
+  notes         LeadNote[]
+
+  @@index([createdAt])
+  @@index([status])
+  @@index([phone])
+  @@index([dni])
+  @@index([plate])
+}
+
+model LeadStatusChange {
+  id             String      @id @default(uuid()) @db.Uuid
+  leadId         String      @db.Uuid
+  lead           Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  fromStatus     LeadStatus?
+  toStatus       LeadStatus
+  changedById    String?     @db.Uuid // id de Supabase Auth; null = sistema
+  changedByEmail String?
+  createdAt      DateTime    @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+model LeadNote {
+  id          String   @id @default(uuid()) @db.Uuid
+  leadId      String   @db.Uuid
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  body        String
+  authorId    String   @db.Uuid
+  authorEmail String
+  createdAt   DateTime @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+model VehicleBrand {
+  id          String         @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String
+  vehicleType VehicleType
+  models      VehicleModel[]
+  leads       Lead[]
+
+  @@unique([vehicleType, slug])
+}
+
+model VehicleModel {
+  id      String       @id @default(uuid()) @db.Uuid
+  brandId String       @db.Uuid
+  brand   VehicleBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  name    String
+  slug    String
+  leads   Lead[]
+
+  @@unique([brandId, slug])
+}
+
+model SubmissionAttempt {
+  id        String   @id @default(uuid()) @db.Uuid
+  ipHash    String
+  createdAt DateTime @default(now())
+
+  @@index([ipHash, createdAt])
+}
