@@ -100,11 +100,14 @@ git config core.hooksPath .githooks
 ```
 
 `core.hooksPath` vive en `.git/config`, que no se versiona, así que cada clon lo necesita.
-Los hooks de [`.githooks/`](.githooks) hacen dos cosas:
+Los hooks de [`.githooks/`](.githooks) sincronizan la memoria y protegen las ramas:
 
 - `pre-push` rechaza los pushes directos a `main` y `master`, los nombres de rama fuera de
   la convención y los pushes con memoria de engram sin commitear.
-- `post-merge` importa la memoria de engram después de cada `git pull`.
+- `post-merge` importa la memoria después de un pull con merge o fast-forward.
+- `post-rewrite` la importa después de un rebase (incluido `git pull --rebase`).
+- `post-checkout` la importa al cambiar de rama.
+- `pnpm install` activa los hooks e importa la memoria disponible.
 
 ### Instalar e importar la memoria del proyecto (una vez después de clonar)
 
@@ -129,11 +132,27 @@ Con el binario andando, una sola vez:
 engram sync --import
 ```
 
-De ahí en adelante el hook `post-merge` la importa solo en cada `git pull`.
+De ahí en adelante los hooks importan la memoria al actualizar el repo. Si Git no
+cambia nada (por ejemplo, un pull que ya está al día), podés importarla manualmente.
+Los errores se muestran sin revertir el merge, rebase o checkout.
 
-**No bloquea nada el primer día.** El hook `post-merge` es best-effort: si engram no está
-instalado se saltea sin romper el merge. Podés clonar, levantar el proyecto y trabajar sin
-él, y sumarlo cuando quieras.
+Antes de pushear, el hook exporta la memoria del proyecto. Si falta Engram o falla la
+exportación, bloquea el push. Si hay archivos nuevos o modificados en `.engram/`,
+revisalos e incluílos en un commit y volvé a pushear:
+
+```bash
+git add .engram
+git commit -m "chore: sync engram memory"
+git push
+```
+
+La memoria llega a quienes descargan esa rama; para compartirla por `main`, el PR debe
+estar mergeado. Los prompts crudos se excluyen de las nuevas exportaciones por defecto;
+esto no elimina prompts que ya hayan sido versionados.
+
+Cada integrante necesita Engram instalado y conectado a su agente. Los hooks comparten
+lo que el agente guardó: no generan resúmenes de conversaciones ni de cambios de código.
+El agente debe consultar Engram para usar la memoria importada.
 
 ## Agentes
 

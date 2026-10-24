@@ -1,18 +1,4 @@
 #!/usr/bin/env bash
-# Hook post-merge de git: importa a la base local la memoria de engram que
-# llegó en el pull/merge, así nadie tiene que acordarse de correr --import.
-# Es best-effort: si engram no está instalado o el import falla, no rompe el merge.
 set -uo pipefail
-
-command -v engram >/dev/null 2>&1 || exit 0
-
 repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
-[[ -d "$repo_root/.engram" ]] || exit 0
-
-if ( cd "$repo_root" && engram sync --import >/dev/null 2>&1 ); then
-  echo "engram: memoria del proyecto importada a tu base local."
-else
-  echo "engram: no se pudo importar la memoria; corré 'engram sync --import' a mano." >&2
-fi
-
-exit 0
+bash "$repo_root/.githooks/import-engram"
