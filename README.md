@@ -200,6 +200,28 @@ Las variables de [`.env.example`](.env.example) ya traen los valores locales: co
 **Borrar todos los datos locales** y arrancar de cero:
 `pnpm exec supabase stop --no-backup` y después `pnpm db:up`.
 
+### Migraciones
+
+El esquema de la base está en [`prisma/schema.prisma`](prisma/schema.prisma) y las
+migraciones en `prisma/migrations/`. Con Supabase local levantado:
+
+```bash
+pnpm db:migrate      # aplica las migraciones pendientes (y crea una nueva si cambiaste el schema)
+pnpm db:studio       # Prisma Studio para ver y editar datos
+pnpm db:generate     # regenera el cliente (también corre solo en cada pnpm install)
+```
+
+Para crear una migración nueva, cambiá el schema y corré `pnpm db:migrate --name <nombre>`.
+Si necesitás agregarle SQL a mano (por ejemplo RLS en una tabla nueva), usá
+`pnpm db:migrate --name <nombre> --create-only`, editá el `migration.sql` y volvé a correr
+`pnpm db:migrate`. **Toda tabla nueva lleva `ENABLE ROW LEVEL SECURITY`** (ver `AGENTS.md`).
+
+**Borrar los datos y reaplicar las migraciones:** `pnpm exec prisma migrate reset`.
+
+En staging y producción las migraciones se aplican con `pnpm db:deploy`
+(`prisma migrate deploy`, que solo aplica las existentes y nunca crea nuevas). Si se corre a
+mano o en el build de Vercel se decide en el step 26.
+
 **Si un puerto está ocupado** (`port is already allocated` o similar):
 
 1. Si es otro proyecto de Supabase que quedó levantado, apagalo con
@@ -246,6 +268,10 @@ pnpm db:up           # levanta Supabase local (ver "Entorno local")
 pnpm db:down         # apaga Supabase local
 pnpm db:restart      # reinicia Supabase local
 pnpm db:status       # URLs y claves de Supabase local
+pnpm db:migrate      # aplica y crea migraciones en local (prisma migrate dev)
+pnpm db:deploy       # aplica migraciones en staging y producción (prisma migrate deploy)
+pnpm db:studio       # Prisma Studio
+pnpm db:generate     # regenera el cliente de Prisma
 ```
 
 Antes de dar un step por terminado tienen que pasar `pnpm lint`, `pnpm typecheck`,

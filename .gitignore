@@ -46,3 +46,6 @@ next-env.d.ts
 
 # NOTA: no agregues `.engram/` acá. Ahí viaja la memoria compartida del proyecto y tiene
 # que estar versionada (ver AGENTS.md y el hook .githooks/pre-push).
+
+# cliente de Prisma generado (pnpm db:generate / postinstall)
+/src/generated/

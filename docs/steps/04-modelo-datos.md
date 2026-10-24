@@ -141,4 +141,38 @@ No hay tabla de administradores: se usan los usuarios de Supabase Auth (un solo 
 
 ## Notas de implementación
 
-_Se completa al cerrar el step (ver `AGENTS.md`)._
+- **Qué se hizo:** se instaló Prisma 7.10.1 (`prisma`, `@prisma/client`, `@prisma/adapter-pg`)
+  con `prisma.config.ts` y el generador `prisma-client`, se escribió `prisma/schema.prisma` con el
+  modelo propuesto, se creó la migración inicial con RLS en todas las tablas (incluida
+  `_prisma_migrations`), se agregó el cliente singleton `src/lib/db.ts` (solo servidor), los
+  scripts de base, la sección "Migraciones" del README y se sacó del CI el `prisma generate`
+  tolerante a errores.
+- **Archivos clave:** `prisma.config.ts`, `prisma/schema.prisma`,
+  `prisma/migrations/20261024214942_init/migration.sql`, `src/lib/db.ts`, `package.json`,
+  `pnpm-workspace.yaml`, `.github/workflows/ci.yml`, `.env.example`, `README.md`, `.gitignore`,
+  `.prettierignore`, `eslint.config.mjs`.
+- **Decisiones:** Prisma 7.10.1 y no la RC 8; cliente generado en `src/generated/prisma` (no se
+  versiona); `prisma.config.ts` carga `.env.local` con dotenv y lee `DIRECT_URL` con
+  `process.env` para no romper el `postinstall` sin variables; tablas con los nombres de los
+  modelos, sin `@@map`. Detalle en
+  [0007](../decisiones/0007-prisma-7-con-supabase.md).
+- **Desvíos del spec:** el RLS de `_prisma_migrations` (que el step no nombra pero está en
+  `public`) es condicional (`DO $$ ... to_regclass ...`) porque `migrate dev` aplica primero en
+  una base sombra donde esa tabla no existe. `pnpm-workspace.yaml` habilita los scripts de
+  instalación de `prisma` y `@prisma/engines`, que pnpm bloquea por defecto.
+- **Cómo probarlo:** con Docker corriendo y `.env.local` copiado de `.env.example`:
+  `pnpm install`, `pnpm db:up`, `pnpm db:migrate`. Ver RLS con
+  `docker exec supabase_db_seguros psql -U postgres -c "select relname, relrowsecurity from pg_class where relname in ('Lead','LeadStatusChange','LeadNote','VehicleBrand','VehicleModel','SubmissionAttempt','_prisma_migrations')"`
+  (todas `t`). Con la clave pública:
+  `curl 'http://127.0.0.1:54321/rest/v1/Lead?select=*' -H "apikey: <NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY>"`
+  devuelve `[]` aunque haya filas.
+- **Pendientes:**
+  - En `SPEC.md` la fila del step 02 figura `PENDIENTE` aunque el PR #10 está mergeado (un
+    merge posterior pisó el cambio de `ef39185`). Corregirlo en un PR `docs/` aparte.
+  - Los enums están duplicados entre `src/lib/constants.ts` y el schema de Prisma. Evaluar
+    derivar las constantes de los tipos generados.
+  - El hook `PreToolUse` de `.claude/settings.json` arma la ruta con `CLAUDE_PROJECT_DIR`: si la
+    sesión de Claude Code se abre fuera del repo y se mueve con `/cd`, apunta a una ruta
+    inexistente (error no bloqueante; el `pre-push` de git sigue protegiendo). Se podría usar
+    `git rev-parse --show-toplevel`.
+  - El step 26 decide si `db:deploy` se corre a mano o en el build de Vercel.

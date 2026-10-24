@@ -18,6 +18,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Propios del repo:
     "coverage/**",
+    "src/generated/**",
   ]),
 ]);
 
