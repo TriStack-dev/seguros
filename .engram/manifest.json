@@ -120,6 +120,22 @@
       "sessions": 1,
       "memories": 3,
       "prompts": 0
+    },
+    {
+      "id": "4c938938",
+      "created_by": "francocrovetto",
+      "created_at": "2026-10-24T19:43:03.832903Z",
+      "sessions": 1,
+      "memories": 0,
+      "prompts": 1
+    },
+    {
+      "id": "334737f3",
+      "created_by": "francocrovetto",
+      "created_at": "2026-10-24T20:23:09.552851Z",
+      "sessions": 1,
+      "memories": 0,
+      "prompts": 1
     }
   ]
 }
