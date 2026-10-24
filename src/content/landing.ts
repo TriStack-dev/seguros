@@ -1,5 +1,5 @@
 // Contenido e identidad [PROVISORIO] hasta el relevamiento del step 00.
-// Los datos del productor se completan en el step 08; no son datos comerciales reales.
+// Los datos del productor se centralizan en content/business.ts.
 export const landingContent = {
   brand: "MiSeguro",
   brandSegments: ["Mi", "Seguro"],
@@ -70,8 +70,6 @@ export const landingContent = {
     description:
       "Este espacio va a reunir los datos del productor asesor de seguros y sus canales de contacto.",
     producerLabel: "Productor asesor de seguros",
-    producer: "[PROVISORIO] Nombre del productor pendiente de confirmar",
-    license: "[PROVISORIO] Matrícula pendiente de confirmar",
     reviewsTitle: "Un espacio para sus experiencias",
     reviewsDescription: "Acá vamos a compartir reseñas verificadas cuando estén disponibles.",
   },
@@ -109,10 +107,7 @@ export const landingContent = {
   footer: {
     description: "Seguros para autos y motos. Una elección acompañada.",
     contactLabel: "Contacto",
-    contact: "[PROVISORIO] Teléfono y correo pendientes de confirmar",
     addressLabel: "Dirección",
-    address: "[PROVISORIO] Domicilio pendiente de confirmar",
     privacy: "Privacidad",
-    provisionalNote: "Identidad visual y datos del productor provisorios.",
   },
 } as const;

@@ -470,6 +470,75 @@ h3 {
   color: var(--muted-foreground);
   font-size: 0.8rem;
 }
+.footer-grid p,
+.privacy-page {
+  overflow-wrap: anywhere;
+}
+.privacy-page {
+  max-width: 72ch;
+  padding-block: 3rem 6rem;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.privacy-page a {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.privacy-page a:hover {
+  color: var(--primary);
+}
+.privacy-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-bottom: 2rem;
+}
+.privacy-intro h1 {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.privacy-page p {
+  color: var(--muted-foreground);
+  margin-top: 1rem;
+}
+.privacy-draft {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--accent);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+}
+.privacy-page h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.privacy-draft h2 {
+  color: var(--primary);
+}
+.privacy-contents {
+  margin-top: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.privacy-contents ul,
+.privacy-sources {
+  margin-top: 1rem;
+}
+.privacy-contents a,
+.privacy-sources a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+.privacy-section {
+  margin-top: 3rem;
+  scroll-margin-top: 2rem;
+}
 @media (max-width: 1023px) {
   .desktop-navigation {
     gap: 1rem;
