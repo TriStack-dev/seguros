@@ -141,7 +141,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 03 | [CI con GitHub Actions](docs/steps/03-ci.md) | 1. Base | 01 | DONE · 2026-10-24 · Crove · #3 |
 | 04 | [Modelo de datos y Prisma](docs/steps/04-modelo-datos.md) | 1. Base | 01, 02 | PENDIENTE |
 | 05 | [Seed del catálogo de vehículos](docs/steps/05-seed-vehiculos.md) | 1. Base | 04 | PENDIENTE |
-| 06 | [Esquemas de validación](docs/steps/06-validaciones.md) | 2. Formulario | 01 | PENDIENTE |
+| 06 | [Esquemas de validación](docs/steps/06-validaciones.md) | 2. Formulario | 01 | DONE · 2026-10-24 · Crove · #6 |
 | 07 | [Layout base y landing](docs/steps/07-layout-landing.md) | 2. Formulario | 01 | PENDIENTE |
 | 08 | [Páginas legales y datos del productor](docs/steps/08-paginas-legales.md) | 2. Formulario | 07 | PENDIENTE |
 | 09 | [Formulario de cotización (UI)](docs/steps/09-formulario.md) | 2. Formulario | 05, 06, 07 | PENDIENTE |
