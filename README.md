@@ -87,14 +87,17 @@ cp .env.example .env.local   # completá los valores (ver "Variables de entorno"
 pnpm dev                     # http://localhost:3000
 ```
 
-### Activar los git hooks (una vez por clon)
+### Git hooks
+
+`pnpm install` los activa solo (script `prepare`). Si clonaste sin instalar, o querés
+asegurarte:
 
 ```bash
 git config core.hooksPath .githooks
 ```
 
-`core.hooksPath` vive en `.git/config`, que no se versiona, así que esto lo tiene que correr
-cada persona en su clon. Los hooks de [`.githooks/`](.githooks) hacen dos cosas:
+`core.hooksPath` vive en `.git/config`, que no se versiona, así que cada clon lo necesita.
+Los hooks de [`.githooks/`](.githooks) hacen dos cosas:
 
 - `pre-push` rechaza los pushes directos a `main` y `master`, los nombres de rama fuera de
   la convención y los pushes con memoria de engram sin commitear.
@@ -103,7 +106,7 @@ cada persona en su clon. Los hooks de [`.githooks/`](.githooks) hacen dos cosas:
 ### Instalar e importar la memoria del proyecto (una vez después de clonar)
 
 La memoria de las sesiones anteriores viaja versionada en [`.engram/`](.engram): son los
-contextos, decisiones y descubrimientos que los agentes (Claude Code, Codex) fueron
+contextos, decisiones y descubrimientos que los agentes (Claude Code, Codex, OpenCode) fueron
 acumulando. Para traértela a tu base local hace falta el binario de
 [engram](https://github.com/Gentleman-Programming/engram), **3.5.2 o mayor**:
 
@@ -128,6 +131,20 @@ De ahí en adelante el hook `post-merge` la importa solo en cada `git pull`.
 **No bloquea nada el primer día.** El hook `post-merge` es best-effort: si engram no está
 instalado se saltea sin romper el merge. Podés clonar, levantar el proyecto y trabajar sin
 él, y sumarlo cuando quieras.
+
+## Agentes
+
+El repo funciona igual con Claude Code, Codex y OpenCode. Las reglas obligatorias las hace
+cumplir git (`.githooks/`), así que valen para cualquier agente y para los pushes a mano.
+
+| | Claude Code | Codex | OpenCode |
+|---|---|---|---|
+| Instrucciones | `CLAUDE.md` → `AGENTS.md` | `AGENTS.md` | `AGENTS.md` |
+| Skills | `.claude/skills` (symlink a `.agents/skills`) | `.agents/skills` | `.agents/skills` |
+| Aviso de push a `main` | `.claude/settings.json` | `.codex/config.toml` | `.opencode/plugins/` |
+
+Los tres avisos llaman al mismo script, `.claude/hooks/block-push-to-protected.sh`. En Codex
+hay que confiar en el proyecto para que lea `.codex/config.toml`.
 
 ## Variables de entorno
 

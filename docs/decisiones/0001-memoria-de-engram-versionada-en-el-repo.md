@@ -41,11 +41,11 @@ Se requiere engram **3.5.2 o mayor**: en 2.2.1 los prompts iban dentro del chunk
   credenciales que administrar y datos del proyecto fuera de nuestra infraestructura.
   Descartada por ahora; es la salida natural si el equipo crece o el repo deja de ser privado.
 - **Hook de agente en vez de `pre-push`:** solo cubriría a quien trabaje con ese agente.
-  El `pre-push` es agnóstico: aplica a Claude Code, Codex y pushes a mano.
+  El `pre-push` es agnóstico: aplica a Claude Code, Codex, OpenCode y pushes a mano.
 
 ## Consecuencias
 - Un repo recién clonado trae la memoria del proyecto sin configuración extra más allá de
-  `git config core.hooksPath .githooks` y un `engram sync --import` inicial (step 01).
+  `pnpm install` (que activa `core.hooksPath`) y un `engram sync --import` inicial (step 01).
 - **El contenido commiteado queda en el historial de git para siempre.** Aunque se deje de
   exportar algo, los chunks viejos no se borran. Por eso no van prompts y por eso esto
   depende de que el repo siga siendo privado y el equipo de confianza. Si el repo se abre,

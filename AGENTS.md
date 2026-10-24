@@ -60,10 +60,18 @@ Los comandos de base de datos y otros scripts se agregan en sus steps. Usá siem
 ## Git y PR
 
 - Nunca se trabaja ni se pushea directo a `main`.
-- Ramas: `<tipo>/<descripción>`, o `<tipo>/<NN>-<descripción>` cuando el trabajo es un step del spec. El tipo es uno de `feat`, `fix`, `refactor`, `chore`, `docs`, `test` — los mismos de los commits. La descripción va en inglés, en minúsculas, con palabras separadas por guiones, y tiene que nombrar el cambio concreto: `fix/premium-rounding-on-annual-plans`, no `fix/bug`. El hook `pre-push` rechaza los nombres que no cumplen. Detalle y ejemplos: `.claude/skills/git-branch-naming/`.
+- Ramas: `<tipo>/<descripción>`, o `<tipo>/<NN>-<descripción>` cuando el trabajo es un step del spec. El tipo es uno de `feat`, `fix`, `refactor`, `chore`, `docs`, `test` — los mismos de los commits. La descripción va en inglés, en minúsculas, con palabras separadas por guiones, y tiene que nombrar el cambio concreto: `fix/premium-rounding-on-annual-plans`, no `fix/bug`. El hook `pre-push` rechaza los nombres que no cumplen. Detalle y ejemplos: `.agents/skills/git-branch-naming/`.
 - Commits con Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`.
 - Título del PR: `Step NN — Título del step`. La descripción enlaza al archivo del step.
 - Un step equivale a un PR. El PR necesita CI en verde.
+
+## Agentes
+
+Cada integrante trabaja con su agente (Claude Code, Codex u OpenCode), así que el repo no depende de ninguno:
+
+- Toda regla obligatoria se hace cumplir en los git hooks de `.githooks/` o en CI, nunca solo en un hook de agente. Los hooks de agente (`.claude/settings.json`, `.codex/config.toml`, `.opencode/plugins/`) son un aviso temprano que llama al mismo script.
+- Las skills del proyecto van en `.agents/skills/<nombre>/SKILL.md`. `.claude/skills` es un symlink a esa carpeta: no crees skills adentro de `.claude/`, `.codex/` ni `.opencode/`.
+- Las instrucciones viven en este archivo. `CLAUDE.md` solo lo importa.
 
 ## Seguridad
 
