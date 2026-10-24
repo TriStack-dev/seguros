@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-24T00:00:00Z",
+  "title": "Design System: MiSeguro",
+  "extensions": {
+    "shadows": [
+      {
+        "name": "quote-panel",
+        "value": "0 20px 48px #0004",
+        "purpose": "Separar el panel de la fotografía."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet-max",
+        "value": "1023px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "767px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "CTA principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acceso al panel estático de cotización.",
+      "html": "<a class=\"ds-cta\" href=\"#cotizar\">Cotizá ahora <svg aria-hidden=\"true\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></a>",
+      "css": ".ds-cta{font-family:var(--font-geist),sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:.75rem;height:3.25rem;padding:0 1.6rem;background:var(--primary);color:var(--primary-foreground);border-radius:100vw;font-size:.95rem;font-weight:650;text-decoration:none;transition:all 150ms}.ds-cta:hover{background:color-mix(in srgb,var(--primary) 80%,transparent)}.ds-cta:focus-visible{outline:3px solid var(--ring);outline-offset:5px;}.ds-cta:active{transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-cta{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Enlace secundario",
+      "kind": "button",
+      "description": "Acceso secundario al proceso.",
+      "html": "<a class=\"ds-secondary\" href=\"#como-funciona\">Conocé cómo funciona</a>",
+      "css": ".ds-secondary{font-family:var(--font-geist),sans-serif;display:inline-flex;align-items:center;min-height:2.75rem;font-size:.9rem;color:var(--foreground);text-decoration:underline;text-underline-offset:5px}.ds-secondary:focus-visible{outline:3px solid var(--ring);outline-offset:5px;}"
+    },
+    {
+      "name": "Navegación",
+      "kind": "nav",
+      "description": "Enlaces del header de escritorio.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Principal\"><a href=\"#como-funciona\">Cómo funciona</a><a href=\"#beneficios\">Beneficios</a><a href=\"#preguntas-frecuentes\">Ayuda</a></nav>",
+      "css": ".ds-nav{font-family:var(--font-geist),sans-serif;display:flex;gap:2rem;font-size:.9rem}.ds-nav a{color:var(--foreground);padding:.8rem 0;text-decoration:none}.ds-nav a:hover{color:var(--primary)}.ds-nav a:focus-visible{outline:3px solid var(--ring);outline-offset:5px;}"
+    },
+    {
+      "name": "Panel de cotización",
+      "kind": "card",
+      "refersTo": "quote-panel",
+      "description": "Vista previa, sin campos ni solicitud.",
+      "html": "<section class=\"ds-panel\"><h2>Tu próxima cobertura empieza acá</h2><p>Próximamente vas a poder cotizar acá</p><p>Este espacio no recibe datos ni solicitudes.</p></section>",
+      "css": ".ds-panel{font-family:var(--font-geist),sans-serif;padding:2rem;border:1px solid var(--border);border-top-color:color-mix(in srgb,var(--primary) 55%,var(--border));border-radius:calc(var(--radius)*1.5);background:color-mix(in srgb,var(--card) 97%,transparent);color:var(--foreground);box-shadow:0 20px 48px #0004}.ds-panel h2{font-size:2rem;line-height:1.12;font-weight:680;letter-spacing:-.035em}.ds-panel p{color:var(--muted-foreground);line-height:1.5}"
+    },
+    {
+      "name": "Reseñas pendientes",
+      "kind": "card",
+      "description": "Contenedor para contenido verificado futuro.",
+      "html": "<section class=\"ds-reviews\"><h3>Un espacio para sus experiencias</h3><p>Acá vamos a compartir reseñas verificadas cuando estén disponibles.</p></section>",
+      "css": ".ds-reviews{font-family:var(--font-geist),sans-serif;border:1px dashed var(--border);border-radius:var(--radius);padding:2.5rem;color:var(--foreground)}.ds-reviews h3{font-size:1.15rem;font-weight:600}.ds-reviews p{color:var(--muted-foreground);line-height:1.75;margin-top:.65rem}"
+    }
+  ],
+  "narrative": {
+    "overview": "Identidad provisoria del step 07: azul oscuro, coral y Geist, con fotografía estática de auto y moto al atardecer. El contraste entre texto claro, superficies oscuras y un único acento organiza la jerarquía.",
+    "keyCharacteristics": [
+      "Superficies azul oscuro con acento coral.",
+      "Tipografía Geist y títulos compactos.",
+      "Fotografía ambiental estática y contenido HTML accesible."
+    ],
+    "rules": [],
+    "dos": [
+      "Do conservar el acento centralizado en --primary y derivar sus estados.",
+      "Do mantener foco visible, navegación por teclado y movimiento reducido.",
+      "Do conservar el carácter provisorio y explícito de los espacios sin datos confirmados."
+    ],
+    "donts": [
+      "Don't incrustar textos, controles ni marcas dentro de la fotografía.",
+      "Don't presentar el panel estático como formulario operativo ni inventar testimonios o datos comerciales."
+    ]
+  }
+}
