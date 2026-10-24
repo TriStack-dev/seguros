@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# supabase: lo que genera la CLI (.temp, .branches, .env locales) lo ignora
+# supabase/.gitignore. Se versionan supabase/config.toml y ese .gitignore.
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
