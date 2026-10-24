@@ -12,6 +12,10 @@
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "db:up": "supabase start",
+    "db:down": "supabase stop",
+    "db:restart": "supabase stop && supabase start",
+    "db:status": "supabase status",
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
@@ -39,6 +43,7 @@
     "jsdom": "^30.1.3",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "supabase": "2.122.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.5"

@@ -21,7 +21,9 @@ Windows, lee `.nvmrc` y con `--use-on-cd` cambia de versión solo al entrar a la
 `nvm` también sirve en Linux y macOS, pero ojo: `nvm-windows` es otro programa y no lee
 `.nvmrc`. pnpm se instala con `npm install -g pnpm` o con `corepack enable pnpm`.
 
-Desde el step 02 hace falta además **Docker** corriendo, para levantar Supabase local.
+Hace falta además **Docker** corriendo, para levantar Supabase local (ver "Entorno local").
+La CLI de Supabase no se instala aparte: viene como dependencia de desarrollo con
+`pnpm install`.
 
 ## Entorno por sistema operativo
 
@@ -84,6 +86,7 @@ git clone https://github.com/TriStack-dev/seguros.git
 cd seguros
 pnpm install
 cp .env.example .env.local   # completá los valores (ver "Variables de entorno")
+pnpm db:up                   # Supabase local en Docker (ver "Entorno local")
 pnpm dev                     # http://localhost:3000
 ```
 
@@ -146,6 +149,48 @@ cumplir git (`.githooks/`), así que valen para cualquier agente y para los push
 Los tres avisos llaman al mismo script, `.claude/hooks/block-push-to-protected.sh`. En Codex
 hay que confiar en el proyecto para que lea `.codex/config.toml`.
 
+## Entorno local
+
+Todo el desarrollo corre contra un Supabase local (PostgreSQL 17 + Auth + Studio) que la CLI
+de Supabase levanta en Docker. No hace falta ninguna cuenta en la nube: staging y producción
+se crean en el step 26 y la diferencia es solo de variables de entorno. La configuración es la
+misma para todos porque está versionada en [`supabase/config.toml`](supabase/config.toml)
+(con el registro público de usuarios desactivado: los administradores se crean a mano).
+
+**Requisitos:** Docker corriendo (Docker Engine en Linux, Docker Desktop u OrbStack en macOS,
+Docker Desktop con backend WSL2 en Windows). La primera levantada descarga las imágenes y
+tarda unos minutos; las siguientes, segundos.
+
+```bash
+pnpm db:up        # levanta el entorno y muestra URLs y claves
+pnpm db:status    # vuelve a mostrar URLs y claves
+pnpm db:restart   # baja y vuelve a levantar (conserva los datos)
+pnpm db:down      # apaga los contenedores (conserva los datos)
+```
+
+| Servicio | URL |
+| --- | --- |
+| API de Supabase (Auth incluido) | http://127.0.0.1:54321 |
+| PostgreSQL | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
+| Studio (panel web de la base) | http://127.0.0.1:54323 |
+| Mailpit (mails que manda Auth) | http://127.0.0.1:54324 |
+
+Las variables de [`.env.example`](.env.example) ya traen los valores locales: con copiarlo a
+`.env.local` alcanza. Si en tu máquina no coinciden, `pnpm db:status` muestra los correctos.
+
+**Borrar todos los datos locales** y arrancar de cero:
+`pnpm exec supabase stop --no-backup` y después `pnpm db:up`.
+
+**Si un puerto está ocupado** (`port is already allocated` o similar):
+
+1. Si es otro proyecto de Supabase que quedó levantado, apagalo con
+   `pnpm exec supabase stop --all`.
+2. Si no, buscá qué lo usa: `ss -ltnp | grep 5432` en Linux, `lsof -i :54322` en macOS o
+   `netstat -ano | findstr 54322` en Windows, y cerralo.
+3. Como último recurso, cambiá el puerto en `supabase/config.toml` (`[api]`, `[db]`,
+   `[studio]`, etc.) **solo en tu copia, sin commitearlo**, y ajustá las URLs de tu
+   `.env.local`.
+
 ## Variables de entorno
 
 Se declaran en [`.env.example`](.env.example) con un comentario de qué son y dónde se
@@ -154,11 +199,17 @@ La tabla completa, con el step en el que aparece cada una, está en la sección 
 [`SPEC.md`](SPEC.md).
 
 Nunca se commitea un archivo con valores reales: solo `.env.example`, con los nombres
-vacíos.
+vacíos. La única excepción son las variables de Supabase local, que llevan valor porque son
+públicas y fijas (ver [`docs/decisiones/0003`](docs/decisiones/0003-desarrollo-contra-supabase-local.md)).
 
 | Variable | Uso |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio, sin barra final (en local, `http://localhost:3000`) |
+| `DATABASE_URL` | Conexión de la app a la base (con pooler en la nube; en local, directa) |
+| `DIRECT_URL` | Conexión directa a la base, para las migraciones |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL de la API de Supabase |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clave publicable de Supabase |
+| `SUPABASE_SECRET_KEY` | Clave secreta de Supabase, solo servidor y scripts |
 
 ## Comandos
 
@@ -172,6 +223,10 @@ pnpm test            # Vitest, una pasada
 pnpm test:watch      # Vitest en modo watch
 pnpm format          # Prettier sobre el código
 pnpm format:check    # Prettier en modo verificación, sin escribir
+pnpm db:up           # levanta Supabase local (ver "Entorno local")
+pnpm db:down         # apaga Supabase local
+pnpm db:restart      # reinicia Supabase local
+pnpm db:status       # URLs y claves de Supabase local
 ```
 
 Antes de dar un step por terminado tienen que pasar `pnpm lint`, `pnpm typecheck`,
