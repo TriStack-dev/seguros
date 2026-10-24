@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/block-push-to-protected.sh\"",
+            "command": "bash \"$(git rev-parse --show-toplevel 2>/dev/null || echo \"${CLAUDE_PROJECT_DIR:-.}\")/.claude/hooks/block-push-to-protected.sh\"",
             "timeout": 10,
             "statusMessage": "Verificando rama de destino del push..."
           }
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && command -v engram >/dev/null 2>&1 && engram sync >/dev/null 2>&1 || true",
+            "command": "cd \"$(git rev-parse --show-toplevel 2>/dev/null || echo \"${CLAUDE_PROJECT_DIR:-.}\")\" && command -v engram >/dev/null 2>&1 && engram sync >/dev/null 2>&1 || true",
             "timeout": 60,
             "statusMessage": "Exportando memoria de engram..."
           }
