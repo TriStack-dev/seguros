@@ -27,4 +27,31 @@ Armar, en una función pura y testeada, el mensaje predefinido y el link `wa.me`
 
 ## Notas de implementación
 
-_Se completa al cerrar el step (ver `AGENTS.md`)._
+**Qué se hizo:** Se agregó `buildWhatsappMessage`, que arma el texto de la sección 7 de las
+reglas de negocio a partir del lead normalizado, y `buildWhatsappLink`, que valida que el
+número sea solo dígitos y devuelve el link `wa.me` con el mensaje codificado. La plantilla
+vive en una única constante, con marcadores que se reemplazan por los datos y hacen que la
+línea se omita cuando el valor queda vacío (GNC en motos, versión, patente).
+
+**Archivos clave:**
+- `src/lib/whatsapp/message-template.ts`: plantilla [PROVISORIO] y renderizado de marcadores.
+- `src/lib/whatsapp/build-message.ts`: `buildWhatsappMessage`, `formatRequestNumber` y el tipo `WhatsappLeadData`.
+- `src/lib/whatsapp/build-link.ts`: `buildWhatsappLink`.
+- `src/lib/whatsapp/build-message.test.ts`, `src/lib/whatsapp/build-link.test.ts`: tests unitarios.
+
+**Decisiones:** La plantilla es un array de líneas con marcadores `{nombre}` en vez de un
+`template string` armado con condicionales: cambiar el texto es editar ese array, y las líneas
+vacías se omiten solas. `formatRequestNumber` se exporta porque el panel (step 16) va a
+necesitar el mismo formato.
+
+**Desvíos del spec:** Ninguno.
+
+**Cómo probarlo:** `pnpm test src/lib/whatsapp`. Para ver el resultado a mano, generar un link
+con `buildWhatsappLink` y abrirlo en el navegador: WhatsApp muestra el mensaje con los saltos
+de línea y los acentos correctos.
+
+**Pendientes:** El número `WHATSAPP_NUMBER` se toma en el step 14; esta función lo recibe como
+parámetro. `formatPhoneForDisplay` del step 06 asume código de área de 3 dígitos: con un área
+de 2 (CABA, `5491141234567`) muestra `+54 9 114 123-4567`. El mensaje hereda ese formato; hay
+que corregir la función en el step 06 o en uno nuevo.
+
