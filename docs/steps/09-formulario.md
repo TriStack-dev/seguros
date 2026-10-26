@@ -8,7 +8,8 @@ Construir el formulario de autos y motos con validación campo por campo, listas
 
 ## Tareas
 
-- [ ] Componente cliente `LeadForm` en `src/components/public/` con React Hook Form + `zodResolver(leadFormSchema)` (step 06) y los componentes `form` de shadcn/ui.
+- [ ] Componente cliente `LeadForm` en `src/components/public/` con React Hook Form + `zodResolver(leadFormSchema)` (step 06), usando `Controller` de React Hook Form y los componentes `field` de shadcn/ui (`Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldGroup`), según la [decisión 0004](../decisiones/0004-field-en-lugar-de-form-de-shadcn.md).
+- [ ] Conectar `FieldError` con `fieldState.error` de cada `Controller`, indicar `data-invalid` en `Field` y `aria-invalid` en el control, y asociar las etiquetas, descripciones y errores con sus campos.
 - [ ] Selector de tipo de vehículo (auto / moto) como botones grandes al inicio. Cambiar el tipo resetea marca, modelo, GNC y uso.
 - [ ] Marca: combobox con búsqueda (`command` + `popover` de shadcn/ui) cargado con las marcas del tipo elegido, más la opción "Otro" que habilita un campo de texto.
 - [ ] Modelo: combobox que se carga al elegir la marca desde `GET /api/vehicles/models?brandId=…` (route handler con validación Zod y caché de una hora), más la opción "Otro". Si la marca es "Otro", el modelo es un campo de texto.
