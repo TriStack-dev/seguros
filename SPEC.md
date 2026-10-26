@@ -142,7 +142,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 04 | [Modelo de datos y Prisma](docs/steps/04-modelo-datos.md) | 1. Base | 01, 02 | DONE · 2026-10-24 · Walter · #16 |
 | 05 | [Seed del catálogo de vehículos](docs/steps/05-seed-vehiculos.md) | 1. Base | 04 | PENDIENTE |
 | 06 | [Esquemas de validación](docs/steps/06-validaciones.md) | 2. Formulario | 01 | DONE · 2026-10-24 · Crove · #6 |
-| 07 | [Layout base y landing](docs/steps/07-layout-landing.md) | 2. Formulario | 01 | PENDIENTE |
+| 07 | [Layout base y landing](docs/steps/07-layout-landing.md) | 2. Formulario | 01 | DONE · 2026-10-24 · Teo · #12 |
 | 08 | [Páginas legales y datos del productor](docs/steps/08-paginas-legales.md) | 2. Formulario | 07 | DONE · 2026-10-24 · Teo · #15 |
 | 09 | [Formulario de cotización (UI)](docs/steps/09-formulario.md) | 2. Formulario | 05, 06, 07 | PENDIENTE |
 | 10 | [Envío y registro del lead](docs/steps/10-envio-lead.md) | 2. Formulario | 04, 06, 09 | PENDIENTE |
