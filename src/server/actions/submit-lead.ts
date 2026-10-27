@@ -1,9 +1,11 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { formatRequestNumber } from "@/lib/leads/request-number";
 import { DATABASE_ERROR_MESSAGE, type SubmitLeadResult } from "@/lib/leads/submit-result";
 import { leadFormSchema, type LeadFormData, type LeadFormInput } from "@/lib/validation/lead-form";
+import { parseAttributionCookie } from "@/lib/attribution";
 
 const fakeSuccess: SubmitLeadResult = {
   ok: true,
@@ -29,6 +31,14 @@ export async function submitLead(input: LeadFormInput): Promise<SubmitLeadResult
   const modelId = brandId ? data.modelId?.trim() || null : null;
   let brandName = data.brandOther?.trim() ?? "";
   let modelName = data.modelOther?.trim() ?? "";
+
+  let attribution = null;
+  try {
+    const cookieStore = await cookies();
+    attribution = parseAttributionCookie(cookieStore.get("ms_attr")?.value);
+  } catch {
+    attribution = null;
+  }
 
   try {
     if (brandId) {
@@ -81,6 +91,14 @@ export async function submitLead(input: LeadFormInput): Promise<SubmitLeadResult
           usage: data.usage,
           consentAt: new Date(),
           status: "NEW",
+          utmSource: attribution?.utmSource ?? null,
+          utmMedium: attribution?.utmMedium ?? null,
+          utmCampaign: attribution?.utmCampaign ?? null,
+          utmTerm: attribution?.utmTerm ?? null,
+          utmContent: attribution?.utmContent ?? null,
+          gclid: attribution?.gclid ?? null,
+          landingPage: attribution?.landingPage ?? null,
+          referrer: attribution?.referrer ?? null,
         },
       });
       await transaction.leadStatusChange.create({
