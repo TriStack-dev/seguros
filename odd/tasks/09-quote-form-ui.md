@@ -61,7 +61,7 @@ Alcance confirmado: diez campos en ese orden; teléfono único; quitar versión,
 - T1 · S1/S2 · inline · completado · d2caf4f · dependencias e infraestructura UI; riesgo item 5 (dependencias).
 - T2 · S1 · delegado · completado · d2caf4f · queries y API + tests; paralelismo con T3, superficies disjuntas, contrato getVehicleBrands()/getVehicleModels(brandId).
 - T3 · S1/S2/S3 · inline · completado · d2caf4f · LeadForm, combobox, rutas y tests; reutilizar leadFormSchema y constantes.
-- T4 · S1/S2/S3 · delegado/inline · CI pendiente · checks, revisión independiente, correcciones y notas; commit pendiente.
+- T4 · S1/S2/S3 · delegado/inline · completado · d2caf4f + 258ca96 + c1d49f1 · checks, revisión independiente, correcciones y notas; commit pendiente.
 
 ## Log
 L1. Pedido original:
@@ -135,3 +135,5 @@ L17. Incorporadas como regresión las3 pruebas independientes sin dependencia de
 L18. Usuario autorizó: "perfecto no revises mas nada. subilo y marcalo como done". Confirmó con "si" publicar TriStack-dev/seguros con conexiones Git/GitHub CLI existentes, un único PR pese a superar400líneas y cierre DONE con número real. Revisión nativa adicional rechazada mediante invocación exacta: declined_this_candidate para3cc4fae2..., sin registro ni cambio global. Estrategia exception-ok/single-pr por autorización directa; unidad coherente de Step09, shadcn/lock generados y tests/documentación incluidos.
 
 L19. Publicación autorizada completada: commit d2caf4f con implementación/tests/docs y memoria; push a origin/feat/09-quote-form-ui; PR27 https://github.com/TriStack-dev/seguros/pull/27 confirmado por create y readback. Excepción de tamaño documentada y aprobada por usuario. GitHub viewerPermissionADMIN verificado para el repo, base main. Solo fila09 SPEC cerrada DONE2026-10-27Teo#27. .atl/ preservado sin seguimiento. CI pendiente de resultado remoto; sin más revisión ni cambios de código.
+
+L20. CI run40574824788 sobre c1d49f1 SUCCESS: ci1m28s con instalación, lint, typecheck, test y build. Cierre documental registra esta evidencia sin nuevos cambios de código. Revisión nativa adicional omitida explícitamente; no afirmar aprobación nativa. Los commits finales solo sincronizan cierre/documentación/memoria.

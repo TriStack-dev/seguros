@@ -85,5 +85,5 @@ Se simplificaron los campos y unificó el teléfono por pedido y confirmación d
 - Revisión independiente de la simplificación: sin bloqueos. Verificó orden de campos, envío auto/moto, consentimiento, foco y compatibilidad del teléfono anterior, con 6 pruebas independientes.
 - Verificación visual a 360 px y recorrido completo en navegador real: Chromium no inicia por falta de `libnspr4.so`, incluso fuera del sandbox. Testing Library no sustituye esta comprobación.
 - Verificación del catálogo contra una base real: este entorno no tiene `DATABASE_URL` configurada. Se verificó la respuesta de fallback y las consultas con mocks, no conectividad ni seed real.
-- PR [#27](https://github.com/TriStack-dev/seguros/pull/27) publicado por autorización explícita del usuario; CI pendiente al momento de este commit de cierre.
+- PR [#27](https://github.com/TriStack-dev/seguros/pull/27) publicado por autorización explícita del usuario; CI en verde en [run 40574824788](https://github.com/TriStack-dev/seguros/actions/runs/40574824788), para el commit `c1d49f1`: instalación, lint, typecheck, tests y build.
 - Advertencia preexistente de Next Image por `quality=80` fuera de `images.qualities`, observada en desarrollo; fuera del alcance del step.
