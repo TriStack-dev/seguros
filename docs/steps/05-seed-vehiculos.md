@@ -12,7 +12,7 @@ No existe una fuente gratuita y completa (las bases completas, como InfoAuto, so
 
 ## Tareas
 
-- [ ] Armar `prisma/seed/vehicles.json` con esta estructura:
+- [x] Armar `prisma/seed/vehicles.json` con esta estructura:
   ```json
   {
     "version": "2026-10-20",
@@ -21,17 +21,17 @@ No existe una fuente gratuita y completa (las bases completas, como InfoAuto, so
     "MOTO": [{ "name": "Honda", "models": ["Wave 110", "CG 150 Titan", "..."] }]
   }
   ```
-- [ ] Contenido: marcas y modelos **comercializados en Argentina** en los últimos ~25 años, priorizando los más patentados.
+- [x] Contenido: marcas y modelos **comercializados en Argentina** en los últimos ~25 años, priorizando los más patentados.
   - Fuentes sugeridas: rankings de patentamientos de ACARA (autos) y de motos (ACARA División Motovehículos / SIOMAA), sitios de las marcas y catálogos de concesionarias. Si el agente no tiene acceso web, armar el catálogo desde su conocimiento e indicarlo en `sources`.
   - Autos: al menos **40 marcas**, con todos sus modelos de línea conocidos (por ejemplo Fiat, Volkswagen, Chevrolet, Ford, Toyota, Renault, Peugeot, Citroën, Nissan, Honda, Jeep, Hyundai, Kia, BAIC, Chery, BYD, RAM, Mercedes-Benz, BMW, Audi, etc.).
   - Motos: al menos **30 marcas**, incluidas las nacionales y de ensamble local (Honda, Yamaha, Motomel, Gilera, Corven, Zanella, Keller, Mondial, Bajaj, Guerrero, Brava, Beta, TVS, Suzuki, Kawasaki, Benelli, KTM, Royal Enfield, Voge, CFMoto, Hero, Siambretta, BMW, Harley-Davidson, Triumph, Ducati, etc.).
   - Modelos **sin año ni versión**; la versión la escribe el usuario. Variantes muy distintas sí van separadas ("Hilux", "SW4").
   - Nombres con la grafía oficial de la marca, sin duplicados, ordenados alfabéticamente.
-- [ ] `prisma/seed/seed.ts`: lee el JSON y hace **upsert** por `(vehicleType, slug)` en marcas y `(brandId, slug)` en modelos. Correrlo varias veces no duplica nada. No borra marcas ni modelos que ya no estén en el JSON (pueden tener leads asociados); los informa por consola.
-- [ ] Función `slugify` en `src/lib/` (minúsculas, sin acentos, guiones) con test.
-- [ ] Test unitario `prisma/seed/vehicles.test.ts` (o en `src/lib/`) que valide el JSON: estructura correcta, mínimos de marcas, sin marcas ni modelos duplicados por slug, ninguna marca sin modelos.
-- [ ] Script `db:seed` en `package.json` y configuración de seed de Prisma.
-- [ ] Documentar en el README cómo actualizar el catálogo (editar el JSON, cambiar `version`, correr `pnpm db:seed` en cada entorno).
+- [x] `prisma/seed/seed.ts`: lee el JSON y hace **upsert** por `(vehicleType, slug)` en marcas y `(brandId, slug)` en modelos. Correrlo varias veces no duplica nada. No borra marcas ni modelos que ya no estén en el JSON (pueden tener leads asociados); los informa por consola.
+- [x] Función `slugify` en `src/lib/` (minúsculas, sin acentos, guiones) con test.
+- [x] Test unitario `prisma/seed/vehicles.test.ts` (o en `src/lib/`) que valide el JSON: estructura correcta, mínimos de marcas, sin marcas ni modelos duplicados por slug, ninguna marca sin modelos.
+- [x] Script `db:seed` en `package.json` y configuración de seed de Prisma.
+- [x] Documentar en el README cómo actualizar el catálogo (editar el JSON, cambiar `version`, correr `pnpm db:seed` en cada entorno).
 
 ## Criterios de aceptación
 
@@ -45,4 +45,30 @@ No existe una fuente gratuita y completa (las bases completas, como InfoAuto, so
 
 ## Notas de implementación
 
-_Se completa al cerrar el step (ver `AGENTS.md`)._
+**Qué se hizo:** Catálogo propio en `prisma/seed/vehicles.json` con 47 marcas de autos (494
+modelos) y 33 de motos (369 modelos), ordenado por slug. `prisma/seed/seed.ts` hace upsert por
+`(vehicleType, slug)` y `(brandId, slug)`, y lista por consola lo que está en la base pero ya
+no en el JSON, sin borrarlo. Se agregó `slugify` con tests, el test de validación del catálogo,
+el script `db:seed` y la documentación del README. Verificado contra Supabase local: dos
+corridas seguidas dejan 80 marcas y 863 modelos.
+
+**Archivos clave:** `prisma/seed/vehicles.json`, `prisma/seed/seed.ts`,
+`prisma/seed/vehicles.test.ts`, `src/lib/slugify.ts`, `src/lib/slugify.test.ts`,
+`prisma.config.ts`, `vitest.config.mts`, `package.json`, `pnpm-workspace.yaml`, `README.md`.
+
+**Decisiones:** Orden alfabético por slug (no por nombre) para que el JSON sea determinístico y
+coincida con el índice de la base. El seed no borra filas ausentes: pueden tener leads
+asociados. `tsx` como runner del seed (`prisma.config.ts` → `migrations.seed`) y `esbuild`
+aprobado en `pnpm-workspace.yaml` porque pnpm bloquea los scripts de build por defecto y el
+seed no arrancaría. `vitest.config.mts` incluye `prisma/**/*.test.ts` además de `src/`.
+
+**Desvíos del spec:** Se agregaron `tsx` (devDependency) y la aprobación de `esbuild`, que el
+step no pedía, porque Prisma 7 necesita un runner para ejecutar el seed en TypeScript.
+
+**Cómo probarlo:** `pnpm db:up`, `pnpm db:deploy`, `pnpm db:seed` dos veces y comparar totales
+(`select count(*) from "VehicleBrand"` → 80; `"VehicleModel"` → 863). `pnpm test` valida el
+JSON. El seed imprime el resumen y avisa si sobran registros en la base.
+
+**Pendientes:** El catálogo se armó sin acceso web (ver `sources`): contrastarlo con ACARA
+antes de producción y reemplazarlo por una fuente paga (InfoAuto) cuando se decida. Actualizar
+la fila del step en `SPEC.md` con la fecha y el número de PR al abrirlo.
