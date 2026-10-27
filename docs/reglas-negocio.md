@@ -7,20 +7,19 @@ Referencia para los steps. Cada step indica qué secciones leer.
 
 Un solo formulario para autos y motos. Las validaciones se aplican en el navegador y se repiten en el servidor con el mismo esquema Zod.
 
+Actualización del step 09 (2026-10-27): se muestran, en este orden, nombre y apellido, teléfono, email, patente, marca, modelo, año del vehículo, código postal, tipo de uso y DNI. Se mantienen el selector Auto/Moto y el consentimiento. No se solicitan versión, GNC ni condición de 0 km.
+
 | Campo (código) | Etiqueta | Obligatorio | Regla |
 | --- | --- | --- | --- |
 | `vehicleType` | Tipo de vehículo | Sí | `AUTO` o `MOTO` |
 | `fullName` | Nombre y apellido | Sí | Ver 2.1 |
-| `phoneArea` + `phoneNumber` | Teléfono | Sí | Ver 2.2; se guarda como un solo campo `phone` |
+| `phone` | Teléfono | Sí | Un solo campo con código de área y número; ver 2.2 |
 | `email` | Email | Sí | Email válido; se guarda en minúsculas y sin espacios |
 | `dni` | DNI | Sí | Ver 2.3 |
-| `isZeroKm` | Es 0 km | No | Checkbox; si está marcado, la patente no se pide [PROVISORIO] |
-| `plate` | Patente | Sí, salvo 0 km [PROVISORIO] | Ver 2.4 |
+| `plate` | Patente | Sí | Ver 2.4 |
 | `brandId` / `brandOther` | Marca | Sí | Elegida del catálogo o "Otro" con texto libre (2 a 40 caracteres) |
 | `modelId` / `modelOther` | Modelo | Sí | Elegido del catálogo (filtrado por marca) o "Otro" con texto libre (1 a 60 caracteres). Si la marca es "Otro", el modelo es siempre texto libre |
-| `version` | Versión | No [PROVISORIO] | Texto libre, hasta 60 caracteres |
 | `year` | Año | Sí | Ver 2.5 |
-| `hasGnc` | ¿Tiene GNC? | Sí, solo para autos [PROVISORIO] | Sí / No. En motos no se muestra y se guarda `null` |
 | `postalCode` | Código postal | Sí | Ver 2.6 |
 | `usage` | Tipo de uso | Sí | Ver 3 |
 | `consent` | Acepto la política de privacidad | Sí | Tiene que estar marcado; se guarda la fecha en `consentAt` |
@@ -33,11 +32,12 @@ Un solo formulario para autos y motos. Las validaciones se aplican en el navegad
 - Máximo 100 caracteres. Se recortan los espacios de los extremos y los espacios dobles.
 
 ### 2.2 Teléfono
-- Dos campos: código de área sin 0 (2 a 4 dígitos) y número sin 15 (6 a 8 dígitos). Entre los dos suman **10 dígitos**.
-- Tolerancia: si el código de área empieza con 0, se quita. Si el número empieza con 15 y con eso la suma da 12 dígitos, se quita el 15.
-- Se ignoran espacios, guiones y paréntesis.
-- Se guarda en formato internacional sin símbolos: `549` + área + número (ejemplo: `5493414123456`). Para mostrar: `+54 9 341 412-3456`.
-- Mensajes de error claros: "Ingresá el código de área sin el 0" y "Ingresá el número sin el 15".
+- Un solo campo con código de área y número: **10 dígitos nacionales**, sin 0 ni 15. Ejemplo: `341 4123456`.
+- Se permiten espacios, guiones, puntos y paréntesis como separadores. También se aceptan los prefijos `+54` y `+54 9`, o un 0 inicial de formato nacional, si al quitarlos quedan exactamente 10 dígitos.
+- No se intenta deducir dónde termina el código de área ni quitar un 15 intermedio ambiguo.
+- Se guarda en formato internacional sin símbolos: `549` + número nacional (ejemplo: `5493414123456`).
+- Error: "Ingresá un teléfono con código de área (10 dígitos, sin 15)".
+- El esquema mantiene compatibilidad con `phoneArea` + `phoneNumber` de consumidores anteriores cuando no se envía `phone`; la UI nueva no muestra esos dos campos.
 
 ### 2.3 DNI
 - 7 u 8 dígitos. Se quitan puntos y espacios antes de validar. Se guarda solo con dígitos.

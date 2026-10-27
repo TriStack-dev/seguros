@@ -660,3 +660,132 @@ h3 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Step 09: inherit the landing tokens, keeping the form legible on small screens. */
+.lead-form {
+  margin-top: 1.5rem;
+  min-width: 0;
+}
+.form-intro {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+.form-section {
+  min-width: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+.form-section legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 1.25rem;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+.form-section > div {
+  clear: both;
+}
+.form-row {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+.lead-form [data-slot="field"] {
+  min-width: 0;
+}
+.quote-control {
+  min-height: 2.75rem;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.quote-control:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.quote-control[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+.quote-control:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+select.quote-control {
+  white-space: normal;
+}
+.vehicle-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.vehicle-picker button {
+  min-height: 3.5rem;
+  font-size: 1rem;
+}
+.vehicle-picker button[aria-pressed="true"] {
+  color: var(--primary);
+  background: var(--accent);
+  border-color: var(--primary);
+}
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  min-height: 2.75rem;
+}
+.form-check [data-slot="checkbox"] {
+  margin-top: 0.3rem;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.form-check label {
+  cursor: pointer;
+  padding-block: 0.15rem;
+}
+.form-demo-note {
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.form-honeypot {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.quote-page {
+  padding-block: 3rem;
+}
+.quote-page > section {
+  max-width: 42rem;
+  margin-inline: auto;
+}
+.quote-page h1 {
+  font-size: 2rem;
+  font-weight: 680;
+  line-height: 1.15;
+}
+@media (min-width: 1100px) {
+  .form-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (min-width: 600px) {
+  .quote-page .form-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 400px) {
+  .quote-placeholder {
+    padding: 1.25rem;
+  }
+}

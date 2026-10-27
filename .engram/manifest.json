@@ -208,6 +208,30 @@
       "sessions": 1,
       "memories": 1,
       "prompts": 0
+    },
+    {
+      "id": "cf627eab",
+      "created_by": "teo",
+      "created_at": "2026-10-27T20:03:12.276639918Z",
+      "sessions": 5,
+      "memories": 25,
+      "prompts": 0
+    },
+    {
+      "id": "a90b5848",
+      "created_by": "teo",
+      "created_at": "2026-10-27T20:04:43.92651139Z",
+      "sessions": 1,
+      "memories": 1,
+      "prompts": 0
+    },
+    {
+      "id": "da6a0d76",
+      "created_by": "teo",
+      "created_at": "2026-10-27T20:07:25.727084338Z",
+      "sessions": 1,
+      "memories": 3,
+      "prompts": 0
     }
   ]
 }

@@ -1,14 +1,6 @@
+import { QuoteFormSection } from "@/components/public/quote-form-section";
 import Image from "next/image";
-import {
-  ArrowRight,
-  CarFront,
-  MessageCircle,
-  ShieldCheck,
-  Bike,
-  Building2,
-  ClipboardList,
-  MessagesSquare,
-} from "lucide-react";
+import { ArrowRight, CarFront, ShieldCheck, Building2, MessagesSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -56,21 +48,7 @@ export default function LandingPage() {
           </div>
           <section id="cotizar" className="quote-placeholder" aria-labelledby="quote-title">
             <h2 id="quote-title">{content.quote.title}</h2>
-            <p>{content.quote.description}</p>
-            <div className="vehicle-label">
-              <CarFront aria-hidden="true" />
-              <span>{content.quote.vehicleLabel}</span>
-              <Bike aria-hidden="true" />
-            </div>
-            <div className="placeholder-space">
-              <ClipboardList aria-hidden="true" size={36} strokeWidth={1.4} />
-              <h3>{content.quote.placeholderTitle}</h3>
-              <p>{content.quote.placeholderDescription}</p>
-            </div>
-            <p className="quote-note">
-              <MessageCircle aria-hidden="true" size={20} />
-              <span>{content.quote.note}</span>
-            </p>
+            <QuoteFormSection />
           </section>
           <ul className="hero-highlights">
             {content.hero.highlights.map((text) => (

@@ -22,6 +22,24 @@ const validBase = {
 };
 
 describe("leadFormSchema", () => {
+  it("accepts a single phone input and reports invalid input on its visible control", () => {
+    const valid = leadFormSchema.safeParse({
+      ...validBase,
+      phone: "+54 9 341 412-3456",
+      phoneArea: "",
+      phoneNumber: "",
+      hasGnc: null,
+    });
+    expect(valid.success).toBe(true);
+    if (valid.success) expect(valid.data.phone).toBe("5493414123456");
+    const invalid = leadFormSchema.safeParse({ ...validBase, phone: "1" });
+    expect(invalid.success).toBe(false);
+    if (!invalid.success)
+      expect(invalid.error.issues.some((issue) => issue.path[0] === "phone")).toBe(true);
+  });
+  it("rejects fractional years", () => {
+    expect(leadFormSchema.safeParse({ ...validBase, year: 2020.5 }).success).toBe(false);
+  });
   it("validates a correct auto lead", () => {
     const result = leadFormSchema.safeParse(validBase);
     expect(result.success).toBe(true);
@@ -64,9 +82,9 @@ describe("leadFormSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("requires hasGnc for auto", () => {
+  it("accepts unknown GNC when the simplified form does not collect it", () => {
     const result = leadFormSchema.safeParse({ ...validBase, hasGnc: null });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it("sets hasGnc to null for moto", () => {

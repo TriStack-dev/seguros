@@ -7,6 +7,7 @@ import {
   normalizePlate,
   normalizePostalCode,
   normalizePhone,
+  normalizeFullPhone,
 } from "@/lib/validation/normalizers";
 
 const nameSchema = z
@@ -63,12 +64,13 @@ const versionSchema = z
   .optional()
   .or(z.literal(""));
 
-export const leadFormSchema = z
+const contactAndVehicleSchema = z
   .object({
     vehicleType: z.enum(VEHICLE_TYPES, { message: "Seleccioná el tipo de vehículo" }),
     fullName: nameSchema,
     phoneArea: z.string(),
     phoneNumber: z.string(),
+    phone: z.string().optional(),
     email: emailSchema,
     dni: dniSchema,
     isZeroKm: z.boolean().optional().default(false),
@@ -86,12 +88,8 @@ export const leadFormSchema = z
       .optional()
       .or(z.literal("")),
     version: versionSchema,
-    year: z.coerce.number({
-      message: "Ingresá el año del vehículo",
-    }),
     hasGnc: z.boolean().nullable().optional(),
     postalCode: postalCodeSchema,
-    usage: z.enum(USAGE_TYPES, { message: "Seleccioná el tipo de uso" }),
     consent: z
       .boolean()
       .refine((v) => v === true, { message: "Tenés que aceptar la política de privacidad" }),
@@ -110,14 +108,17 @@ export const leadFormSchema = z
 
     // phone normalization/validation
     try {
-      const phone = normalizePhone(data.phoneArea, data.phoneNumber);
+      const phone =
+        data.phone !== undefined
+          ? normalizeFullPhone(data.phone)
+          : normalizePhone(data.phoneArea, data.phoneNumber);
       (data as Record<string, unknown>).phone = phone;
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Teléfono inválido";
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message,
-        path: ["phoneNumber"],
+        path: [data.phone !== undefined ? "phone" : "phoneNumber"],
       });
     }
 
@@ -220,43 +221,49 @@ export const leadFormSchema = z
       }
     }
 
-    // usage valid for vehicle type
-    const allowedUsages = USAGE_BY_VEHICLE[data.vehicleType];
-    if (!allowedUsages.includes(data.usage)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "El tipo de uso no es válido para este vehículo",
-        path: ["usage"],
-      });
-    }
-
-    // year
-    const currentYear = new Date().getFullYear();
-    if (data.year < MIN_YEAR || data.year > currentYear + 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `El año debe estar entre ${MIN_YEAR} y ${currentYear + 1}`,
-        path: ["year"],
-      });
-    }
-
-    // hasGnc
-    if (data.vehicleType === "AUTO") {
-      if (data.hasGnc !== true && data.hasGnc !== false) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Indicá si tiene GNC",
-          path: ["hasGnc"],
-        });
-      }
-    } else if (data.vehicleType === "MOTO") {
-      // must be absent/null
-      if (data.hasGnc !== null && data.hasGnc !== undefined) {
-        // we'll normalize to null, but better to be strict
-      }
-      (data as Record<string, unknown>).hasGnc = null;
+    // The public form no longer collects GNC. Null means unknown, not "No".
+    if (data.vehicleType === "MOTO" || data.hasGnc === undefined) {
+      data.hasGnc = null;
     }
   });
+
+// Validate independent groups in parallel: an empty usage or invalid year must not
+// suppress phone, plate and catalog errors while completing the form onTouched.
+export const leadFormSchema = contactAndVehicleSchema
+  .and(
+    z
+      .object({
+        vehicleType: z.enum(VEHICLE_TYPES, { message: "Seleccioná el tipo de vehículo" }),
+        usage: z.enum(USAGE_TYPES, { message: "Seleccioná el tipo de uso" }),
+      })
+      .superRefine((data, ctx) => {
+        if (!USAGE_BY_VEHICLE[data.vehicleType].includes(data.usage)) {
+          ctx.addIssue({
+            code: "custom",
+            message: "El tipo de uso no es válido para este vehículo",
+            path: ["usage"],
+          });
+        }
+      }),
+  )
+  .and(
+    z
+      .object({
+        year: z.coerce
+          .number({ message: "Ingresá el año del vehículo" })
+          .int({ message: "Ingresá un año entero" }),
+      })
+      .superRefine((data, ctx) => {
+        const currentYear = new Date().getFullYear();
+        if (data.year < MIN_YEAR || data.year > currentYear + 1) {
+          ctx.addIssue({
+            code: "custom",
+            message: `El año debe estar entre ${MIN_YEAR} y ${currentYear + 1}`,
+            path: ["year"],
+          });
+        }
+      }),
+  );
 
 export type LeadFormInput = z.input<typeof leadFormSchema>;
 export type LeadFormData = z.output<typeof leadFormSchema> & {
