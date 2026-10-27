@@ -29,4 +29,9 @@ Guardar en cada lead de dónde vino el usuario (campaña, buscador, referido o d
 
 ## Notas de implementación
 
-_Se completa al cerrar el step (ver `AGENTS.md`)._
+- **Qué se hizo:** Se agregó lógica pura de atribución en `src/lib/attribution/` (tipos, parseo de URL/referrer, cookie `ms_attr` con límites, clasificación de origen) con tests unitarios. Se actualizó `src/proxy.ts` para capturar UTM/gclid/referrer/landingPage en rutas públicas (manteniendo protección de `/admin` componible) y ampliar el matcher. `submitLead` lee la cookie con `cookies()` (con fallback si no hay request scope) y guarda los campos de atribución en el lead.
+- **Archivos clave:** `src/lib/attribution/*`, `src/proxy.ts`, `src/server/actions/submit-lead.ts`
+- **Decisiones:** Se mantuvo un único archivo `proxy.ts` (como indica el TODO) con funciones por responsabilidad. La cookie es `httpOnly`, `sameSite=lax`, 30 días. Si no hay parámetros y no existe cookie, se guarda solo `landingPage` y `referrer` externo.
+- **Desvíos del spec:** Ninguno.
+- **Cómo probarlo:** Entrar a `/?utm_source=google&utm_medium=cpc&utm_campaign=prueba&gclid=abc`, navegar y enviar el formulario; verificar que el lead guarda esos valores. Visitar sin parámetros no borra la atribución; con otros UTM la reemplaza. Correr `pnpm test` para ver tests de `classifySource`.
+- **Pendientes:** Ninguno.
