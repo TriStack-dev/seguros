@@ -1,5 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
+import {
+  ATTRIBUTION_COOKIE,
+  getAttributionCookieOptions,
+  hasAttributionParams,
+  parseAttributionFromUrl,
+  serializeAttribution,
+  type Attribution,
+} from "@/lib/attribution";
 
 /** Rutas de /admin accesibles sin sesión. Todo lo demás de /admin la exige. */
 const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/recuperar", "/admin/auth/callback"];
@@ -8,20 +16,64 @@ function isPublicAdminPath(pathname: string) {
   return PUBLIC_ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
-/**
- * Proxy del panel (step 15): refresca la sesión de Supabase, redirige a /admin/login toda
- * ruta /admin/* sin sesión, y marca /admin como noindex y sin caché (para que "atrás" no
- * muestre contenido tras cerrar sesión).
- *
- * TODO step 12 (atribución): este archivo exporta UN solo `proxy`. Cuando exista la lógica de
- * atribución, sumarla como otra rama de esta función (por ejemplo `if (!pathname.startsWith("/admin"))
- * return handleAttribution(request)`) y ampliar `config.matcher` para que cubra las rutas públicas.
- * No crear un segundo archivo: Next solo carga uno.
- */
-export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  if (!pathname.startsWith("/admin")) return NextResponse.next();
+function getExternalReferrer(request: NextRequest): string | null {
+  const referrer = request.headers.get("referer") || request.headers.get("referrer");
+  if (!referrer) return null;
+  try {
+    const refUrl = new URL(referrer);
+    if (refUrl.hostname === request.nextUrl.hostname) return null;
+    return referrer;
+  } catch {
+    return null;
+  }
+}
 
+function handleAttribution(request: NextRequest): NextResponse {
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+  if (
+    pathname.startsWith("/_next") ||
+    pathname === "/favicon.ico" ||
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf|eot)$/.test(pathname)
+  ) {
+    return NextResponse.next();
+  }
+
+  const existingCookie = request.cookies.get(ATTRIBUTION_COOKIE)?.value;
+  const hasParams = hasAttributionParams(request.nextUrl);
+  const externalReferrer = getExternalReferrer(request);
+
+  let attributionToSet: Attribution | null = null;
+
+  if (hasParams) {
+    attributionToSet = parseAttributionFromUrl(request.nextUrl, externalReferrer);
+  } else if (!existingCookie) {
+    const landingPage = request.nextUrl.pathname + (request.nextUrl.search || "");
+    const attr: Attribution = {
+      landingPage: landingPage.length > 255 ? landingPage.slice(0, 255) : landingPage,
+    };
+    if (externalReferrer) {
+      attr.referrer = externalReferrer.length > 255 ? externalReferrer.slice(0, 255) : externalReferrer;
+    }
+    if (attr.landingPage || attr.referrer) {
+      attributionToSet = attr;
+    }
+  }
+
+  if (!attributionToSet) {
+    return NextResponse.next();
+  }
+
+  const response = NextResponse.next();
+  const isSecure = request.nextUrl.protocol === "https:";
+  response.cookies.set(ATTRIBUTION_COOKIE, serializeAttribution(attributionToSet), getAttributionCookieOptions(isSecure));
+  return response;
+}
+
+async function handleAdminProtection(request: NextRequest): Promise<NextResponse> {
+  const { pathname } = request.nextUrl;
   const { response, user } = await updateSession(request);
 
   let result = response;
@@ -31,7 +83,6 @@ export async function proxy(request: NextRequest) {
     loginUrl.search = "";
     loginUrl.searchParams.set("next", pathname + request.nextUrl.search);
     result = NextResponse.redirect(loginUrl);
-    // Conservar las cookies de sesión que haya actualizado Supabase.
     for (const cookie of response.cookies.getAll()) result.cookies.set(cookie);
   }
 
@@ -40,7 +91,21 @@ export async function proxy(request: NextRequest) {
   return result;
 }
 
-// Hoy solo /admin. Con la atribución (step 12) se amplía a las rutas públicas.
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/admin")) {
+    return handleAdminProtection(request);
+  }
+  return handleAttribution(request);
+}
+
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  matcher: [
+    "/",
+    "/cotizar/:path*",
+    "/privacidad",
+    "/admin",
+    "/admin/:path*",
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };
