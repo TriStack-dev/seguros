@@ -10,7 +10,12 @@
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
-export const BlockPushToProtected = async ({ worktree }) => {
+const blockPushToProtected = async (ctx = {}) => {
+  const worktree = typeof ctx === "string" ? ctx : ctx.worktree || ctx.directory || ctx.cwd || process.env.PWD || process.cwd();
+  if (!worktree || typeof worktree !== "string") {
+    console.error("[block-push-to-protected] No valid worktree/directory provided to plugin");
+    return {};
+  }
   const script = join(worktree, ".claude/hooks/block-push-to-protected.sh");
 
   return {
@@ -39,3 +44,9 @@ export const BlockPushToProtected = async ({ worktree }) => {
     },
   };
 };
+
+export default {
+  id: "block-push-to-protected",
+  setup: blockPushToProtected,
+};
+
