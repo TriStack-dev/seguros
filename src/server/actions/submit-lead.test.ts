@@ -1,15 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { brandFindUnique, modelFindUnique, leadCreate, statusChangeCreate, transaction } = vi.hoisted(() => {
-  const brandFindUnique = vi.fn();
-  const modelFindUnique = vi.fn();
-  const leadCreate = vi.fn();
-  const statusChangeCreate = vi.fn();
-  const transaction = vi.fn(async (callback: (tx: unknown) => unknown) =>
-    callback({ lead: { create: leadCreate }, leadStatusChange: { create: statusChangeCreate } }),
-  );
-  return { brandFindUnique, modelFindUnique, leadCreate, statusChangeCreate, transaction };
-});
+const { brandFindUnique, modelFindUnique, leadCreate, statusChangeCreate, transaction } =
+  vi.hoisted(() => {
+    const brandFindUnique = vi.fn();
+    const modelFindUnique = vi.fn();
+    const leadCreate = vi.fn();
+    const statusChangeCreate = vi.fn();
+    const transaction = vi.fn(async (callback: (tx: unknown) => unknown) =>
+      callback({ lead: { create: leadCreate }, leadStatusChange: { create: statusChangeCreate } }),
+    );
+    return { brandFindUnique, modelFindUnique, leadCreate, statusChangeCreate, transaction };
+  });
 
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/db", () => ({
@@ -37,7 +38,6 @@ const validInput: LeadFormInput = {
   brandOther: "",
   modelId: "model-id",
   modelOther: "",
-  version: "",
   hasGnc: null,
   postalCode: "2000",
   consent: true,
@@ -85,30 +85,53 @@ describe("submitLead", () => {
     const result = await submitLead(validInput);
     expect(result).toEqual({ ok: true, leadId: "lead-id", requestNumber: "MS-000123" });
     expect(transaction).toHaveBeenCalledOnce();
-    expect(leadCreate).toHaveBeenCalledWith({ data: expect.objectContaining({
-      vehicleType: "AUTO",
-      fullName: "Ana Pérez",
-      phone: "5493414123456",
-      email: "ana@example.com",
-      dni: "12345678",
-      plate: "AA123BB",
-      brandId: "brand-id",
-      brandName: "Ford",
-      modelId: "model-id",
-      modelName: "Ka",
-      year: 2020,
-      usage: "PARTICULAR",
-      status: "NEW",
-      consentAt: expect.any(Date),
-    }) });
-    expect(statusChangeCreate).toHaveBeenCalledWith({ data: {
-      leadId: "lead-id", fromStatus: null, toStatus: "NEW",
-    } });
+    expect(leadCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        vehicleType: "AUTO",
+        fullName: "Ana Pérez",
+        phone: "5493414123456",
+        email: "ana@example.com",
+        dni: "12345678",
+        plate: "AA123BB",
+        brandId: "brand-id",
+        brandName: "Ford",
+        modelId: "model-id",
+        modelName: "Ka",
+        year: 2020,
+        usage: "PARTICULAR",
+        status: "NEW",
+        consentAt: expect.any(Date),
+      }),
+    });
+    expect(statusChangeCreate).toHaveBeenCalledWith({
+      data: {
+        leadId: "lead-id",
+        fromStatus: null,
+        toStatus: "NEW",
+      },
+    });
   });
 
   it("returns a generic failure when persistence fails", async () => {
     transaction.mockRejectedValueOnce(new Error("database unavailable"));
     const result = await submitLead(validInput);
-    expect(result).toMatchObject({ ok: false, message: expect.stringContaining("No pudimos enviar") });
+    expect(result).toMatchObject({
+      ok: false,
+      message: expect.stringContaining("No pudimos enviar"),
+    });
   });
 });
+
+it.each([true, false])(
+  "persists zero km without plate and GNC=%s without version",
+  async (hasGnc) => {
+    const result = await submitLead({ ...validInput, isZeroKm: true, plate: "", hasGnc });
+    expect(result.ok).toBe(true);
+    expect(leadCreate.mock.calls[0]?.[0].data).toMatchObject({
+      isZeroKm: true,
+      plate: null,
+      hasGnc,
+    });
+    expect(leadCreate.mock.calls[0]?.[0].data).not.toHaveProperty("version");
+  },
+);

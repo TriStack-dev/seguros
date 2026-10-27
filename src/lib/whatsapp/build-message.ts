@@ -7,6 +7,8 @@ export { formatRequestNumber } from "@/lib/leads/request-number";
 
 /** Datos normalizados del lead (step 06) más los campos que resuelve quien crea el lead. */
 export type WhatsappLeadData = LeadFormData & {
+  /** Legacy message input only; no longer collected or persisted on Lead. */
+  version?: string;
   /** Teléfono normalizado `549...`; el formulario lo calcula al validar. */
   phone: string;
   /** Número autoincremental de la base. */

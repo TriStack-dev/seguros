@@ -55,19 +55,21 @@ describe("LeadForm", () => {
   it("shows only the requested fields in order and preserves type and consent", () => {
     const { container } = render(<LeadForm brands={brands} />);
     const labels = [...container.querySelectorAll("label[for]")].map((label) => label.textContent);
-    expect(labels.slice(0, 10)).toEqual([
+    expect(labels.slice(0, 12)).toEqual([
       "Nombre y apellido",
       "Teléfono",
       "Email",
+      "Es 0 km",
       "Patente",
       "Marca",
       "Modelo",
       "Año del vehículo",
+      "¿Tiene GNC?",
       "Código postal",
       "Tipo de uso",
       "DNI",
     ]);
-    expect(screen.queryByRole("checkbox", { name: "Es 0 km" })).not.toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Es 0 km" })).toBeInTheDocument();
     expect(screen.queryByLabelText("Versión (opcional)")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Teléfono", { exact: true })).toHaveAttribute("type", "tel");
     expect(screen.getByRole("checkbox", { name: /Acepto la política/ })).toBeInTheDocument();
@@ -80,7 +82,7 @@ describe("LeadForm", () => {
     await user.click(screen.getByRole("button", { name: "Moto" }));
     expect(screen.getByLabelText("Tipo de uso", { exact: true })).toHaveValue("");
     await user.click(screen.getByRole("button", { name: "Auto" }));
-    expect(screen.queryByLabelText("¿Tiene GNC?", { exact: true })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("¿Tiene GNC?", { exact: true })).toBeInTheDocument();
   });
   it("submits validated data through the server action", async () => {
     const user = userEvent.setup();
@@ -117,4 +119,16 @@ describe("LeadForm", () => {
     });
     expect(await screen.findByRole("status")).toHaveTextContent("MS-000123");
   });
+});
+
+it("clears the plate for zero km and requires it again when unchecked", async () => {
+  const user = userEvent.setup();
+  render(<LeadForm brands={[]} />);
+  await user.type(screen.getByLabelText("Patente", { exact: true }), "AA123BB");
+  await user.click(screen.getByRole("checkbox", { name: "Es 0 km" }));
+  expect(screen.queryByLabelText("Patente", { exact: true })).not.toBeInTheDocument();
+  await user.click(screen.getByRole("checkbox", { name: "Es 0 km" }));
+  expect(screen.getByLabelText("Patente", { exact: true })).toHaveValue("");
+  await user.click(screen.getByRole("button", { name: "Iniciar cotización" }));
+  expect(await screen.findByText("Ingresá la patente")).toBeInTheDocument();
 });

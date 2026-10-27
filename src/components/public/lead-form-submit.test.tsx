@@ -26,11 +26,7 @@ afterEach(() => {
 for (const type of ["AUTO", "MOTO"] as const) {
   it(`submits ${type} through the server action only after consent`, async () => {
     const u = userEvent.setup();
-    let resolveSubmit!: (result: {
-      ok: true;
-      leadId: string;
-      requestNumber: string;
-    }) => void;
+    let resolveSubmit!: (result: { ok: true; leadId: string; requestNumber: string }) => void;
     submitLead.mockReturnValue(
       new Promise((resolve) => {
         resolveSubmit = resolve;
@@ -57,9 +53,11 @@ for (const type of ["AUTO", "MOTO"] as const) {
       type === "AUTO" ? "RIDE_HAILING" : "DELIVERY",
     );
     await u.click(screen.getByRole("button", { name: "Iniciar cotización" }));
-    await waitFor(() => expect(screen.getByRole("checkbox")).toHaveFocus());
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: /Acepto la política/ })).toHaveFocus(),
+    );
     expect(submitLead).not.toHaveBeenCalled();
-    await u.click(screen.getByRole("checkbox"));
+    await u.click(screen.getByRole("checkbox", { name: /Acepto la política/ }));
     await u.click(screen.getByRole("button", { name: "Iniciar cotización" }));
     await waitFor(() => expect(submitLead).toHaveBeenCalledOnce());
     const submitButton = screen.getByRole("button", { name: "Validando…" });
@@ -101,7 +99,7 @@ it("shows server field errors and does not log submitted data", async () => {
   await u.type(screen.getByLabelText("Código postal", { exact: true }), "2000");
   await u.selectOptions(screen.getByLabelText("Tipo de uso", { exact: true }), "PARTICULAR");
   await u.type(screen.getByLabelText("DNI", { exact: true }), "12345678");
-  await u.click(screen.getByRole("checkbox"));
+  await u.click(screen.getByRole("checkbox", { name: /Acepto la política/ }));
   await u.click(screen.getByRole("button", { name: "Iniciar cotización" }));
   expect(await screen.findByText("Email no válido desde el servidor")).toBeInTheDocument();
   expect(log).not.toHaveBeenCalled();

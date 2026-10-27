@@ -76,9 +76,9 @@ export function LeadForm({
       website: "",
     },
   });
-  const [vehicleType, brandId] = useWatch({
+  const [vehicleType, brandId, isZeroKm] = useWatch({
     control: form.control,
-    name: ["vehicleType", "brandId"],
+    name: ["vehicleType", "brandId", "isZeroKm"],
   });
   const loadingModels = !!brandId && catalog?.brandId !== brandId;
   const modelError = !!brandId && catalog?.brandId === brandId && catalog.error;
@@ -224,7 +224,8 @@ export function LeadForm({
       }}
     >
       <p className="form-intro">
-        Completá tus datos y los de tu vehículo. Todos los campos son obligatorios.
+        Completá tus datos y los de tu vehículo. La patente no es obligatoria si tu vehículo es 0
+        km.
       </p>
       <FieldGroup>
         <Controller
@@ -255,6 +256,7 @@ export function LeadForm({
                         form.resetField("brandOther");
                         resetModel();
                         form.resetField("usage");
+                        form.resetField("hasGnc");
                         setOtherBrand(false);
                       }}
                     >
@@ -276,14 +278,37 @@ export function LeadForm({
           "Incluí el código de área, sin 0 ni 15. Por ejemplo: 341 4123456.",
         )}
         {text("email", "Email", { type: "email", autoComplete: "email", autoCapitalize: "none" })}
-        {text(
-          "plate",
-          "Patente",
-          { autoCapitalize: "characters" },
-          vehicleType === "AUTO"
-            ? "Por ejemplo: AAA123 o AA123BB."
-            : "Por ejemplo: 123ABC o A123BCD.",
-        )}
+        <Controller
+          name="isZeroKm"
+          control={form.control}
+          render={({ field }) => (
+            <Field>
+              <div className="form-check">
+                <Checkbox
+                  id={id("isZeroKm")}
+                  ref={field.ref}
+                  checked={field.value}
+                  onBlur={field.onBlur}
+                  onCheckedChange={(checked) => {
+                    field.onChange(checked === true);
+                    form.setValue("plate", "", { shouldValidate: true });
+                    form.clearErrors("plate");
+                  }}
+                />
+                <FieldLabel htmlFor={id("isZeroKm")}>Es 0 km</FieldLabel>
+              </div>
+            </Field>
+          )}
+        />
+        {!isZeroKm &&
+          text(
+            "plate",
+            "Patente",
+            { autoCapitalize: "characters" },
+            vehicleType === "AUTO"
+              ? "Por ejemplo: AAA123 o AA123BB."
+              : "Por ejemplo: 123ABC o A123BCD.",
+          )}
         {catalogUnavailable && (
           <p role="status" className="text-sm text-muted-foreground">
             No pudimos cargar el catálogo. Podés elegir Otro e ingresar marca y modelo.
@@ -377,6 +402,31 @@ export function LeadForm({
           "Año del vehículo",
           { inputMode: "numeric" },
           `Entre ${MIN_YEAR} y ${new Date().getFullYear() + 1}.`,
+        )}
+        {vehicleType === "AUTO" && (
+          <Controller
+            name="hasGnc"
+            control={form.control}
+            render={({ field }) => (
+              <Field>
+                <FieldLabel htmlFor={id("hasGnc")}>¿Tiene GNC?</FieldLabel>
+                <select
+                  id={id("hasGnc")}
+                  ref={field.ref}
+                  className="quote-control"
+                  value={field.value == null ? "" : String(field.value)}
+                  onBlur={field.onBlur}
+                  onChange={(event) =>
+                    field.onChange(event.target.value === "" ? null : event.target.value === "true")
+                  }
+                >
+                  <option value="">Seleccioná una opción (opcional)</option>
+                  <option value="true">Sí</option>
+                  <option value="false">No</option>
+                </select>
+              </Field>
+            )}
+          />
         )}
         {text(
           "postalCode",
