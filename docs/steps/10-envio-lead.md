@@ -33,4 +33,17 @@ Guardar el lead en la base cuando el usuario envía el formulario, con validaci�
 
 ## Notas de implementación
 
-_Se completa al cerrar el step (ver `AGENTS.md`)._
+**Qué se hizo:** Se agregó `submitLead`, que valida nuevamente con el esquema compartido, descarta silenciosamente el honeypot y verifica tipo/marca/modelo contra el catálogo antes de guardar.
+En una transacción crea el lead en estado `NEW` y el primer cambio `null → NEW`, con el consentimiento registrado por el servidor.
+El formulario ahora envía mediante la Server Action, presenta errores por campo, evita envíos simultáneos y muestra el número de solicitud confirmado.
+Se centralizaron el formato y el parseo del número de solicitud y se agregó el aviso global de errores de envío.
+
+**Archivos clave:** `src/server/actions/submit-lead.ts`, `src/lib/leads/request-number.ts`, `src/lib/leads/submit-result.ts`, `src/components/public/lead-form.tsx`, `src/app/layout.tsx`.
+
+**Decisiones:** Se reutilizó y trasladó `formatRequestNumber` desde el helper de WhatsApp para mantener un único formato. El honeypot devuelve una respuesta de éxito sintética antes de la validación visible y no consulta ni escribe la base.
+
+**Desvíos del spec:** Ninguno. No se agregaron captcha, límites por IP, atribución, WhatsApp ni pantalla definitiva de confirmación.
+
+**Cómo probarlo:** `pnpm test`; `pnpm lint`; `pnpm typecheck`; `pnpm build`. Los tests del servidor cubren validación, honeypot, tipo/marca/modelo, transacción y falla de persistencia; los del número cubren formato y parseo.
+
+**Pendientes:** No se ejecutó una prueba integrada contra una base PostgreSQL configurada; el test automatizado verifica la transacción mediante mocks. El estado del Step 10 en `SPEC.md` queda `PENDIENTE` hasta el PR; no se creó commit ni PR por instrucción del usuario. La confirmación definitiva y WhatsApp quedan para el Step 14.

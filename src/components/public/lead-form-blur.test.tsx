@@ -3,6 +3,9 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { LeadForm } from "./lead-form";
+vi.mock("server-only", () => ({}));
+vi.mock("@/server/actions/submit-lead", () => ({ submitLead: vi.fn() }));
+vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 beforeEach(() => {
   vi.stubGlobal(
     "ResizeObserver",

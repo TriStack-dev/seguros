@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type ComponentProps } from "react";
+import { useEffect, useId, useRef, useState, type ComponentProps } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Bike, CarFront, LoaderCircle } from "lucide-react";
@@ -12,6 +12,9 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/c
 import { MIN_YEAR, USAGE_BY_VEHICLE, USAGE_LABELS, type VehicleType } from "@/lib/constants";
 import { leadFormSchema, type LeadFormInput, type LeadFormData } from "@/lib/validation/lead-form";
 import { CatalogCombobox, type CatalogOption } from "./catalog-combobox";
+import { submitLead } from "@/server/actions/submit-lead";
+import { DATABASE_ERROR_MESSAGE } from "@/lib/leads/submit-result";
+import { toast } from "sonner";
 
 export type VehicleBrandOption = CatalogOption & { vehicleType: VehicleType };
 type Props = {
@@ -46,6 +49,8 @@ export function LeadForm({
   } | null>(null);
   const [retry, setRetry] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [requestNumber, setRequestNumber] = useState<string | null>(null);
+  const submitPending = useRef(false);
   const form = useForm<LeadFormInput, unknown, LeadFormData>({
     resolver: zodResolver(leadFormSchema),
     mode: "onTouched",
@@ -154,8 +159,23 @@ export function LeadForm({
     setOtherModel(false);
   };
   const submit = async (data: LeadFormData) => {
-    console.log(data);
-    setSubmitted(true);
+    try {
+      const result = await submitLead(data);
+      if (!result.ok) {
+        for (const [name, messages] of Object.entries(result.fieldErrors ?? {})) {
+          const message = messages?.[0];
+          if (message) form.setError(name as keyof LeadFormInput, { type: "server", message });
+        }
+        if (!result.fieldErrors) toast.error(result.message || DATABASE_ERROR_MESSAGE);
+        return;
+      }
+      setRequestNumber(result.requestNumber);
+      setSubmitted(true);
+    } catch {
+      toast.error(DATABASE_ERROR_MESSAGE);
+    } finally {
+      submitPending.current = false;
+    }
   };
 
   return (
@@ -164,31 +184,43 @@ export function LeadForm({
       noValidate
       aria-label="Formulario de cotización"
       onSubmit={(event) => {
+        if (submitPending.current) {
+          event.preventDefault();
+          return;
+        }
         if (form.getValues("website")?.trim()) {
           event.preventDefault();
           return;
         }
+        submitPending.current = true;
         setSubmitted(false);
-        void form.handleSubmit(submit, (errors) => {
-          const first = (
-            [
-              "fullName",
-              "phone",
-              "email",
-              "plate",
-              "brandId",
-              "brandOther",
-              "modelId",
-              "modelOther",
-              "year",
-              "postalCode",
-              "usage",
-              "dni",
-              "consent",
-            ] as const
-          ).find((name) => errors[name]);
-          if (first) form.setFocus(first === "modelId" && otherBrand ? "modelOther" : first);
-        })(event);
+        setRequestNumber(null);
+        void form
+          .handleSubmit(submit, (errors) => {
+            const first = (
+              [
+                "fullName",
+                "phone",
+                "email",
+                "plate",
+                "brandId",
+                "brandOther",
+                "modelId",
+                "modelOther",
+                "year",
+                "postalCode",
+                "usage",
+                "dni",
+                "consent",
+              ] as const
+            ).find((name) => errors[name]);
+            if (first) form.setFocus(first === "modelId" && otherBrand ? "modelOther" : first);
+            submitPending.current = false;
+          })(event)
+          .catch(() => {
+            submitPending.current = false;
+            toast.error(DATABASE_ERROR_MESSAGE);
+          });
       }}
     >
       <p className="form-intro">
@@ -432,8 +464,8 @@ export function LeadForm({
         </Button>
         <p className="form-demo-note" role="status">
           {submitted
-            ? "Datos validados en esta demostración. No se envió ni guardó tu solicitud."
-            : "Formulario de demostración: los datos se muestran solo en la consola del navegador. No se envía una solicitud."}
+            ? `¡Listo! Recibimos tu solicitud. Tu número de solicitud es ${requestNumber}.`
+            : "Al enviar, vamos a registrar tu solicitud para que un asesor pueda contactarte."}
         </p>
       </FieldGroup>
     </form>

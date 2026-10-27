@@ -1,8 +1,12 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { render, screen, cleanup, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { LeadForm } from "./lead-form";
+const { submitLead } = vi.hoisted(() => ({ submitLead: vi.fn() }));
+vi.mock("@/server/actions/submit-lead", () => ({ submitLead }));
+vi.mock("server-only", () => ({}));
+vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 beforeEach(() => {
   vi.stubGlobal(
     "ResizeObserver",
@@ -20,11 +24,18 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 for (const type of ["AUTO", "MOTO"] as const) {
-  it(`submits ${type} validated unknown-GNC payload only after consent`, async () => {
+  it(`submits ${type} through the server action only after consent`, async () => {
     const u = userEvent.setup();
-    const log = vi.spyOn(console, "log").mockImplementation(() => {});
-    const fetch = vi.fn();
-    vi.stubGlobal("fetch", fetch);
+    let resolveSubmit!: (result: {
+      ok: true;
+      leadId: string;
+      requestNumber: string;
+    }) => void;
+    submitLead.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSubmit = resolve;
+      }),
+    );
     render(<LeadForm brands={[]} initialVehicleType={type} />);
     for (const [label, val] of Object.entries({
       "Nombre y apellido": "Ana Pérez",
@@ -47,11 +58,16 @@ for (const type of ["AUTO", "MOTO"] as const) {
     );
     await u.click(screen.getByRole("button", { name: "Iniciar cotización" }));
     await waitFor(() => expect(screen.getByRole("checkbox")).toHaveFocus());
-    expect(log).not.toHaveBeenCalled();
+    expect(submitLead).not.toHaveBeenCalled();
     await u.click(screen.getByRole("checkbox"));
     await u.click(screen.getByRole("button", { name: "Iniciar cotización" }));
-    await waitFor(() => expect(log).toHaveBeenCalledOnce());
-    expect(log.mock.calls[0]?.[0]).toMatchObject({
+    await waitFor(() => expect(submitLead).toHaveBeenCalledOnce());
+    const submitButton = screen.getByRole("button", { name: "Validando…" });
+    expect(submitButton).toBeDisabled();
+    await u.click(submitButton);
+    fireEvent.submit(screen.getByRole("form", { name: "Formulario de cotización" }));
+    expect(submitLead).toHaveBeenCalledOnce();
+    expect(submitLead.mock.calls[0]?.[0]).toMatchObject({
       vehicleType: type,
       phone: "5493414123456",
       hasGnc: null,
@@ -59,9 +75,37 @@ for (const type of ["AUTO", "MOTO"] as const) {
       dni: "12345678",
       postalCode: "S2000ABC",
     });
-    expect(fetch).not.toHaveBeenCalled();
+    resolveSubmit({ ok: true, leadId: "lead-id", requestNumber: "MS-000123" });
+    expect(await screen.findByRole("status")).toHaveTextContent("MS-000123");
   });
 }
+
+it("shows server field errors and does not log submitted data", async () => {
+  const u = userEvent.setup();
+  const log = vi.spyOn(console, "log").mockImplementation(() => {});
+  submitLead.mockResolvedValue({
+    ok: false,
+    fieldErrors: { email: ["Email no válido desde el servidor"] },
+    message: "Revisá los datos ingresados.",
+  });
+  render(<LeadForm brands={[]} />);
+  await u.type(screen.getByLabelText("Nombre y apellido", { exact: true }), "Ana Pérez");
+  await u.type(screen.getByLabelText("Email", { exact: true }), "ana@example.com");
+  await u.click(screen.getByRole("combobox", { name: "Marca" }));
+  await u.click(screen.getByRole("option", { name: "Otro" }));
+  await u.type(screen.getByLabelText("Otra marca", { exact: true }), "Marca");
+  await u.type(screen.getByLabelText("Modelo", { exact: true }), "Modelo");
+  await u.type(screen.getByLabelText("Teléfono", { exact: true }), "3414123456");
+  await u.type(screen.getByLabelText("Patente", { exact: true }), "AA123BB");
+  await u.type(screen.getByLabelText("Año del vehículo", { exact: true }), "2020");
+  await u.type(screen.getByLabelText("Código postal", { exact: true }), "2000");
+  await u.selectOptions(screen.getByLabelText("Tipo de uso", { exact: true }), "PARTICULAR");
+  await u.type(screen.getByLabelText("DNI", { exact: true }), "12345678");
+  await u.click(screen.getByRole("checkbox"));
+  await u.click(screen.getByRole("button", { name: "Iniciar cotización" }));
+  expect(await screen.findByText("Email no válido desde el servidor")).toBeInTheDocument();
+  expect(log).not.toHaveBeenCalled();
+});
 it("invalid phone comes before plate and DNI focus", async () => {
   const u = userEvent.setup();
   render(<LeadForm brands={[]} />);
