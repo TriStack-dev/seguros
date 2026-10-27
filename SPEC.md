@@ -140,7 +140,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 02 | [Entorno de desarrollo local](docs/steps/02-entorno-local.md) | 1. Base | 01 | DONE · 2026-10-24 · Walter · #10 |
 | 03 | [CI con GitHub Actions](docs/steps/03-ci.md) | 1. Base | 01 | DONE · 2026-10-24 · Crove · #3 |
 | 04 | [Modelo de datos y Prisma](docs/steps/04-modelo-datos.md) | 1. Base | 01, 02 | DONE · 2026-10-24 · Walter · #16 |
-| 05 | [Seed del catálogo de vehículos](docs/steps/05-seed-vehiculos.md) | 1. Base | 04 | PENDIENTE |
+| 05 | [Seed del catálogo de vehículos](docs/steps/05-seed-vehiculos.md) | 1. Base | 04 | DONE · 2026-10-26 · Crove · #22 |
 | 06 | [Esquemas de validación](docs/steps/06-validaciones.md) | 2. Formulario | 01 | DONE · 2026-10-24 · Crove · #6 |
 | 07 | [Layout base y landing](docs/steps/07-layout-landing.md) | 2. Formulario | 01 | DONE · 2026-10-24 · Teo · #12 |
 | 08 | [Páginas legales y datos del productor](docs/steps/08-paginas-legales.md) | 2. Formulario | 07 | DONE · 2026-10-24 · Teo · #15 |

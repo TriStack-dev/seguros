@@ -70,5 +70,4 @@ step no pedía, porque Prisma 7 necesita un runner para ejecutar el seed en Type
 JSON. El seed imprime el resumen y avisa si sobran registros en la base.
 
 **Pendientes:** El catálogo se armó sin acceso web (ver `sources`): contrastarlo con ACARA
-antes de producción y reemplazarlo por una fuente paga (InfoAuto) cuando se decida. Actualizar
-la fila del step en `SPEC.md` con la fecha y el número de PR al abrirlo.
+antes de producción y reemplazarlo por una fuente paga (InfoAuto) cuando se decida.
