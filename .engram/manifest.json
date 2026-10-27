@@ -216,6 +216,14 @@
       "sessions": 5,
       "memories": 25,
       "prompts": 0
+    },
+    {
+      "id": "a90b5848",
+      "created_by": "teo",
+      "created_at": "2026-10-27T20:04:43.92651139Z",
+      "sessions": 1,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }
