@@ -8,17 +8,17 @@ Guardar el lead en la base cuando el usuario envía el formulario, con validaci�
 
 ## Tareas
 
-- [ ] Server Action `submitLead` en `src/server/actions/submit-lead.ts`:
+- [x] Server Action `submitLead` en `src/server/actions/submit-lead.ts`:
   1. Valida la entrada con `leadFormSchema` (step 06). Si falla, devuelve los errores por campo.
   2. Si el honeypot viene con contenido, devuelve una respuesta de éxito falsa y no guarda nada.
   3. Si viene `brandId` / `modelId`, verifica que existan, que la marca sea del tipo de vehículo elegido y que el modelo sea de esa marca; completa `brandName` y `modelName` desde el catálogo. Si viene "Otro", usa el texto libre.
   4. En una transacción: crea el `Lead` con estado `NEW` y `consentAt = now()`, y el primer `LeadStatusChange` (`null → NEW`, sin usuario).
   5. Devuelve `{ ok: true, leadId, requestNumber }` (formateado según la sección 4).
-- [ ] `src/lib/leads/request-number.ts` + tests: `formatRequestNumber(n)` y `parseRequestNumber(texto)` (acepta `MS-000123`, `000123` y `123`).
-- [ ] Tipo de resultado discriminado (`{ ok: true, … } | { ok: false, fieldErrors?, message }`) compartido entre la acción y el formulario.
-- [ ] Conectar `LeadForm` a la acción: errores del servidor en sus campos, error genérico con `sonner` si falla la base ("No pudimos enviar tu solicitud. Probá de nuevo o escribinos por WhatsApp."). Evitar doble envío mientras está pendiente.
-- [ ] Por ahora, si el envío sale bien, mostrar un mensaje simple con el número de solicitud. La pantalla de confirmación con WhatsApp es el step 14.
-- [ ] Nunca loguear datos personales en la consola del servidor.
+- [x] `src/lib/leads/request-number.ts` + tests: `formatRequestNumber(n)` y `parseRequestNumber(texto)` (acepta `MS-000123`, `000123` y `123`).
+- [x] Tipo de resultado discriminado (`{ ok: true, … } | { ok: false, fieldErrors?, message }`) compartido entre la acción y el formulario.
+- [x] Conectar `LeadForm` a la acción: errores del servidor en sus campos, error genérico con `sonner` si falla la base ("No pudimos enviar tu solicitud. Probá de nuevo o escribinos por WhatsApp."). Evitar doble envío mientras está pendiente.
+- [x] Por ahora, si el envío sale bien, mostrar un mensaje simple con el número de solicitud. La pantalla de confirmación con WhatsApp es el step 14.
+- [x] Nunca loguear datos personales en la consola del servidor.
 
 ## Criterios de aceptación
 
@@ -46,4 +46,4 @@ Se centralizaron el formato y el parseo del número de solicitud y se agregó el
 
 **Cómo probarlo:** `pnpm test`; `pnpm lint`; `pnpm typecheck`; `pnpm build`. Los tests del servidor cubren validación, honeypot, tipo/marca/modelo, transacción y falla de persistencia; los del número cubren formato y parseo.
 
-**Pendientes:** No se ejecutó una prueba integrada contra una base PostgreSQL configurada; el test automatizado verifica la transacción mediante mocks. El estado del Step 10 en `SPEC.md` queda `PENDIENTE` hasta el PR; no se creó commit ni PR por instrucción del usuario. La confirmación definitiva y WhatsApp quedan para el Step 14.
+**Pendientes:** No se ejecutó una prueba integrada contra una base PostgreSQL configurada; el test automatizado verifica la transacción mediante mocks. Publicado en el PR #28. Verificación: 112 tests, lint y typecheck correctos; build con Webpack correcto. El build estándar de Turbopack no pudo completarse por restricciones de permisos del entorno. La confirmación definitiva y WhatsApp quedan para el Step 14.
