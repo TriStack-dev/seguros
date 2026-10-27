@@ -100,8 +100,8 @@ Variables (cada step agrega las suyas a `.env.example`, con un comentario de qu�
 | `WHATSAPP_NUMBER` | Número de los brokers, solo dígitos (`5493794057190`) | 14 |
 | `IP_HASH_SALT` | Sal para guardar el hash de la IP | 11 |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Captcha | 11 |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Auth | 02 |
-| `SUPABASE_SECRET_KEY` | Solo servidor y scripts (crear administradores) | 02 |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Auth (la clave publicable equivale a `anon`) | 02, 15 |
+| `SUPABASE_SECRET_KEY` | Solo servidor y scripts (crear administradores; equivale a `service_role`) | 02, 15 |
 | `NEXT_PUBLIC_GTM_ID` | Google Tag Manager | 21 |
 | `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_AUTH_TOKEN` / `SENTRY_ORG` / `SENTRY_PROJECT` | Sentry | 23 |
 
@@ -150,7 +150,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 12 | [Atribución (UTM, gclid, página de entrada)](docs/steps/12-atribucion.md) | 2. Formulario | 10 | PENDIENTE |
 | 13 | [Mensaje y link de WhatsApp](docs/steps/13-mensaje-whatsapp.md) | 3. WhatsApp | 06 | DONE · 2026-10-26 · Crove · #21 |
 | 14 | [Confirmación y derivación a WhatsApp](docs/steps/14-confirmacion-whatsapp.md) | 3. WhatsApp | 10, 13 | PENDIENTE |
-| 15 | [Login del panel](docs/steps/15-auth-admin.md) | 4. Panel | 02, 04 | PENDIENTE |
+| 15 | [Login del panel](docs/steps/15-auth-admin.md) | 4. Panel | 02, 04 | DONE · 2026-10-26 · Walter · #26 |
 | 16 | [Listado de leads](docs/steps/16-panel-listado.md) | 4. Panel | 10, 15 | PENDIENTE |
 | 17 | [Detalle del lead y estados](docs/steps/17-panel-detalle-estados.md) | 4. Panel | 12, 16 | PENDIENTE |
 | 18 | [Notas del lead](docs/steps/18-panel-notas.md) | 4. Panel | 17 | PENDIENTE |

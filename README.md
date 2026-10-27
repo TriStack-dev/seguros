@@ -199,6 +199,25 @@ pnpm db:down      # apaga los contenedores (conserva los datos)
 Las variables de [`.env.example`](.env.example) ya traen los valores locales: con copiarlo a
 `.env.local` alcanza. Si en tu máquina no coinciden, `pnpm db:status` muestra los correctos.
 
+### Administradores del panel
+
+El panel (`/admin`) se protege con Supabase Auth. No hay registro público: las cuentas las
+crea el equipo con el script `admin:create`, que usa la Admin API y `SUPABASE_SECRET_KEY`
+(desde `.env.local`, nunca se imprime).
+
+```bash
+pnpm admin:create persona@ejemplo.com
+```
+
+El script crea el usuario ya confirmado con una contraseña temporal aleatoria, que muestra
+**una sola vez** por la terminal. Pasásela a la persona por un canal privado; puede cambiarla
+desde "Olvidé mi contraseña" en `/admin/login`. En local, el mail de recuperación se ve en
+Mailpit (http://127.0.0.1:54324). Entrá siempre por el mismo host (`localhost` o `127.0.0.1`)
+durante todo el flujo de recuperación, porque la sesión viaja en cookies.
+
+Las claves `sb_publishable_...` y `sb_secret_...` de Supabase equivalen a las legacy `anon` y
+`service_role`, respectivamente.
+
 **Borrar todos los datos locales** y arrancar de cero:
 `pnpm exec supabase stop --no-backup` y después `pnpm db:up`.
 
@@ -297,6 +316,7 @@ pnpm db:up           # levanta Supabase local (ver "Entorno local")
 pnpm db:down         # apaga Supabase local
 pnpm db:restart      # reinicia Supabase local
 pnpm db:status       # URLs y claves de Supabase local
+pnpm admin:create    # crea un administrador del panel (ver "Administradores del panel")
 pnpm db:migrate      # aplica y crea migraciones en local (prisma migrate dev)
 pnpm db:deploy       # aplica migraciones en staging y producción (prisma migrate deploy)
 pnpm db:seed         # carga el catálogo de vehículos (prisma db seed)
