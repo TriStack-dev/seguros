@@ -144,7 +144,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 06 | [Esquemas de validación](docs/steps/06-validaciones.md) | 2. Formulario | 01 | DONE · 2026-10-24 · Crove · #6 |
 | 07 | [Layout base y landing](docs/steps/07-layout-landing.md) | 2. Formulario | 01 | DONE · 2026-10-24 · Teo · #12 |
 | 08 | [Páginas legales y datos del productor](docs/steps/08-paginas-legales.md) | 2. Formulario | 07 | DONE · 2026-10-24 · Teo · #15 |
-| 09 | [Formulario de cotización (UI)](docs/steps/09-formulario.md) | 2. Formulario | 05, 06, 07 | PENDIENTE |
+| 09 | [Formulario de cotización (UI)](docs/steps/09-formulario.md) | 2. Formulario | 05, 06, 07 | DONE · 2026-10-27 · Teo · #27 |
 | 10 | [Envío y registro del lead](docs/steps/10-envio-lead.md) | 2. Formulario | 04, 06, 09 | PENDIENTE |
 | 11 | [Anti-spam](docs/steps/11-anti-spam.md) | 2. Formulario | 10 | PENDIENTE |
 | 12 | [Atribución (UTM, gclid, página de entrada)](docs/steps/12-atribucion.md) | 2. Formulario | 10 | PENDIENTE |

@@ -59,7 +59,7 @@ Se mantiene [0004](../decisiones/0004-field-en-lugar-de-form-de-shadcn.md). [000
 
 ### Desvíos del spec
 
-Se simplificaron los campos y unificó el teléfono por pedido y confirmación del usuario (2026-10-27), actualizando las reglas de negocio. GNC no informado queda null, nunca se inventa false. Se corrigió el esquema del step 06 para rechazar años decimales y evitar que un uso vacío suprima errores de otros campos: las reglas ya exigían enteros y validación por campo. El resto se limita al alcance del step 09. El cierre formal de la fila 09 en `SPEC.md` queda pendiente de las comprobaciones faltantes y de un PR; no se inventó un número de PR ni se modificaron otras filas.
+Se simplificaron los campos y unificó el teléfono por pedido y confirmación del usuario (2026-10-27), actualizando las reglas de negocio. GNC no informado queda null, nunca se inventa false. Se corrigió el esquema del step 06 para rechazar años decimales y evitar que un uso vacío suprima errores de otros campos: las reglas ya exigían enteros y validación por campo. El resto se limita al alcance del step 09. Por autorización del usuario, la fila 09 de `SPEC.md` se marcó `DONE · 2026-10-27 · Teo · #27`, con las limitaciones de verificación detalladas abajo. No se modificaron otras filas.
 
 ### Cómo probarlo
 
@@ -85,5 +85,5 @@ Se simplificaron los campos y unificó el teléfono por pedido y confirmación d
 - Revisión independiente de la simplificación: sin bloqueos. Verificó orden de campos, envío auto/moto, consentimiento, foco y compatibilidad del teléfono anterior, con 6 pruebas independientes.
 - Verificación visual a 360 px y recorrido completo en navegador real: Chromium no inicia por falta de `libnspr4.so`, incluso fuera del sandbox. Testing Library no sustituye esta comprobación.
 - Verificación del catálogo contra una base real: este entorno no tiene `DATABASE_URL` configurada. Se verificó la respuesta de fallback y las consultas con mocks, no conectividad ni seed real.
-- Apertura de PR y CI (no autorizadas en este pedido); luego completar la fila 09 de `SPEC.md` con identidad y número reales.
+- PR [#27](https://github.com/TriStack-dev/seguros/pull/27) publicado por autorización explícita del usuario; CI pendiente al momento de este commit de cierre.
 - Advertencia preexistente de Next Image por `quality=80` fuera de `images.qualities`, observada en desarrollo; fuera del alcance del step.
