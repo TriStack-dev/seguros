@@ -87,6 +87,8 @@ cd seguros
 pnpm install
 cp .env.example .env.local   # completá los valores (ver "Variables de entorno")
 pnpm db:up                   # Supabase local en Docker (ver "Entorno local")
+pnpm db:deploy               # aplica las migraciones de Prisma
+pnpm db:seed                 # carga el catálogo de vehículos (sin esto los selects vienen vacíos)
 pnpm dev                     # http://localhost:3000
 ```
 
