@@ -147,7 +147,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 09 | [Formulario de cotización (UI)](docs/steps/09-formulario.md) | 2. Formulario | 05, 06, 07 | DONE · 2026-10-27 · Teo · #27 |
 | 10 | [Envío y registro del lead](docs/steps/10-envio-lead.md) | 2. Formulario | 04, 06, 09 | DONE · 2026-10-27 · Teo · #28 |
 | 11 | [Anti-spam](docs/steps/11-anti-spam.md) | 2. Formulario | 10 | PENDIENTE |
-| 12 | [Atribución (UTM, gclid, página de entrada)](docs/steps/12-atribucion.md) | 2. Formulario | 10 | PENDIENTE |
+| 12 | [Atribución (UTM, gclid, página de entrada)](docs/steps/12-atribucion.md) | 2. Formulario | 10 | DONE · 2026-10-27 · Walter · #30 |
 | 13 | [Mensaje y link de WhatsApp](docs/steps/13-mensaje-whatsapp.md) | 3. WhatsApp | 06 | DONE · 2026-10-26 · Crove · #21 |
 | 14 | [Confirmación y derivación a WhatsApp](docs/steps/14-confirmacion-whatsapp.md) | 3. WhatsApp | 10, 13 | PENDIENTE |
 | 15 | [Login del panel](docs/steps/15-auth-admin.md) | 4. Panel | 02, 04 | DONE · 2026-10-26 · Walter · #26 |
