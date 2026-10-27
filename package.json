@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "admin:create": "tsx scripts/create-admin.ts",
     "db:up": "supabase start",
     "db:down": "supabase stop",
     "db:restart": "supabase stop && supabase start",
@@ -27,6 +28,8 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.0",
     "lucide-react": "^1.61.0",
