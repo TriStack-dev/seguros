@@ -3,6 +3,10 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { LeadForm } from "./lead-form";
+const { submitLead } = vi.hoisted(() => ({ submitLead: vi.fn() }));
+vi.mock("server-only", () => ({}));
+vi.mock("@/server/actions/submit-lead", () => ({ submitLead }));
+vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
 const brands = [
   { id: "auto-brand", name: "Fiat", vehicleType: "AUTO" as const },
@@ -78,11 +82,9 @@ describe("LeadForm", () => {
     await user.click(screen.getByRole("button", { name: "Auto" }));
     expect(screen.queryByLabelText("¿Tiene GNC?", { exact: true })).not.toBeInTheDocument();
   });
-  it("logs only schema-validated data and never performs a lead request", async () => {
+  it("submits validated data through the server action", async () => {
     const user = userEvent.setup();
-    const log = vi.spyOn(console, "log").mockImplementation(() => {});
-    const fetch = vi.fn();
-    vi.stubGlobal("fetch", fetch);
+    submitLead.mockResolvedValue({ ok: true, leadId: "lead-id", requestNumber: "MS-000123" });
     render(<LeadForm brands={[]} initialVehicleType="MOTO" />);
     for (const [label, value] of Object.entries({
       "Nombre y apellido": "Ana Pérez",
@@ -101,8 +103,8 @@ describe("LeadForm", () => {
     await user.selectOptions(screen.getByLabelText("Tipo de uso", { exact: true }), "DELIVERY");
     await user.click(screen.getByRole("checkbox", { name: /Acepto la política/ }));
     await user.click(screen.getByRole("button", { name: "Iniciar cotización" }));
-    await waitFor(() => expect(log).toHaveBeenCalledOnce());
-    expect(log.mock.calls[0]?.[0]).toMatchObject({
+    await waitFor(() => expect(submitLead).toHaveBeenCalledOnce());
+    expect(submitLead.mock.calls[0]?.[0]).toMatchObject({
       phone: "5493414123456",
       email: "ana@example.com",
       dni: "12345678",
@@ -113,6 +115,6 @@ describe("LeadForm", () => {
       brandOther: "Zanella",
       modelOther: "ZB 110",
     });
-    expect(fetch).not.toHaveBeenCalled();
+    expect(await screen.findByRole("status")).toHaveTextContent("MS-000123");
   });
 });

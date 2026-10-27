@@ -2,6 +2,8 @@ import { USAGE_LABELS } from "@/lib/constants";
 import type { LeadFormData } from "@/lib/validation/lead-form";
 import { formatPhoneForDisplay } from "@/lib/validation/normalizers";
 import { renderWhatsappTemplate } from "@/lib/whatsapp/message-template";
+import { formatRequestNumber } from "@/lib/leads/request-number";
+export { formatRequestNumber } from "@/lib/leads/request-number";
 
 /** Datos normalizados del lead (step 06) más los campos que resuelve quien crea el lead. */
 export type WhatsappLeadData = LeadFormData & {
@@ -14,11 +16,6 @@ export type WhatsappLeadData = LeadFormData & {
   /** Nombre del modelo resuelto (del catálogo o el texto libre de "Otro"). */
   modelName: string;
 };
-
-/** `123` → `MS-000123`; con más de 6 dígitos se muestra completo (`MS-1234567`). */
-export function formatRequestNumber(requestNumber: number): string {
-  return `MS-${String(requestNumber).padStart(6, "0")}`;
-}
 
 export function buildWhatsappMessage(data: WhatsappLeadData): string {
   const vehicle = [data.brandName, data.modelName, data.version, String(data.year)]
