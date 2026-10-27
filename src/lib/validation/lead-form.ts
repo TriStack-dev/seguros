@@ -58,12 +58,6 @@ const postalCodeSchema = z
     { message: "Ingresá un código postal válido" },
   );
 
-const versionSchema = z
-  .string()
-  .max(60, { message: "La versión puede tener hasta 60 caracteres" })
-  .optional()
-  .or(z.literal(""));
-
 const contactAndVehicleSchema = z
   .object({
     vehicleType: z.enum(VEHICLE_TYPES, { message: "Seleccioná el tipo de vehículo" }),
@@ -87,7 +81,6 @@ const contactAndVehicleSchema = z
       .max(60, { message: "El modelo puede tener hasta 60 caracteres" })
       .optional()
       .or(z.literal("")),
-    version: versionSchema,
     hasGnc: z.boolean().nullable().optional(),
     postalCode: postalCodeSchema,
     consent: z

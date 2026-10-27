@@ -7,7 +7,7 @@ Referencia para los steps. Cada step indica qué secciones leer.
 
 Un solo formulario para autos y motos. Las validaciones se aplican en el navegador y se repiten en el servidor con el mismo esquema Zod.
 
-Actualización del step 09 (2026-10-27): se muestran, en este orden, nombre y apellido, teléfono, email, patente, marca, modelo, año del vehículo, código postal, tipo de uso y DNI. Se mantienen el selector Auto/Moto y el consentimiento. No se solicitan versión, GNC ni condición de 0 km.
+Actualización del step 09 (2026-10-27): se muestran, en este orden, nombre y apellido, teléfono, email, patente, marca, modelo, año del vehículo, código postal, tipo de uso y DNI. Se mantienen el selector Auto/Moto y el consentimiento. Se recuperan Es 0 km y GNC (solo autos); no se solicita versión.
 
 | Campo (código) | Etiqueta | Obligatorio | Regla |
 | --- | --- | --- | --- |
@@ -16,7 +16,9 @@ Actualización del step 09 (2026-10-27): se muestran, en este orden, nombre y ap
 | `phone` | Teléfono | Sí | Un solo campo con código de área y número; ver 2.2 |
 | `email` | Email | Sí | Email válido; se guarda en minúsculas y sin espacios |
 | `dni` | DNI | Sí | Ver 2.3 |
-| `plate` | Patente | Sí | Ver 2.4 |
+| `isZeroKm` | Es 0 km | No | Permite omitir patente |
+| `plate` | Patente | Salvo 0 km | Ver 2.4 |
+| `hasGnc` | ¿Tiene GNC? | No | Solo autos; Sí/No; sin respuesta y motos: null |
 | `brandId` / `brandOther` | Marca | Sí | Elegida del catálogo o "Otro" con texto libre (2 a 40 caracteres) |
 | `modelId` / `modelOther` | Modelo | Sí | Elegido del catálogo (filtrado por marca) o "Otro" con texto libre (1 a 60 caracteres). Si la marca es "Otro", el modelo es siempre texto libre |
 | `year` | Año | Sí | Ver 2.5 |
@@ -43,6 +45,8 @@ Actualización del step 09 (2026-10-27): se muestran, en este orden, nombre y ap
 - 7 u 8 dígitos. Se quitan puntos y espacios antes de validar. Se guarda solo con dígitos.
 
 ### 2.4 Patente
+Al marcar 0 km se oculta y limpia la patente; se guarda null. Al desmarcarlo vuelve a ser obligatoria.
+
 Se guarda en mayúsculas, sin espacios ni guiones. Formatos válidos según el tipo de vehículo:
 
 | Tipo | Formato viejo | Formato Mercosur |

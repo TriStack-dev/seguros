@@ -12,7 +12,6 @@ const validBase = {
   plate: "AA123BB",
   brandId: "brand-1",
   modelId: "model-1",
-  version: "1.6",
   year: 2020,
   hasGnc: false,
   postalCode: "2000",

@@ -58,7 +58,6 @@ model Lead {
   modelId     String?       @db.Uuid
   model       VehicleModel? @relation(fields: [modelId], references: [id])
   modelName   String
-  version     String?
   year        Int
   hasGnc      Boolean?
   postalCode  String

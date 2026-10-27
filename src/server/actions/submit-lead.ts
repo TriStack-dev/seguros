@@ -3,11 +3,7 @@
 import { db } from "@/lib/db";
 import { formatRequestNumber } from "@/lib/leads/request-number";
 import { DATABASE_ERROR_MESSAGE, type SubmitLeadResult } from "@/lib/leads/submit-result";
-import {
-  leadFormSchema,
-  type LeadFormData,
-  type LeadFormInput,
-} from "@/lib/validation/lead-form";
+import { leadFormSchema, type LeadFormData, type LeadFormInput } from "@/lib/validation/lead-form";
 
 const fakeSuccess: SubmitLeadResult = {
   ok: true,
@@ -74,12 +70,11 @@ export async function submitLead(input: LeadFormInput): Promise<SubmitLeadResult
           email: data.email,
           dni: data.dni,
           isZeroKm: data.isZeroKm,
-          plate: data.isZeroKm && !data.plateNormalized ? null : data.plateNormalized ?? null,
+          plate: data.isZeroKm && !data.plateNormalized ? null : (data.plateNormalized ?? null),
           brandId,
           brandName,
           modelId,
           modelName,
-          version: data.version || null,
           year: data.year,
           hasGnc: data.hasGnc ?? null,
           postalCode: data.postalCode,
