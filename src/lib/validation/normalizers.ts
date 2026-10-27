@@ -69,6 +69,22 @@ export function normalizePhone(area: string, number: string): string {
   return `549${a}${n}`;
 }
 
+// A combined number does not reveal where the area code ends. Validate the
+// complete national number instead of inventing an area/number split.
+export function normalizeFullPhone(value: string): string {
+  let digits = value.replace(/[\s().+-]/g, "");
+  if (digits.length === 13 && digits.startsWith("549")) digits = digits.slice(3);
+  else if (digits.length === 12 && digits.startsWith("54")) digits = digits.slice(2);
+  else if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
+  if (!/^\d{10}$/.test(digits)) {
+    throw new ValidationError(
+      "Ingresá un teléfono con código de área (10 dígitos, sin 15)",
+      "full_phone_invalid",
+    );
+  }
+  return `549${digits}`;
+}
+
 export function formatPhoneForDisplay(phone: string): string {
   if (!phone) return "";
   // expect 549 + area + number
