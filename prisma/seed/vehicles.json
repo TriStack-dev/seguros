@@ -1,0 +1,1051 @@
+{
+  "version": "2026-10-26",
+  "sources": [
+    "Elaboración propia a partir de los rankings de patentamientos de ACARA (autos) y de ACARA División Motovehículos / SIOMAA (motos) de los últimos años.",
+    "Sitios oficiales de cada marca y catálogos de concesionarias de Argentina.",
+    "Carga hecha sin acceso web: los modelos se armaron con conocimiento del mercado argentino de los últimos ~25 años. Antes de reemplazar el catálogo por una fuente paga (InfoAuto), revisarlo contra ella."
+  ],
+  "AUTO": [
+    {
+      "name": "Alfa Romeo",
+      "models": ["147", "156", "159", "Brera", "Giulia", "Giulietta", "MiTo", "Stelvio"]
+    },
+    {
+      "name": "Audi",
+      "models": ["A1", "A3", "A4", "A5", "A6", "A7", "e-tron", "Q3", "Q5", "Q7", "Q8", "TT"]
+    },
+    {
+      "name": "BAIC",
+      "models": ["BJ40", "D20", "X25", "X35", "X55"]
+    },
+    {
+      "name": "BMW",
+      "models": [
+        "i3",
+        "iX",
+        "M3",
+        "M4",
+        "Serie 1",
+        "Serie 2",
+        "Serie 3",
+        "Serie 4",
+        "Serie 5",
+        "Serie 7",
+        "X1",
+        "X2",
+        "X3",
+        "X4",
+        "X5",
+        "X6",
+        "X7",
+        "Z4"
+      ]
+    },
+    {
+      "name": "BYD",
+      "models": [
+        "Dolphin",
+        "Dolphin Mini",
+        "e2",
+        "Han",
+        "Seal",
+        "Seal U",
+        "Song Plus",
+        "Tang",
+        "Yuan Plus"
+      ]
+    },
+    {
+      "name": "Chery",
+      "models": [
+        "Arrizo 5",
+        "Arrizo 6",
+        "QQ",
+        "Tiggo 2",
+        "Tiggo 3",
+        "Tiggo 4",
+        "Tiggo 5",
+        "Tiggo 7",
+        "Tiggo 8"
+      ]
+    },
+    {
+      "name": "Chevrolet",
+      "models": [
+        "Agile",
+        "Astra",
+        "Aveo",
+        "Blazer",
+        "Camaro",
+        "Captiva",
+        "Cavalier",
+        "Classic",
+        "Cobalt",
+        "Corsa",
+        "Cruze",
+        "Equinox",
+        "Joy",
+        "Meriva",
+        "Montana",
+        "Onix",
+        "Onix Plus",
+        "Orlando",
+        "Prisma",
+        "S10",
+        "Silverado",
+        "Sonic",
+        "Spark",
+        "Spark GT",
+        "Spin",
+        "Tracker",
+        "Trailblazer",
+        "Trax",
+        "Vectra",
+        "Zafira"
+      ]
+    },
+    {
+      "name": "Chrysler",
+      "models": ["300C", "Grand Voyager", "Neon", "PT Cruiser", "Sebring", "Town & Country"]
+    },
+    {
+      "name": "Citroën",
+      "models": [
+        "Basalt",
+        "Berlingo",
+        "C3",
+        "C3 Aircross",
+        "C4",
+        "C4 Cactus",
+        "C4 Lounge",
+        "C4 Picasso",
+        "C5",
+        "C5 Aircross",
+        "Elysee",
+        "Jumper",
+        "Jumpy",
+        "Saxo",
+        "Xsara",
+        "Xsara Picasso"
+      ]
+    },
+    {
+      "name": "Dodge",
+      "models": ["Caliber", "Durango", "Journey", "Nitro"]
+    },
+    {
+      "name": "Dongfeng",
+      "models": ["AX7", "H30 Cross", "S30"]
+    },
+    {
+      "name": "DS",
+      "models": ["DS 3", "DS 4", "DS 5", "DS 7 Crossback"]
+    },
+    {
+      "name": "Fiat",
+      "models": [
+        "500",
+        "500X",
+        "Argo",
+        "Cronos",
+        "Doblò",
+        "Ducato",
+        "Fastback",
+        "Fiorino",
+        "Idea",
+        "Linea",
+        "Mobi",
+        "Palio",
+        "Pulse",
+        "Punto",
+        "Qubo",
+        "Scudo",
+        "Siena",
+        "Stilo",
+        "Strada",
+        "Tipo",
+        "Toro",
+        "Uno",
+        "Viaggio"
+      ]
+    },
+    {
+      "name": "Ford",
+      "models": [
+        "Bronco",
+        "Bronco Sport",
+        "EcoSport",
+        "Edge",
+        "Escort",
+        "Explorer",
+        "F-100",
+        "F-150",
+        "Fiesta",
+        "Focus",
+        "Galaxy",
+        "Ka",
+        "Kuga",
+        "Maverick",
+        "Mondeo",
+        "Mustang",
+        "Ranger",
+        "S-Max",
+        "Territory",
+        "Transit"
+      ]
+    },
+    {
+      "name": "Foton",
+      "models": ["Gratour", "Sauvana", "Tunland", "View"]
+    },
+    {
+      "name": "Geely",
+      "models": ["Coolray", "Emgrand", "Emgrand X7", "GC6", "MK"]
+    },
+    {
+      "name": "GWM",
+      "models": ["Poer", "Wingle 5", "Wingle 7"]
+    },
+    {
+      "name": "Haval",
+      "models": ["H1", "H2", "H6", "H9", "Jolion"]
+    },
+    {
+      "name": "Honda",
+      "models": [
+        "Accord",
+        "City",
+        "Civic",
+        "CR-V",
+        "CR-Z",
+        "Element",
+        "Fit",
+        "HR-V",
+        "Insight",
+        "Odyssey",
+        "Pilot",
+        "WR-V",
+        "ZR-V"
+      ]
+    },
+    {
+      "name": "Hyundai",
+      "models": [
+        "Accent",
+        "Atos",
+        "Creta",
+        "Elantra",
+        "Excel",
+        "Galloper",
+        "Grand i10",
+        "H1",
+        "i10",
+        "i20",
+        "i30",
+        "Ioniq",
+        "Kona",
+        "Santa Fe",
+        "Sonata",
+        "Terracan",
+        "Tiburon",
+        "Tucson",
+        "Veloster",
+        "Veracruz",
+        "Verna"
+      ]
+    },
+    {
+      "name": "Isuzu",
+      "models": ["D-Max", "MU-X", "Trooper"]
+    },
+    {
+      "name": "Iveco",
+      "models": ["Daily"]
+    },
+    {
+      "name": "JAC",
+      "models": ["J2", "J3", "J4", "S2", "S3", "S5", "T6", "T8"]
+    },
+    {
+      "name": "Jaguar",
+      "models": ["E-Pace", "F-Pace", "F-Type", "I-Pace", "S-Type", "X-Type", "XE", "XF", "XJ"]
+    },
+    {
+      "name": "Jeep",
+      "models": [
+        "Avenger",
+        "Cherokee",
+        "Commander",
+        "Compass",
+        "Gladiator",
+        "Grand Cherokee",
+        "Liberty",
+        "Patriot",
+        "Renegade",
+        "Wrangler"
+      ]
+    },
+    {
+      "name": "JMC",
+      "models": ["Boarding", "Carrying", "Convey", "Vigus"]
+    },
+    {
+      "name": "Kia",
+      "models": [
+        "Carens",
+        "Carnival",
+        "Cerato",
+        "Forte",
+        "K2700",
+        "Morning",
+        "Optima",
+        "Picanto",
+        "Rio",
+        "Seltos",
+        "Sorento",
+        "Soul",
+        "Sportage",
+        "Stinger"
+      ]
+    },
+    {
+      "name": "Land Rover",
+      "models": [
+        "Defender",
+        "Discovery",
+        "Discovery Sport",
+        "Freelander",
+        "LR2",
+        "LR4",
+        "Range Rover",
+        "Range Rover Evoque",
+        "Range Rover Sport",
+        "Range Rover Velar"
+      ]
+    },
+    {
+      "name": "Lexus",
+      "models": ["CT", "ES", "GS", "IS", "LS", "LX", "NX", "RX", "UX"]
+    },
+    {
+      "name": "Lifan",
+      "models": ["320", "520", "620", "720", "Foison", "Myway", "X50", "X60"]
+    },
+    {
+      "name": "Maserati",
+      "models": ["Ghibli", "GranCabrio", "GranTurismo", "Levante", "Quattroporte"]
+    },
+    {
+      "name": "Mazda",
+      "models": ["2", "3", "5", "6", "BT-50", "CX-3", "CX-30", "CX-5", "CX-7", "CX-9", "MX-5"]
+    },
+    {
+      "name": "Mercedes-Benz",
+      "models": [
+        "CLA",
+        "Clase A",
+        "Clase B",
+        "Clase C",
+        "Clase E",
+        "Clase G",
+        "Clase GLA",
+        "Clase GLB",
+        "Clase GLC",
+        "Clase GLE",
+        "Clase GLS",
+        "Clase M",
+        "Clase S",
+        "Clase V",
+        "Clase X",
+        "CLK",
+        "CLS",
+        "SLK",
+        "Sprinter",
+        "Vito"
+      ]
+    },
+    {
+      "name": "Mini",
+      "models": ["Cabrio", "Clubman", "Cooper", "Countryman", "Paceman"]
+    },
+    {
+      "name": "Mitsubishi",
+      "models": [
+        "ASX",
+        "Eclipse Cross",
+        "L200",
+        "Lancer",
+        "Montero",
+        "Outlander",
+        "Pajero",
+        "Space Star"
+      ]
+    },
+    {
+      "name": "Nissan",
+      "models": [
+        "350Z",
+        "370Z",
+        "Almera",
+        "Frontier",
+        "Kicks",
+        "Leaf",
+        "March",
+        "Murano",
+        "Navara",
+        "Note",
+        "Pathfinder",
+        "Pickup",
+        "Platina",
+        "Sentra",
+        "Sunny",
+        "Tiida",
+        "Versa",
+        "X-Trail",
+        "Xterra"
+      ]
+    },
+    {
+      "name": "Peugeot",
+      "models": [
+        "106",
+        "2008",
+        "206",
+        "207",
+        "208",
+        "3008",
+        "301",
+        "307",
+        "308",
+        "4008",
+        "408",
+        "5008",
+        "508",
+        "Bipper",
+        "Boxer",
+        "Expert",
+        "Partner",
+        "RCZ",
+        "Rifter"
+      ]
+    },
+    {
+      "name": "Porsche",
+      "models": ["718", "911", "Boxster", "Cayenne", "Cayman", "Macan", "Panamera", "Taycan"]
+    },
+    {
+      "name": "RAM",
+      "models": ["1500", "2500", "7000", "Rampage"]
+    },
+    {
+      "name": "Renault",
+      "models": [
+        "Alaskan",
+        "Captur",
+        "Clio",
+        "Duster",
+        "Fluence",
+        "Kangoo",
+        "Koleos",
+        "Kwid",
+        "Logan",
+        "Master",
+        "Megane",
+        "Oroch",
+        "Sandero",
+        "Scenic",
+        "Stepway",
+        "Symbol",
+        "Trafic",
+        "Twingo"
+      ]
+    },
+    {
+      "name": "Seat",
+      "models": ["Altea", "Ateca", "Cordoba", "Ibiza", "Leon", "Toledo"]
+    },
+    {
+      "name": "Subaru",
+      "models": ["BRZ", "Forester", "Impreza", "Legacy", "Outback", "WRX", "XV"]
+    },
+    {
+      "name": "Suzuki",
+      "models": [
+        "Alto",
+        "Baleno",
+        "Celerio",
+        "Dzire",
+        "Fun",
+        "Grand Vitara",
+        "Ignis",
+        "Jimny",
+        "Samurai",
+        "Swift",
+        "SX4",
+        "Vitara"
+      ]
+    },
+    {
+      "name": "Tesla",
+      "models": ["Model 3", "Model S", "Model X", "Model Y"]
+    },
+    {
+      "name": "Toyota",
+      "models": [
+        "4Runner",
+        "Camry",
+        "Corolla",
+        "Corolla Cross",
+        "Etios",
+        "FJ Cruiser",
+        "Fortuner",
+        "Hiace",
+        "Hilux",
+        "Land Cruiser",
+        "Prius",
+        "RAV4",
+        "Sienna",
+        "SW4",
+        "Tundra",
+        "Vitz",
+        "Yaris",
+        "Yaris Cross"
+      ]
+    },
+    {
+      "name": "Volkswagen",
+      "models": [
+        "Amarok",
+        "Beetle",
+        "Bora",
+        "CC",
+        "Fox",
+        "Gol",
+        "Golf",
+        "Jetta",
+        "Kombi",
+        "Lupo",
+        "Nivus",
+        "Passat",
+        "Polo",
+        "Saveiro",
+        "Scirocco",
+        "Sharan",
+        "Suran",
+        "T-Cross",
+        "Taos",
+        "Tiguan",
+        "Touareg",
+        "Up",
+        "Vento",
+        "Virtus",
+        "Voyage"
+      ]
+    },
+    {
+      "name": "Volvo",
+      "models": ["C30", "C40", "S40", "S60", "S80", "S90", "V40", "V60", "XC40", "XC60", "XC90"]
+    }
+  ],
+  "MOTO": [
+    {
+      "name": "Aprilia",
+      "models": [
+        "Classic 125",
+        "RS 660",
+        "RSV4",
+        "RX 125",
+        "SR 160",
+        "SX 125",
+        "Tuareg 660",
+        "Tuono 660"
+      ]
+    },
+    {
+      "name": "Bajaj",
+      "models": [
+        "Avenger 220",
+        "Boxer CT 100",
+        "CT 100",
+        "Discover 150",
+        "Dominar 400",
+        "Platina 100",
+        "Pulsar 150",
+        "Pulsar 180",
+        "Pulsar 200 NS",
+        "Rouser 125",
+        "Rouser 135",
+        "Rouser 200",
+        "Rouser 220",
+        "Rouser 400"
+      ]
+    },
+    {
+      "name": "Benelli",
+      "models": [
+        "302S",
+        "502C",
+        "BN 125",
+        "Imperiale 400",
+        "Leoncino 250",
+        "Leoncino 500",
+        "TNT 135",
+        "TNT 15",
+        "TNT 25",
+        "TNT 300",
+        "TNT 600",
+        "TRK 251",
+        "TRK 502",
+        "TRK 702"
+      ]
+    },
+    {
+      "name": "Beta",
+      "models": [
+        "125 RR",
+        "200 RR",
+        "250 RR",
+        "300 RR",
+        "350 RR",
+        "390 RR",
+        "430 RR",
+        "480 RR",
+        "Xtrainer 300"
+      ]
+    },
+    {
+      "name": "BMW",
+      "models": [
+        "C 400 GT",
+        "CE 04",
+        "F 750 GS",
+        "F 850 GS",
+        "F 900 R",
+        "F 900 XR",
+        "G 310 GS",
+        "G 310 R",
+        "R 1250 GS",
+        "R 1250 R",
+        "R nineT",
+        "S 1000 RR",
+        "S 1000 XR"
+      ]
+    },
+    {
+      "name": "Brava",
+      "models": ["Altino 110", "Kansas 150", "Nevada 150"]
+    },
+    {
+      "name": "CFMoto",
+      "models": [
+        "150 NK",
+        "250 NK",
+        "250 SR",
+        "300 NK",
+        "300 SR",
+        "400 NK",
+        "450 MT",
+        "450 SR",
+        "650 GT",
+        "650 MT",
+        "650 NK",
+        "700 CL-X",
+        "700 MT",
+        "800 MT",
+        "800 NK"
+      ]
+    },
+    {
+      "name": "Corven",
+      "models": [
+        "Dakar 200",
+        "Energy 110",
+        "Hunter 150",
+        "JAG 200",
+        "Mirage 110",
+        "Texas 150",
+        "Touring 250",
+        "Triax 150",
+        "Triax 200"
+      ]
+    },
+    {
+      "name": "Ducati",
+      "models": [
+        "DesertX",
+        "Diavel V4",
+        "Hypermotard 950",
+        "Monster",
+        "Multistrada V2",
+        "Multistrada V4",
+        "Panigale V2",
+        "Panigale V4",
+        "Scrambler Full Throttle",
+        "Scrambler Icon",
+        "Streetfighter V4",
+        "Supersport 950"
+      ]
+    },
+    {
+      "name": "Gilera",
+      "models": ["IG 150", "Smash 110", "Smash 125", "VC 150"]
+    },
+    {
+      "name": "Guerrero",
+      "models": ["GMR 200", "GMX 150", "GTM 200", "GXL 150", "GXR 150", "GXT 200"]
+    },
+    {
+      "name": "Harley-Davidson",
+      "models": [
+        "CVO Street Glide",
+        "Nightster",
+        "Pan America 1250",
+        "Softail Fat Boy",
+        "Softail Heritage Classic",
+        "Softail Street Bob",
+        "Sportster Forty-Eight",
+        "Sportster Iron 883",
+        "Sportster S",
+        "Touring Electra Glide",
+        "Touring Road King",
+        "Touring Street Glide"
+      ]
+    },
+    {
+      "name": "Hero",
+      "models": [
+        "Dash 110",
+        "Dash 125",
+        "Eco 100",
+        "Glamour 125",
+        "Hunk 150",
+        "Ignitor 125",
+        "Splendor 100",
+        "Xpulse 200",
+        "Xtreme 200"
+      ]
+    },
+    {
+      "name": "Honda",
+      "models": [
+        "ADV 150",
+        "Africa Twin",
+        "Biz 110",
+        "Biz 125",
+        "CB 110",
+        "CB 190 R",
+        "CB 250 Twister",
+        "CB 300 R",
+        "CBR 250 R",
+        "CBR 300 R",
+        "CBR 500 R",
+        "CBR 650 R",
+        "CG 150 Titan",
+        "CG 160 Fan",
+        "CG 160 Titan",
+        "Elite 125",
+        "Forza 350",
+        "NX 190",
+        "NX 400",
+        "PCX 150",
+        "Wave 110",
+        "Wave 125",
+        "X-ADV",
+        "XR 150 L",
+        "XR 190 L",
+        "XR 250 Tornado",
+        "XR 300 L Tornado"
+      ]
+    },
+    {
+      "name": "Husqvarna",
+      "models": [
+        "FC 250",
+        "FC 450",
+        "FE 250",
+        "FE 350",
+        "FE 450",
+        "Norden 901",
+        "Svartpilen 200",
+        "Svartpilen 250",
+        "Svartpilen 401",
+        "TE 250",
+        "TE 300",
+        "Vitpilen 250",
+        "Vitpilen 401"
+      ]
+    },
+    {
+      "name": "Kawasaki",
+      "models": [
+        "KLR 650",
+        "KLX 300",
+        "Ninja 250",
+        "Ninja 300",
+        "Ninja 400",
+        "Ninja 650",
+        "Ninja ZX-10R",
+        "Ninja ZX-6R",
+        "Versys 1000",
+        "Versys 300",
+        "Versys 650",
+        "Vulcan S",
+        "W 800",
+        "Z 250",
+        "Z 400",
+        "Z 650",
+        "Z 900"
+      ]
+    },
+    {
+      "name": "Keller",
+      "models": ["Classic 110", "Crono 110", "Strato 110"]
+    },
+    {
+      "name": "KTM",
+      "models": [
+        "250 EXC",
+        "300 EXC",
+        "450 EXC-F",
+        "Adventure 250",
+        "Adventure 390",
+        "Adventure 790",
+        "Adventure 890",
+        "Duke 200",
+        "Duke 250",
+        "Duke 390",
+        "Duke 790",
+        "Duke 890",
+        "Freeride 350",
+        "RC 200",
+        "RC 390"
+      ]
+    },
+    {
+      "name": "Kymco",
+      "models": [
+        "Agility 125",
+        "Agility 200",
+        "AK 550",
+        "Downtown 350",
+        "K-Pipe 125",
+        "Like 125",
+        "Like 200",
+        "Visión 110",
+        "Xciting 400"
+      ]
+    },
+    {
+      "name": "Lifan",
+      "models": ["City 150", "KPR 150", "KPR 200", "LF 110", "LF 125", "LF 150", "Pony 100"]
+    },
+    {
+      "name": "Mondial",
+      "models": ["LD 110", "LD 150", "Max 150"]
+    },
+    {
+      "name": "Motomel",
+      "models": [
+        "Blitz 110",
+        "C 110",
+        "Max 150",
+        "S2 150",
+        "S3 250",
+        "Skua 150",
+        "Skua 200",
+        "Skua 250",
+        "Strato 150"
+      ]
+    },
+    {
+      "name": "Royal Enfield",
+      "models": [
+        "Bullet 350",
+        "Classic 350",
+        "Continental GT 650",
+        "Himalayan 450",
+        "Hunter 350",
+        "Interceptor 650",
+        "Meteor 350",
+        "Scram 411",
+        "Super Meteor 650"
+      ]
+    },
+    {
+      "name": "Siambretta",
+      "models": ["125", "150"]
+    },
+    {
+      "name": "Suzuki",
+      "models": [
+        "Address 110",
+        "Avenis 125",
+        "AX 100",
+        "AX 115",
+        "Best 125",
+        "Boulevard M800",
+        "Burgman 400",
+        "DR 160",
+        "DR 200",
+        "EN 125",
+        "Gixxer 150",
+        "Gixxer 250",
+        "GN 125",
+        "GSX-R 1000",
+        "GSX-R 150",
+        "GSX-R 600",
+        "GSX-S 750",
+        "Intruder 150",
+        "Intruder 800",
+        "Let's 110",
+        "V-Strom 1050",
+        "V-Strom 250",
+        "V-Strom 650"
+      ]
+    },
+    {
+      "name": "SYM",
+      "models": [
+        "Cruisym 250",
+        "Fiddle 200",
+        "Joymax 300",
+        "Maxsym 400",
+        "NH T 125",
+        "Symphony 150"
+      ]
+    },
+    {
+      "name": "Triumph",
+      "models": [
+        "Bonneville T100",
+        "Bonneville T120",
+        "Rocket 3",
+        "Scrambler 1200",
+        "Scrambler 900",
+        "Speed Triple 1200",
+        "Speed Twin 1200",
+        "Speed Twin 900",
+        "Street Triple 675",
+        "Street Triple 765",
+        "Thruxton RS",
+        "Tiger 1200",
+        "Tiger 660",
+        "Tiger 900",
+        "Trident 660"
+      ]
+    },
+    {
+      "name": "TVS",
+      "models": [
+        "Apache RR 310",
+        "Apache RTR 160",
+        "Apache RTR 200",
+        "Jupiter 125",
+        "Ntorq 125",
+        "Raider 125",
+        "Ronin 225",
+        "Sport 110",
+        "Star City 110",
+        "XL 100"
+      ]
+    },
+    {
+      "name": "Vespa",
+      "models": [
+        "Elettrica",
+        "GTS 300",
+        "GTV 300",
+        "LX 125",
+        "LX 150",
+        "Primavera 125",
+        "Primavera 150",
+        "S 125",
+        "Sprint 125",
+        "Sprint 150"
+      ]
+    },
+    {
+      "name": "Voge",
+      "models": [
+        "125 AC",
+        "250 RR",
+        "300 AC",
+        "300 DS",
+        "300 Rally",
+        "300 RR",
+        "500 AC",
+        "500 DS",
+        "525 ACX",
+        "525 DSX",
+        "650 DS",
+        "900 DS"
+      ]
+    },
+    {
+      "name": "Yamaha",
+      "models": [
+        "Aerox 155",
+        "Crypton 110",
+        "Fazer 250",
+        "Fino 125",
+        "FZ 150",
+        "FZ 16",
+        "FZ 25",
+        "MT-03",
+        "MT-07",
+        "MT-09",
+        "MT-15",
+        "NMAX 155",
+        "PW 50",
+        "R1",
+        "R3",
+        "R6",
+        "Ray ZR 125",
+        "TMAX 560",
+        "TT-R 230",
+        "WR 250",
+        "XMAX 250",
+        "XMAX 300",
+        "XTZ 1200",
+        "XTZ 125",
+        "XTZ 150",
+        "XTZ 250",
+        "XTZ 660",
+        "YBR 125",
+        "YBR 250"
+      ]
+    },
+    {
+      "name": "Zanella",
+      "models": [
+        "CZ 150",
+        "Due 110",
+        "Exclusive 150",
+        "Patagonia 150",
+        "Patagonia 250",
+        "RX 150",
+        "RX 200",
+        "Sapucai 150",
+        "Styler 125",
+        "Styler 150",
+        "ZR 150",
+        "ZR 200"
+      ]
+    },
+    {
+      "name": "Zontes",
+      "models": [
+        "ZT 310 R",
+        "ZT 310 T",
+        "ZT 310 X",
+        "ZT 350 R",
+        "ZT 350 T",
+        "ZT 350 X",
+        "ZT 550 R",
+        "ZT 550 T",
+        "ZT 700 T",
+        "ZT 703 F"
+      ]
+    }
+  ]
+}
