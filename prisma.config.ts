@@ -9,6 +9,8 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
+    // `prisma db seed`. tsx ejecuta TypeScript sin compilar aparte.
+    seed: "tsx prisma/seed/seed.ts",
   },
   datasource: {
     // La CLI (migrate, studio) usa la conexión directa, nunca el pooler.

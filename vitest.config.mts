@@ -19,6 +19,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    include: ["src/**/*.test.{ts,tsx}"],
+    // Los tests del seed viven junto al JSON que validan, fuera de src/.
+    include: ["src/**/*.test.{ts,tsx}", "prisma/**/*.test.ts"],
   },
 });

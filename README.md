@@ -232,6 +232,33 @@ mano o en el build de Vercel se decide en el step 26.
    `[studio]`, etc.) **solo en tu copia, sin commitearlo**, y ajustá las URLs de tu
    `.env.local`.
 
+### Catálogo de vehículos
+
+[`prisma/seed/vehicles.json`](prisma/seed/vehicles.json) es el catálogo [PROVISORIO] de
+marcas y modelos que alimentan los selects del formulario. Se versiona en el repo y se carga
+en la base con:
+
+```bash
+pnpm db:seed         # prisma db seed (usa tsx, no hace falta compilar)
+```
+
+Es idempotente: hace upsert por slug en marcas y modelos, así que se puede correr las veces
+que haga falta sin duplicar filas. No borra lo que ya no está en el JSON porque puede tener
+leads asociados: lo lista por consola para revisarlo a mano.
+
+Para actualizar el catálogo:
+
+1. Editá `prisma/seed/vehicles.json`: marcas con sus modelos, en la grafía oficial, sin año
+   ni versión (las variantes muy distintas van separadas: "Hilux" y "SW4").
+2. Cambiá `version` a la fecha del cambio (`AAAA-MM-DD`) y actualizá `sources` si sumaste
+   fuentes.
+3. Corré `pnpm db:seed` en cada entorno donde tenga que estar el catálogo actualizado.
+4. `pnpm test` valida el JSON antes de cargarlo: estructura, mínimos de marcas, duplicados
+   por slug, orden alfabético y el top 10 de patentamientos.
+
+Los nombres se guardan con slug (`fiat`, `cronos`; sin acentos ni mayúsculas) para que un
+cambio de grafía no duplique la fila.
+
 ## Variables de entorno
 
 Se declaran en [`.env.example`](.env.example) con un comentario de qué son y dónde se
@@ -270,6 +297,7 @@ pnpm db:restart      # reinicia Supabase local
 pnpm db:status       # URLs y claves de Supabase local
 pnpm db:migrate      # aplica y crea migraciones en local (prisma migrate dev)
 pnpm db:deploy       # aplica migraciones en staging y producción (prisma migrate deploy)
+pnpm db:seed         # carga el catálogo de vehículos (prisma db seed)
 pnpm db:studio       # Prisma Studio
 pnpm db:generate     # regenera el cliente de Prisma
 ```
