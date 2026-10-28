@@ -87,3 +87,7 @@ Se simplificaron los campos y unificó el teléfono por pedido y confirmación d
 - Verificación del catálogo contra una base real: este entorno no tiene `DATABASE_URL` configurada. Se verificó la respuesta de fallback y las consultas con mocks, no conectividad ni seed real.
 - PR [#27](https://github.com/TriStack-dev/seguros/pull/27) publicado por autorización explícita del usuario; CI en verde en [run 40574824788](https://github.com/TriStack-dev/seguros/actions/runs/40574824788), para el commit `c1d49f1`: instalación, lint, typecheck, tests y build.
 - Advertencia preexistente de Next Image por `quality=80` fuera de `images.qualities`, observada en desarrollo; fuera del alcance del step.
+
+### Corrección de patente para 0 km (2026-10-28)
+
+El campo Patente permanece visible y conserva su valor al alternar «Es 0 km». Para 0 km se indica como opcional; para usados sigue siendo obligatorio. La validación existente exige un formato válido cuando se informa una patente. No requiere migración: `Lead.plate` ya admite `null` y la acción conserva las patentes informadas.

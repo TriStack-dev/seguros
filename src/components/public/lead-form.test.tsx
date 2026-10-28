@@ -121,14 +121,24 @@ describe("LeadForm", () => {
   });
 });
 
-it("clears the plate for zero km and requires it again when unchecked", async () => {
+it("keeps the plate visible and preserves its value when toggling zero km", async () => {
   const user = userEvent.setup();
   render(<LeadForm brands={[]} />);
   await user.type(screen.getByLabelText("Patente", { exact: true }), "AA123BB");
   await user.click(screen.getByRole("checkbox", { name: "Es 0 km" }));
-  expect(screen.queryByLabelText("Patente", { exact: true })).not.toBeInTheDocument();
+  expect(screen.getByLabelText("Patente (opcional)", { exact: true })).toHaveValue("AA123BB");
   await user.click(screen.getByRole("checkbox", { name: "Es 0 km" }));
-  expect(screen.getByLabelText("Patente", { exact: true })).toHaveValue("");
+  expect(screen.getByLabelText("Patente", { exact: true })).toHaveValue("AA123BB");
+});
+
+it("allows an empty plate only while zero km is checked", async () => {
+  const user = userEvent.setup();
+  render(<LeadForm brands={[]} />);
+  await user.click(screen.getByRole("checkbox", { name: "Es 0 km" }));
+  await user.click(screen.getByRole("button", { name: "Iniciar cotización" }));
+  expect(await screen.findByText(/Ingresá nombre y apellido válidos/)).toBeInTheDocument();
+  expect(screen.queryByText("Ingresá la patente")).not.toBeInTheDocument();
+  await user.click(screen.getByRole("checkbox", { name: "Es 0 km" }));
   await user.click(screen.getByRole("button", { name: "Iniciar cotización" }));
   expect(await screen.findByText("Ingresá la patente")).toBeInTheDocument();
 });
