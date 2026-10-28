@@ -10,12 +10,17 @@ import { parseAttributionCookie } from "@/lib/attribution";
 import { checkRateLimit } from "@/lib/anti-spam/rate-limit";
 import { verifyTurnstile } from "@/lib/anti-spam/turnstile";
 import { RATE_LIMIT_MESSAGE, TURNSTILE_ERROR_MESSAGE } from "@/lib/anti-spam/constants";
+import { buildWhatsappMessage } from "@/lib/whatsapp/build-message";
+import { buildWhatsappLink } from "@/lib/whatsapp/build-link";
 
-const fakeSuccess: SubmitLeadResult = {
-  ok: true,
-  leadId: "discarded",
-  requestNumber: "MS-000000",
-};
+function createFakeSuccess(): SubmitLeadResult {
+  const message = "¡Hola! Quiero cotizar un seguro.";
+  const configuredNumber = process.env.WHATSAPP_NUMBER;
+  const whatsappUrl = configuredNumber
+    ? buildWhatsappLink(configuredNumber, message)
+    : `https://wa.me/?text=${encodeURIComponent(message)}`;
+  return { ok: true, leadId: "discarded", requestNumber: "MS-000000", whatsappUrl };
+}
 
 export async function submitLead(input: LeadFormInput, token?: string): Promise<SubmitLeadResult> {
   try {
@@ -31,7 +36,7 @@ export async function submitLead(input: LeadFormInput, token?: string): Promise<
   }
 
   // Keep spam submissions indistinguishable from successful ones and never persist them.
-  if (typeof input?.website === "string" && input.website.trim() !== "") return fakeSuccess;
+  if (typeof input?.website === "string" && input.website.trim() !== "") return createFakeSuccess();
 
   const parsed = leadFormSchema.safeParse(input);
   if (!parsed.success) {
@@ -43,6 +48,13 @@ export async function submitLead(input: LeadFormInput, token?: string): Promise<
   }
 
   const data = parsed.data as LeadFormData;
+  const whatsappNumber = process.env.WHATSAPP_NUMBER;
+  try {
+    if (!whatsappNumber) throw new Error("Missing WhatsApp number");
+    buildWhatsappLink(whatsappNumber, "");
+  } catch {
+    return { ok: false, message: DATABASE_ERROR_MESSAGE };
+  }
   const brandId = data.brandId?.trim() || null;
   const modelId = brandId ? data.modelId?.trim() || null : null;
   let brandName = data.brandOther?.trim() ?? "";
@@ -123,10 +135,23 @@ export async function submitLead(input: LeadFormInput, token?: string): Promise<
       return createdLead;
     });
 
+    const requestNumber = formatRequestNumber(lead.requestNumber);
+    const whatsappUrl = buildWhatsappLink(
+      whatsappNumber,
+      buildWhatsappMessage({
+        ...data,
+        phone: lead.phone,
+        requestNumber: lead.requestNumber,
+        brandName,
+        modelName,
+      }),
+    );
+
     return {
       ok: true,
       leadId: lead.id,
-      requestNumber: formatRequestNumber(lead.requestNumber),
+      requestNumber,
+      whatsappUrl,
     };
   } catch {
     return { ok: false, message: DATABASE_ERROR_MESSAGE };

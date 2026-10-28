@@ -100,7 +100,12 @@ describe("LeadForm", () => {
   });
   it("submits validated data through the server action", async () => {
     const user = userEvent.setup();
-    submitLead.mockResolvedValue({ ok: true, leadId: "lead-id", requestNumber: "MS-000123" });
+    submitLead.mockResolvedValue({
+      ok: true,
+      leadId: "lead-id",
+      requestNumber: "MS-000123",
+      whatsappUrl: "https://wa.me/5493794057190",
+    });
     render(<LeadForm brands={[]} initialVehicleType="MOTO" />);
     for (const [label, value] of Object.entries({
       "Nombre y apellido": "Ana Pérez",
@@ -132,7 +137,10 @@ describe("LeadForm", () => {
       modelOther: "ZB 110",
     });
     expect(submitLead.mock.calls[0]?.[1]).toBe("test-turnstile-token");
-    expect(await screen.findByRole("status")).toHaveTextContent("MS-000123");
+    expect(
+      await screen.findByRole("heading", { name: "¡Listo! Recibimos tu solicitud" }),
+    ).toHaveFocus();
+    expect(screen.getByText("MS-000123")).toBeInTheDocument();
   });
 });
 

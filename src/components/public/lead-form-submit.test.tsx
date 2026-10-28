@@ -40,7 +40,12 @@ afterEach(() => {
 for (const type of ["AUTO", "MOTO"] as const) {
   it(`submits ${type} through the server action only after consent`, async () => {
     const u = userEvent.setup();
-    let resolveSubmit!: (result: { ok: true; leadId: string; requestNumber: string }) => void;
+    let resolveSubmit!: (result: {
+      ok: true;
+      leadId: string;
+      requestNumber: string;
+      whatsappUrl: string;
+    }) => void;
     submitLead.mockReturnValue(
       new Promise((resolve) => {
         resolveSubmit = resolve;
@@ -88,8 +93,21 @@ for (const type of ["AUTO", "MOTO"] as const) {
       postalCode: "S2000ABC",
     });
     expect(submitLead.mock.calls[0]?.[1]).toBe("test-turnstile-token");
-    resolveSubmit({ ok: true, leadId: "lead-id", requestNumber: "MS-000123" });
-    expect(await screen.findByRole("status")).toHaveTextContent("MS-000123");
+    resolveSubmit({
+      ok: true,
+      leadId: "lead-id",
+      requestNumber: "MS-000123",
+      whatsappUrl: "https://wa.me/5493794057190",
+    });
+    expect(
+      await screen.findByRole("heading", { name: "¡Listo! Recibimos tu solicitud" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("MS-000123")).toBeInTheDocument();
+    await u.click(screen.getByRole("button", { name: "Cargar otra cotización" }));
+    await waitFor(() =>
+      expect(screen.getByLabelText("Nombre y apellido", { exact: true })).toHaveFocus(),
+    );
+    expect(screen.getByLabelText("Nombre y apellido", { exact: true })).toHaveValue("");
   });
 }
 
