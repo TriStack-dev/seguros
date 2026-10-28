@@ -15,12 +15,14 @@ import { CatalogCombobox, type CatalogOption } from "./catalog-combobox";
 import { submitLead } from "@/server/actions/submit-lead";
 import { DATABASE_ERROR_MESSAGE } from "@/lib/leads/submit-result";
 import { toast } from "sonner";
+import { TurnstileWidget } from "./turnstile-widget";
 
 export type VehicleBrandOption = CatalogOption & { vehicleType: VehicleType };
 type Props = {
   brands: VehicleBrandOption[];
   initialVehicleType?: VehicleType;
   catalogUnavailable?: boolean;
+  whatsappUrl?: string;
 };
 type TextName =
   | "fullName"
@@ -38,6 +40,7 @@ export function LeadForm({
   brands,
   initialVehicleType = "AUTO",
   catalogUnavailable = false,
+  whatsappUrl,
 }: Props) {
   const prefix = useId();
   const [otherBrand, setOtherBrand] = useState(false);
@@ -50,6 +53,9 @@ export function LeadForm({
   const [retry, setRetry] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [requestNumber, setRequestNumber] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
   const submitPending = useRef(false);
   const form = useForm<LeadFormInput, unknown, LeadFormData>({
     resolver: zodResolver(leadFormSchema),
@@ -159,8 +165,14 @@ export function LeadForm({
     setOtherModel(false);
   };
   const submit = async (data: LeadFormData) => {
+    if (!turnstileToken) {
+      setTurnstileError("Completá la verificación de seguridad antes de enviar.");
+      submitPending.current = false;
+      return;
+    }
+
     try {
-      const result = await submitLead(data);
+      const result = await submitLead(data, turnstileToken);
       if (!result.ok) {
         for (const [name, messages] of Object.entries(result.fieldErrors ?? {})) {
           const message = messages?.[0];
@@ -174,6 +186,8 @@ export function LeadForm({
     } catch {
       toast.error(DATABASE_ERROR_MESSAGE);
     } finally {
+      setTurnstileToken(null);
+      setTurnstileResetKey((value) => value + 1);
       submitPending.current = false;
     }
   };
@@ -193,6 +207,7 @@ export function LeadForm({
           return;
         }
         submitPending.current = true;
+        setTurnstileError(null);
         setSubmitted(false);
         setRequestNumber(null);
         void form
@@ -500,6 +515,20 @@ export function LeadForm({
             autoComplete="off"
           />
         </div>
+        <TurnstileWidget
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+          whatsappUrl={whatsappUrl}
+          resetKey={turnstileResetKey}
+          onTokenChange={(token) => {
+            setTurnstileToken(token);
+            if (token) setTurnstileError(null);
+          }}
+        />
+        {turnstileError && (
+          <p className="text-sm text-destructive" aria-live="polite">
+            {turnstileError}
+          </p>
+        )}
         <Button
           type="submit"
           className="quote-button w-full"

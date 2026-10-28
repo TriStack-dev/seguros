@@ -7,6 +7,20 @@ const { submitLead } = vi.hoisted(() => ({ submitLead: vi.fn() }));
 vi.mock("@/server/actions/submit-lead", () => ({ submitLead }));
 vi.mock("server-only", () => ({}));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
+vi.mock("./turnstile-widget", async () => {
+  const React = await import("react");
+  return {
+    TurnstileWidget: ({ onTokenChange }: { onTokenChange: (token: string | null) => void }) => {
+      const delivered = React.useRef(false);
+      React.useEffect(() => {
+        if (delivered.current) return;
+        delivered.current = true;
+        onTokenChange("test-turnstile-token");
+      }, [onTokenChange]);
+      return null;
+    },
+  };
+});
 beforeEach(() => {
   vi.stubGlobal(
     "ResizeObserver",
@@ -73,6 +87,7 @@ for (const type of ["AUTO", "MOTO"] as const) {
       dni: "12345678",
       postalCode: "S2000ABC",
     });
+    expect(submitLead.mock.calls[0]?.[1]).toBe("test-turnstile-token");
     resolveSubmit({ ok: true, leadId: "lead-id", requestNumber: "MS-000123" });
     expect(await screen.findByRole("status")).toHaveTextContent("MS-000123");
   });

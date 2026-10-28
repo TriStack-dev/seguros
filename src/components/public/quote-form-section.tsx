@@ -1,3 +1,4 @@
+import { buildWhatsappLink } from "@/lib/whatsapp/build-link";
 import { LeadForm, type VehicleBrandOption } from "./lead-form";
 import { getVehicleBrands } from "@/server/queries/vehicles";
 import type { VehicleType } from "@/lib/constants";
@@ -14,9 +15,15 @@ export async function QuoteFormSection({
   } catch {
     catalogUnavailable = true;
   }
+  const whatsappNumber = process.env.WHATSAPP_NUMBER;
+  const whatsappUrl =
+    whatsappNumber && /^\d+$/.test(whatsappNumber)
+      ? buildWhatsappLink(whatsappNumber, "Hola, necesito ayuda para cotizar mi seguro.")
+      : undefined;
   return (
     <LeadForm
       brands={brands}
+      whatsappUrl={whatsappUrl}
       initialVehicleType={initialVehicleType}
       catalogUnavailable={catalogUnavailable}
     />

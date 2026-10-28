@@ -7,6 +7,20 @@ const { submitLead } = vi.hoisted(() => ({ submitLead: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/server/actions/submit-lead", () => ({ submitLead }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
+vi.mock("./turnstile-widget", async () => {
+  const React = await import("react");
+  return {
+    TurnstileWidget: ({ onTokenChange }: { onTokenChange: (token: string | null) => void }) => {
+      const delivered = React.useRef(false);
+      React.useEffect(() => {
+        if (delivered.current) return;
+        delivered.current = true;
+        onTokenChange("test-turnstile-token");
+      }, [onTokenChange]);
+      return null;
+    },
+  };
+});
 
 const brands = [
   { id: "auto-brand", name: "Fiat", vehicleType: "AUTO" as const },
@@ -117,6 +131,7 @@ describe("LeadForm", () => {
       brandOther: "Zanella",
       modelOther: "ZB 110",
     });
+    expect(submitLead.mock.calls[0]?.[1]).toBe("test-turnstile-token");
     expect(await screen.findByRole("status")).toHaveTextContent("MS-000123");
   });
 });

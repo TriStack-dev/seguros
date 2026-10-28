@@ -6,6 +6,20 @@ import { LeadForm } from "./lead-form";
 vi.mock("server-only", () => ({}));
 vi.mock("@/server/actions/submit-lead", () => ({ submitLead: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
+vi.mock("./turnstile-widget", async () => {
+  const React = await import("react");
+  return {
+    TurnstileWidget: ({ onTokenChange }: { onTokenChange: (token: string | null) => void }) => {
+      const delivered = React.useRef(false);
+      React.useEffect(() => {
+        if (delivered.current) return;
+        delivered.current = true;
+        onTokenChange("test-turnstile-token");
+      }, [onTokenChange]);
+      return null;
+    },
+  };
+});
 const brands = [
   { id: "one", name: "Fiat", vehicleType: "AUTO" as const },
   { id: "two", name: "Ford", vehicleType: "AUTO" as const },
