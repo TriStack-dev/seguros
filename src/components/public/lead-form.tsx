@@ -291,7 +291,6 @@ export function LeadForm({
                   onBlur={field.onBlur}
                   onCheckedChange={(checked) => {
                     field.onChange(checked === true);
-                    form.setValue("plate", "", { shouldValidate: true });
                     form.clearErrors("plate");
                   }}
                 />
@@ -300,15 +299,14 @@ export function LeadForm({
             </Field>
           )}
         />
-        {!isZeroKm &&
-          text(
-            "plate",
-            "Patente",
-            { autoCapitalize: "characters" },
-            vehicleType === "AUTO"
-              ? "Por ejemplo: AAA123 o AA123BB."
-              : "Por ejemplo: 123ABC o A123BCD.",
-          )}
+        {text(
+          "plate",
+          isZeroKm ? "Patente (opcional)" : "Patente",
+          { autoCapitalize: "characters" },
+          vehicleType === "AUTO"
+            ? "Por ejemplo: AAA123 o AA123BB."
+            : "Por ejemplo: 123ABC o A123BCD.",
+        )}
         {catalogUnavailable && (
           <p role="status" className="text-sm text-muted-foreground">
             No pudimos cargar el catálogo. Podés elegir Otro e ingresar marca y modelo.
