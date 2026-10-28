@@ -64,6 +64,9 @@ Los comandos de base de datos y otros scripts se agregan en sus steps. Usá siem
 - Commits con Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`.
 - Título del PR: `Step NN — Título del step`. La descripción enlaza al archivo del step.
 - Un step equivale a un PR. El PR necesita CI en verde.
+- El `pre-push` rechaza una rama con cambios de código que no actualice la documentación.
+  En ramas de step exige `docs/steps/NN-*.md`; en el resto, `docs/**`, `SPEC.md`,
+  `README.md` o `AGENTS.md`. La comparación es acumulada por rama (ver decisión 0010).
 
 ## Agentes
 

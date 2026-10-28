@@ -264,6 +264,14 @@
       "sessions": 3,
       "memories": 0,
       "prompts": 0
+    },
+    {
+      "id": "ccfc6ef1",
+      "created_by": "waltertoledo",
+      "created_at": "2026-10-28T17:39:59.915803296Z",
+      "sessions": 1,
+      "memories": 0,
+      "prompts": 0
     }
   ]
 }
