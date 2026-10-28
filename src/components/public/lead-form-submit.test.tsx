@@ -30,6 +30,7 @@ beforeEach(() => {
       disconnect() {}
     },
   );
+  vi.stubGlobal("dataLayer", []);
   Element.prototype.scrollIntoView = vi.fn();
 });
 afterEach(() => {
@@ -52,6 +53,7 @@ for (const type of ["AUTO", "MOTO"] as const) {
       }),
     );
     render(<LeadForm brands={[]} initialVehicleType={type} />);
+    expect(window.dataLayer).toEqual([{ event: "form_view", vehicle_type: type }]);
     for (const [label, val] of Object.entries({
       "Nombre y apellido": "Ana Pérez",
       Teléfono: "+54 9 341 4123456",
@@ -93,6 +95,10 @@ for (const type of ["AUTO", "MOTO"] as const) {
       postalCode: "S2000ABC",
     });
     expect(submitLead.mock.calls[0]?.[1]).toBe("test-turnstile-token");
+    expect(window.dataLayer).toEqual([
+      { event: "form_view", vehicle_type: type },
+      { event: "form_start", vehicle_type: type },
+    ]);
     resolveSubmit({
       ok: true,
       leadId: "lead-id",
@@ -103,6 +109,22 @@ for (const type of ["AUTO", "MOTO"] as const) {
       await screen.findByRole("heading", { name: "¡Listo! Recibimos tu solicitud" }),
     ).toBeInTheDocument();
     expect(screen.getByText("MS-000123")).toBeInTheDocument();
+    expect(window.dataLayer).toEqual([
+      { event: "form_view", vehicle_type: type },
+      { event: "form_start", vehicle_type: type },
+      {
+        event: "generate_lead",
+        vehicle_type: type,
+        usage: type === "AUTO" ? "RIDE_HAILING" : "DELIVERY",
+        request_number: "MS-000123",
+      },
+    ]);
+    fireEvent.click(screen.getByRole("link", { name: "Abrir WhatsApp" }));
+    expect(window.dataLayer).toContainEqual({
+      event: "whatsapp_click",
+      vehicle_type: type,
+      request_number: "MS-000123",
+    });
     await u.click(screen.getByRole("button", { name: "Cargar otra cotización" }));
     await waitFor(() =>
       expect(screen.getByLabelText("Nombre y apellido", { exact: true })).toHaveFocus(),
@@ -136,6 +158,10 @@ it("shows server field errors and does not log submitted data", async () => {
   await u.click(screen.getByRole("button", { name: "Iniciar cotización" }));
   expect(await screen.findByText("Email no válido desde el servidor")).toBeInTheDocument();
   expect(log).not.toHaveBeenCalled();
+  expect(window.dataLayer).toEqual([
+    { event: "form_view", vehicle_type: "AUTO" },
+    { event: "form_start", vehicle_type: "AUTO" },
+  ]);
 });
 it("invalid phone comes before plate and DNI focus", async () => {
   const u = userEvent.setup();

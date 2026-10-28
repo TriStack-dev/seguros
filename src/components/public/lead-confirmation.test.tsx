@@ -18,6 +18,7 @@ it("confirms the request, links directly to WhatsApp, and tracks without blockin
   Element.prototype.scrollIntoView = scroll;
   render(
     <LeadConfirmation
+      vehicleType="AUTO"
       leadId="8a10bedd-6d48-4e4a-8560-01f9c2d56f7d"
       requestNumber="MS-000123"
       whatsappUrl="https://wa.me/5493794057190?text=Hi"
@@ -44,6 +45,7 @@ it("confirms the request, links directly to WhatsApp, and tracks without blockin
 it("formats an Argentine WhatsApp number from the link pathname", () => {
   render(
     <LeadConfirmation
+      vehicleType="AUTO"
       leadId="lead"
       requestNumber="MS-1"
       whatsappUrl="https://wa.me/5493794057190"
