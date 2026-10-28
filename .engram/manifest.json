@@ -266,16 +266,19 @@
       "prompts": 0
     },
     {
-      "id": "acf496b6",
-      "created_by": "waltertoledo",
-      "created_at": "2026-10-28T17:44:23.450730908Z",
-      "sessions": 1,
-      "memories": 2,
       "id": "ccfc6ef1",
       "created_by": "waltertoledo",
       "created_at": "2026-10-28T17:39:59.915803296Z",
       "sessions": 1,
       "memories": 0,
+      "prompts": 0
+    },
+    {
+      "id": "8f900c92",
+      "created_by": "teo",
+      "created_at": "2026-10-28T18:48:15.469643099Z",
+      "sessions": 3,
+      "memories": 1,
       "prompts": 0
     }
   ]
