@@ -2,13 +2,16 @@ import { PublicTagManager } from "@/components/public/public-tag-manager";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/logo";
+import { JsonLd } from "@/components/public/json-ld";
 import { Button } from "@/components/ui/button";
 import { business } from "@/content/business";
 import { landingContent as content } from "@/content/landing";
+import { buildOrganizationJsonLd } from "@/lib/seo";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="public-site">
+      <JsonLd data={buildOrganizationJsonLd()} />
       {process.env.NEXT_PUBLIC_GTM_ID && (
         <PublicTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
       )}

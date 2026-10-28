@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/accordion";
 import { business } from "@/content/business";
 import { landingContent as content } from "@/content/landing";
+import { buildPageMetadata } from "@/lib/seo";
 
 const benefitIcons = [MessagesSquare, Building2, CarFront];
+
+export const metadata = buildPageMetadata("home");
 
 export default function LandingPage() {
   return (

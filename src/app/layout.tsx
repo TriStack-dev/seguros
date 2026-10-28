@@ -3,13 +3,11 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { buildSiteMetadata } from "@/lib/seo";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
-export const metadata: Metadata = {
-  title: "MiSeguro",
-  description: "Cotizá el seguro de tu auto o tu moto y te contacta un asesor por WhatsApp.",
-};
+export const metadata: Metadata = buildSiteMetadata();
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

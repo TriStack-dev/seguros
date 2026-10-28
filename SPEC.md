@@ -96,7 +96,7 @@ Variables (cada step agrega las suyas a `.env.example`, con un comentario de qu�
 | --- | --- | --- |
 | `DATABASE_URL` | Conexión con pooler (app) | 02, 04 |
 | `DIRECT_URL` | Conexión directa (migraciones) | 02, 04 |
-| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | 01 |
+| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio (metadatos, sitemap, robots) | 01, 22 |
 | `WHATSAPP_NUMBER` | Número de brokers, solo dígitos; alternativa si falla el captcha y link de derivación | 11, 14 |
 | `IP_HASH_SALT` | Sal privada aleatoria y estable por entorno para guardar sha256(IP + sal); obligatoria | 11 |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Captcha Turnstile: claves oficiales de prueba solo en desarrollo; secret solo servidor | 11 |
@@ -157,7 +157,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 19 | [Exportación a CSV](docs/steps/19-panel-csv.md) | 4. Panel | 16 | PENDIENTE |
 | 20 | [Estadísticas](docs/steps/20-panel-estadisticas.md) | 4. Panel | 17 | PENDIENTE |
 | 21 | [Analítica con GTM y GA4](docs/steps/21-analitica-ga4.md) | 5. Lanzamiento | 09, 14 | DONE · 2026-10-28 · Teo · #40 |
-| 22 | [SEO técnico](docs/steps/22-seo-tecnico.md) | 5. Lanzamiento | 07, 08 | PENDIENTE |
+| 22 | [SEO técnico](docs/steps/22-seo-tecnico.md) | 5. Lanzamiento | 07, 08 | DONE · 2026-10-28 · franc · #PR |
 | 23 | [Monitoreo de errores con Sentry](docs/steps/23-sentry.md) | 5. Lanzamiento | 01, 26 | PENDIENTE |
 | 24 | [Backups y restauración](docs/steps/24-backups.md) | 5. Lanzamiento | 04, 26 | PENDIENTE |
 | 25 | [Lanzamiento a producción](docs/steps/25-lanzamiento.md) | 5. Lanzamiento | 00 a 24 y 26 | PENDIENTE |
