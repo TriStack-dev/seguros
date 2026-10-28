@@ -3,6 +3,7 @@ import { listLeads } from "@/server/queries/leads";
 import { LeadsTable } from "@/components/admin/leads/leads-table";
 import { LeadsFilters } from "@/components/admin/leads/leads-filters";
 import { LeadsPagination } from "@/components/admin/leads/pagination";
+import { buildLeadListBackQuery } from "@/lib/leads/list-query";
 import type { LeadStatus, VehicleType } from "@/generated/prisma/client";
 
 export const metadata: Metadata = { title: "Leads" };
@@ -22,7 +23,9 @@ export default async function LeadsPage({
   const pageParam = typeof params.page === "string" ? params.page : undefined;
 
   const vehicleType =
-    vehicleTypeParam === "AUTO" || vehicleTypeParam === "MOTO" ? (vehicleTypeParam as VehicleType) : undefined;
+    vehicleTypeParam === "AUTO" || vehicleTypeParam === "MOTO"
+      ? (vehicleTypeParam as VehicleType)
+      : undefined;
   const status =
     statusParam === "NEW" ||
     statusParam === "CONTACTED" ||
@@ -42,13 +45,22 @@ export default async function LeadsPage({
     page: Number.isNaN(page) ? 1 : page,
   });
 
+  const backQuery = buildLeadListBackQuery({
+    search,
+    from,
+    to,
+    vehicleType,
+    status,
+    page: result.page,
+  });
+
   return (
     <>
       <h1 className="text-2xl font-semibold">Leads</h1>
       <p className="mt-1 text-muted-foreground">Listado de solicitudes de cotización</p>
       <div className="mt-6">
         <LeadsFilters />
-        <LeadsTable items={result.items} />
+        <LeadsTable items={result.items} backQuery={backQuery} />
         <LeadsPagination page={result.page} totalPages={result.totalPages} />
       </div>
     </>

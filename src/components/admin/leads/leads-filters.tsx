@@ -5,7 +5,15 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LEAD_STATUSES } from "@/lib/constants";
+import { LEAD_STATUS_LABELS } from "@/lib/leads/status";
 
 export function LeadsFilters() {
   const router = useRouter();
@@ -92,11 +100,11 @@ export function LeadsFilters() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="NEW">Nuevo</SelectItem>
-            <SelectItem value="CONTACTED">Contactado</SelectItem>
-            <SelectItem value="QUOTED">Cotizado</SelectItem>
-            <SelectItem value="ISSUED">Emitido</SelectItem>
-            <SelectItem value="LOST">Perdido</SelectItem>
+            {LEAD_STATUSES.map((statusOption) => (
+              <SelectItem key={statusOption} value={statusOption}>
+                {LEAD_STATUS_LABELS[statusOption]}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

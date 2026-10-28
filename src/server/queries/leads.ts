@@ -3,7 +3,13 @@ import "server-only";
 import { db } from "@/lib/db";
 import { parseRequestNumber } from "@/lib/leads/request-number";
 import { requireAdmin } from "@/server/auth";
-import type { LeadStatus, Prisma, VehicleType } from "@/generated/prisma/client";
+import type {
+  Lead,
+  LeadStatus,
+  LeadStatusChange,
+  Prisma,
+  VehicleType,
+} from "@/generated/prisma/client";
 
 const PAGE_SIZE = 25;
 
@@ -31,8 +37,6 @@ export type LeadListResult = {
   pageSize: number;
   totalPages: number;
 };
-
-
 
 export async function listLeads(params: {
   search?: string;
@@ -169,4 +173,22 @@ export async function listLeads(params: {
 export async function countNewLeads(): Promise<number> {
   await requireAdmin();
   return db.lead.count({ where: { status: "NEW" } });
+}
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export type LeadDetail = Lead & { statusChanges: LeadStatusChange[] };
+
+/** Lead con su historial de estados, o null si el id no existe. */
+export async function getLeadDetail(id: string): Promise<LeadDetail | null> {
+  await requireAdmin();
+
+  if (!UUID_PATTERN.test(id)) return null;
+
+  return db.lead.findUnique({
+    where: { id },
+    include: {
+      statusChanges: { orderBy: { createdAt: "asc" } },
+    },
+  });
 }
