@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { JsonLd } from "@/components/public/json-ld";
 import { privacyContent as content } from "@/content/privacy";
+import { buildBreadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
+
+export const metadata = buildPageMetadata("privacy");
 
 export default function PrivacyPage() {
   return (
     <main id="contenido" tabIndex={-1} className="site-container privacy-page">
+      <JsonLd data={buildBreadcrumbJsonLd("privacy")} />
       <Link href="/" className="privacy-back">
         Volver al inicio
       </Link>
