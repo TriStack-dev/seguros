@@ -1,27 +1,57 @@
 // Plugin de OpenCode: bloquea cualquier `git push` que escriba sobre una rama protegida.
-// Enforza AGENTS.md: "Nunca se trabaja ni se pushea directo a main".
-//
-// Reutiliza el mismo script que Claude Code y Codex (.claude/hooks/block-push-to-protected.sh):
-// le pasa por stdin el payload que ese script espera ({"tool_input": {"command": ...}}) y, si
-// la respuesta es un deny, tira un error. En OpenCode, tirar en `tool.execute.before` cancela
-// la ejecución del tool y le devuelve el mensaje al agente.
-//
-// Es solo un aviso temprano: la regla la hace cumplir .githooks/pre-push, corra el agente que corra.
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
-const blockPushToProtected = async (ctx = {}) => {
-  const worktree = typeof ctx === "string" ? ctx : ctx.worktree || ctx.directory || ctx.cwd || process.env.PWD || process.cwd();
+const setup = async (ctx = {}) => {
+  const worktree =
+    ctx.location?.directory ||
+    ctx.worktree ||
+    ctx.directory ||
+    ctx.cwd ||
+    process.env.PWD ||
+    process.cwd();
   if (!worktree || typeof worktree !== "string") {
     console.error("[block-push-to-protected] No valid worktree/directory provided to plugin");
-    return {};
+    return;
   }
   const script = join(worktree, ".claude/hooks/block-push-to-protected.sh");
 
+  // V2 API
+  if (ctx.tool?.hook) {
+    try {
+      await ctx.tool.hook("execute.before", (event) => {
+        if (event.tool !== "bash") return;
+        const command = event.input?.command || event.args?.command || event.parameters?.command;
+        if (typeof command !== "string" || !command.includes("push")) return;
+
+        const result = spawnSync("bash", [script], {
+          cwd: worktree,
+          input: JSON.stringify({ tool_input: { command } }),
+          encoding: "utf8",
+        });
+        if (result.status !== 0 || !result.stdout.trim()) return;
+
+        let decision;
+        try {
+          decision = JSON.parse(result.stdout).hookSpecificOutput;
+        } catch {
+          return;
+        }
+        if (decision?.permissionDecision === "deny") {
+          throw new Error(decision.permissionDecisionReason);
+        }
+      });
+    } catch (e) {
+      console.error("[block-push-to-protected] Failed to register hook:", e);
+    }
+    return;
+  }
+
+  // V1 API
   return {
     "tool.execute.before": async (input, output) => {
       if (input.tool !== "bash") return;
-      const command = output.args?.command;
+      const command = output.args?.command || input.args?.command;
       if (typeof command !== "string" || !command.includes("push")) return;
 
       const result = spawnSync("bash", [script], {
@@ -29,7 +59,6 @@ const blockPushToProtected = async (ctx = {}) => {
         input: JSON.stringify({ tool_input: { command } }),
         encoding: "utf8",
       });
-      // Si el script no corre (sin bash o sin jq), no bloqueamos: el pre-push sigue cubriendo.
       if (result.status !== 0 || !result.stdout.trim()) return;
 
       let decision;
@@ -47,6 +76,6 @@ const blockPushToProtected = async (ctx = {}) => {
 
 export default {
   id: "block-push-to-protected",
-  setup: blockPushToProtected,
+  setup,
+  server: setup,
 };
-
