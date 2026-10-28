@@ -1,11 +1,15 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { db } from "@/lib/db";
 import { formatRequestNumber } from "@/lib/leads/request-number";
 import { DATABASE_ERROR_MESSAGE, type SubmitLeadResult } from "@/lib/leads/submit-result";
 import { leadFormSchema, type LeadFormData, type LeadFormInput } from "@/lib/validation/lead-form";
 import { parseAttributionCookie } from "@/lib/attribution";
+
+import { checkRateLimit } from "@/lib/anti-spam/rate-limit";
+import { verifyTurnstile } from "@/lib/anti-spam/turnstile";
+import { RATE_LIMIT_MESSAGE, TURNSTILE_ERROR_MESSAGE } from "@/lib/anti-spam/constants";
 
 const fakeSuccess: SubmitLeadResult = {
   ok: true,
@@ -13,7 +17,19 @@ const fakeSuccess: SubmitLeadResult = {
   requestNumber: "MS-000000",
 };
 
-export async function submitLead(input: LeadFormInput): Promise<SubmitLeadResult> {
+export async function submitLead(input: LeadFormInput, token?: string): Promise<SubmitLeadResult> {
+  try {
+    const requestHeaders = await headers();
+    if (!(await checkRateLimit(requestHeaders.get("x-forwarded-for")))) {
+      return { ok: false, message: RATE_LIMIT_MESSAGE };
+    }
+    if (!(await verifyTurnstile(token))) {
+      return { ok: false, message: TURNSTILE_ERROR_MESSAGE };
+    }
+  } catch {
+    return { ok: false, message: DATABASE_ERROR_MESSAGE };
+  }
+
   // Keep spam submissions indistinguishable from successful ones and never persist them.
   if (typeof input?.website === "string" && input.website.trim() !== "") return fakeSuccess;
 

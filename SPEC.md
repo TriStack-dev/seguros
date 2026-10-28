@@ -97,9 +97,9 @@ Variables (cada step agrega las suyas a `.env.example`, con un comentario de qu�
 | `DATABASE_URL` | Conexión con pooler (app) | 02, 04 |
 | `DIRECT_URL` | Conexión directa (migraciones) | 02, 04 |
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | 01 |
-| `WHATSAPP_NUMBER` | Número de los brokers, solo dígitos (`5493794057190`) | 14 |
-| `IP_HASH_SALT` | Sal para guardar el hash de la IP | 11 |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Captcha | 11 |
+| `WHATSAPP_NUMBER` | Número real confirmado, solo dígitos; alternativa si falla el captcha y derivación posterior | 11, 14 |
+| `IP_HASH_SALT` | Sal privada aleatoria y estable por entorno para guardar sha256(IP + sal); obligatoria | 11 |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Captcha Turnstile: claves oficiales de prueba solo en desarrollo; secret solo servidor | 11 |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Auth (la clave publicable equivale a `anon`) | 02, 15 |
 | `SUPABASE_SECRET_KEY` | Solo servidor y scripts (crear administradores; equivale a `service_role`) | 02, 15 |
 | `NEXT_PUBLIC_GTM_ID` | Google Tag Manager | 21 |
@@ -146,7 +146,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 08 | [Páginas legales y datos del productor](docs/steps/08-paginas-legales.md) | 2. Formulario | 07 | DONE · 2026-10-24 · Teo · #15 |
 | 09 | [Formulario de cotización (UI)](docs/steps/09-formulario.md) | 2. Formulario | 05, 06, 07 | DONE · 2026-10-27 · Teo · #27 |
 | 10 | [Envío y registro del lead](docs/steps/10-envio-lead.md) | 2. Formulario | 04, 06, 09 | DONE · 2026-10-27 · Teo · #28 |
-| 11 | [Anti-spam](docs/steps/11-anti-spam.md) | 2. Formulario | 10 | PENDIENTE |
+| 11 | [Anti-spam](docs/steps/11-anti-spam.md) | 2. Formulario | 10 | DONE · 2026-10-28 · Teo · #37 |
 | 12 | [Atribución (UTM, gclid, página de entrada)](docs/steps/12-atribucion.md) | 2. Formulario | 10 | DONE · 2026-10-27 · Walter · #31 |
 | 13 | [Mensaje y link de WhatsApp](docs/steps/13-mensaje-whatsapp.md) | 3. WhatsApp | 06 | DONE · 2026-10-26 · Crove · #21 |
 | 14 | [Confirmación y derivación a WhatsApp](docs/steps/14-confirmacion-whatsapp.md) | 3. WhatsApp | 10, 13 | PENDIENTE |

@@ -21,6 +21,18 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
+const { checkRateLimit, verifyTurnstile, requestHeaders } = vi.hoisted(() => ({
+  checkRateLimit: vi.fn(),
+  verifyTurnstile: vi.fn(),
+  requestHeaders: vi.fn(),
+}));
+vi.mock("@/lib/anti-spam/rate-limit", () => ({ checkRateLimit }));
+vi.mock("@/lib/anti-spam/turnstile", () => ({ verifyTurnstile }));
+vi.mock("next/headers", () => ({
+  headers: requestHeaders,
+  cookies: vi.fn(async () => ({ get: () => undefined })),
+}));
+
 import { submitLead } from "./submit-lead";
 import type { LeadFormInput } from "@/lib/validation/lead-form";
 
@@ -48,6 +60,9 @@ const validInput: LeadFormInput = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  checkRateLimit.mockResolvedValue(true);
+  verifyTurnstile.mockResolvedValue(true);
+  requestHeaders.mockResolvedValue(new Headers({ "x-forwarded-for": "203.0.113.8, 192.0.2.1" }));
   brandFindUnique.mockResolvedValue({ id: "brand-id", name: "Ford", vehicleType: "AUTO" });
   modelFindUnique.mockResolvedValue({ id: "model-id", name: "Ka", brandId: "brand-id" });
   leadCreate.mockResolvedValue({ id: "lead-id", requestNumber: 123 });
@@ -135,3 +150,80 @@ it.each([true, false])(
     expect(leadCreate.mock.calls[0]?.[0].data).not.toHaveProperty("version");
   },
 );
+
+it("records attempts before validation and passes the server header, not client input", async () => {
+  const result = await submitLead({ ...validInput, email: "invalid" }, "token");
+  expect(result.ok).toBe(false);
+  expect(checkRateLimit).toHaveBeenCalledWith("203.0.113.8, 192.0.2.1");
+  expect(checkRateLimit.mock.invocationCallOrder[0]).toBeLessThan(
+    verifyTurnstile.mock.invocationCallOrder[0] ?? Infinity,
+  );
+  expect(transaction).not.toHaveBeenCalled();
+});
+it("rejects an exhausted IP with the exact business message before any lead write", async () => {
+  checkRateLimit.mockResolvedValueOnce(false);
+  expect(await submitLead(validInput, "token")).toEqual({
+    ok: false,
+    message:
+      "Recibimos varias solicitudes desde tu conexión. Probá de nuevo más tarde o escribinos por WhatsApp.",
+  });
+  expect(verifyTurnstile).not.toHaveBeenCalled();
+  expect(leadCreate).not.toHaveBeenCalled();
+});
+it.each([undefined, "bad-token"])(
+  "rejects unverified token %s while retaining the attempt",
+  async (token) => {
+    verifyTurnstile.mockResolvedValueOnce(false);
+    expect(await submitLead(validInput, token)).toMatchObject({
+      ok: false,
+      message: expect.stringContaining("verificar"),
+    });
+    expect(checkRateLimit).toHaveBeenCalledOnce();
+    expect(verifyTurnstile).toHaveBeenCalledWith(token);
+    expect(leadCreate).not.toHaveBeenCalled();
+  },
+);
+it("fails closed if attempt admission cannot be stored", async () => {
+  checkRateLimit.mockRejectedValueOnce(new Error("offline"));
+  expect(await submitLead(validInput, "token")).toMatchObject({
+    ok: false,
+    message: expect.stringContaining("No pudimos enviar"),
+  });
+  expect(verifyTurnstile).not.toHaveBeenCalled();
+  expect(leadCreate).not.toHaveBeenCalled();
+});
+
+it("rejects the sixth invalid submission from the same IP and creates no lead", async () => {
+  const { checkRateLimit: actualCheck } = await vi.importActual<
+    typeof import("@/lib/anti-spam/rate-limit")
+  >("@/lib/anti-spam/rate-limit");
+  let attempts = 0;
+  checkRateLimit.mockImplementation((ip) =>
+    actualCheck(ip, {
+      salt: "test-salt",
+      random: () => 1,
+      transaction: async (run) =>
+        run({
+          submissionAttempt: {
+            count: async () => attempts,
+            create: async () => {
+              attempts++;
+            },
+          },
+        }),
+    }),
+  );
+  for (let i = 0; i < 5; i++) {
+    expect(await submitLead({ ...validInput, email: "invalid" }, "token")).toMatchObject({
+      ok: false,
+      fieldErrors: { email: expect.any(Array) },
+    });
+  }
+  expect(await submitLead({ ...validInput, email: "invalid" }, "token")).toMatchObject({
+    ok: false,
+    message:
+      "Recibimos varias solicitudes desde tu conexión. Probá de nuevo más tarde o escribinos por WhatsApp.",
+  });
+  expect(attempts).toBe(5);
+  expect(leadCreate).not.toHaveBeenCalled();
+});
