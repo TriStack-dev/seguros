@@ -53,7 +53,7 @@ Ver [0013](../decisiones/0013-analitica-y-cookies.md). Mantener GTM sin configur
 
 ### Desvíos del spec
 
-No se crearon ni configuraron cuentas externas: no se proporcionaron cuentas del cliente ni autorización para operarlas. El JSON es una plantilla no publicada, no una exportación real validada. La decisión sobre necesidad/contenido del aviso requiere el relevamiento del cliente; no se inventó una conclusión legal. Por indicación explícita del usuario (2026-10-28), se marca DONE en `SPEC.md` y se publica el PR, manteniendo documentados los criterios externos no verificados.
+No se crearon ni configuraron cuentas externas: no se proporcionaron cuentas del cliente ni autorización para operarlas. El JSON es una plantilla no publicada, no una exportación real validada. La decisión sobre necesidad/contenido del aviso requiere el relevamiento del cliente; no se inventó una conclusión legal. Por indicación explícita del usuario (2026-10-28), se marca DONE en `SPEC.md` con referencia al [PR #40](https://github.com/TriStack-dev/seguros/pull/40), manteniendo documentados los criterios externos no verificados.
 
 ### Cómo probarlo
 
