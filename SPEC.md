@@ -153,7 +153,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 15 | [Login del panel](docs/steps/15-auth-admin.md) | 4. Panel | 02, 04 | DONE · 2026-10-26 · Walter · #26 |
 | 16 | [Listado de leads](docs/steps/16-panel-listado.md) | 4. Panel | 10, 15 | DONE · 2026-10-28 · Walter · #32 |
 | 17 | [Detalle del lead y estados](docs/steps/17-panel-detalle-estados.md) | 4. Panel | 12, 16 | DONE · 2026-10-28 · Walter · #35 |
-| 18 | [Notas del lead](docs/steps/18-panel-notas.md) | 4. Panel | 17 | PENDIENTE |
+| 18 | [Notas del lead](docs/steps/18-panel-notas.md) | 4. Panel | 17 | DONE · 2026-10-28 · franc · #PR |
 | 19 | [Exportación a CSV](docs/steps/19-panel-csv.md) | 4. Panel | 16 | DONE · 2026-10-28 · franc · #PR |
 | 20 | [Estadísticas](docs/steps/20-panel-estadisticas.md) | 4. Panel | 17 | PENDIENTE |
 | 21 | [Analítica con GTM y GA4](docs/steps/21-analitica-ga4.md) | 5. Lanzamiento | 09, 14 | DONE · 2026-10-28 · Teo · #40 |
