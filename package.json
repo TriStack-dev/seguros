@@ -20,6 +20,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
+    "db:seed:leads": "tsx scripts/seed-dev-leads.ts",
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "prepare": "git config core.hooksPath .githooks && bash .githooks/import-engram",

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { requireAdmin } from "@/server/auth";
 import { signOut } from "@/server/actions/auth";
+import { countNewLeads } from "@/server/queries/leads";
 
 const NAV = [
   { href: "/admin/leads", label: "Leads" },
@@ -13,6 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();
+  const newLeadsCount = await countNewLeads();
 
   return (
     <div className="min-h-svh">
@@ -24,9 +26,14 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline flex items-center gap-1.5"
               >
                 {item.label}
+                {item.href === "/admin/leads" && newLeadsCount > 0 ? (
+                  <span className="ml-1 inline-flex items-center rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                    {newLeadsCount}
+                  </span>
+                ) : null}
               </Link>
             ))}
           </nav>

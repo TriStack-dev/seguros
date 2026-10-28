@@ -151,7 +151,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 13 | [Mensaje y link de WhatsApp](docs/steps/13-mensaje-whatsapp.md) | 3. WhatsApp | 06 | DONE · 2026-10-26 · Crove · #21 |
 | 14 | [Confirmación y derivación a WhatsApp](docs/steps/14-confirmacion-whatsapp.md) | 3. WhatsApp | 10, 13 | PENDIENTE |
 | 15 | [Login del panel](docs/steps/15-auth-admin.md) | 4. Panel | 02, 04 | DONE · 2026-10-26 · Walter · #26 |
-| 16 | [Listado de leads](docs/steps/16-panel-listado.md) | 4. Panel | 10, 15 | PENDIENTE |
+| 16 | [Listado de leads](docs/steps/16-panel-listado.md) | 4. Panel | 10, 15 | DONE · 2026-10-28 · Walter · #TBD |
 | 17 | [Detalle del lead y estados](docs/steps/17-panel-detalle-estados.md) | 4. Panel | 12, 16 | PENDIENTE |
 | 18 | [Notas del lead](docs/steps/18-panel-notas.md) | 4. Panel | 17 | PENDIENTE |
 | 19 | [Exportación a CSV](docs/steps/19-panel-csv.md) | 4. Panel | 16 | PENDIENTE |
