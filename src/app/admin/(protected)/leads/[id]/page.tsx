@@ -13,6 +13,8 @@ import { formatRequestNumber } from "@/lib/leads/request-number";
 import { LEAD_STATUS_BADGE_VARIANTS, LEAD_STATUS_LABELS } from "@/lib/leads/status";
 import { buildLeadSummary } from "@/lib/leads/summary";
 import { formatPhoneForDisplay } from "@/lib/validation/normalizers";
+import { LeadNoteForm } from "@/components/admin/leads/lead-note-form";
+import { LeadNoteList } from "@/components/admin/leads/lead-note-list";
 import { LeadQuickActions } from "@/components/admin/leads/lead-quick-actions";
 import { LeadStatusChanger } from "@/components/admin/leads/lead-status-changer";
 import { getLeadDetail } from "@/server/queries/leads";
@@ -153,6 +155,16 @@ export default async function LeadDetailPage({
                   Aceptó la política de privacidad el {formatDateTimeAr(lead.consentAt)}.
                 </p>
               </section>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Notas</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-6">
+              <LeadNoteForm leadId={lead.id} />
+              <LeadNoteList notes={lead.notes} />
             </CardContent>
           </Card>
 
