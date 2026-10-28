@@ -54,7 +54,7 @@ Ver [0011 — Turnstile y límite por IP](../decisiones/0011-anti-spam-turnstile
 
 ### Desvíos del spec
 
-La creación del sitio real en Cloudflare queda pendiente: el step permite claves oficiales de prueba para desarrollo y no se autorizó operar en la cuenta del cliente. Sin `WHATSAPP_NUMBER` confirmado se informa que el canal aún no está configurado, en lugar de publicar un contacto ficticio. Durante la implementación el usuario pidió entrega local; posteriormente autorizó commit, push y una única PR con excepción de tamaño. El índice se actualizará con el número real de esa PR, sin merge automático.
+La creación del sitio real en Cloudflare queda pendiente: el step permite claves oficiales de prueba para desarrollo y no se autorizó operar en la cuenta del cliente. Sin `WHATSAPP_NUMBER` confirmado se informa que el canal aún no está configurado, en lugar de publicar un contacto ficticio. Durante la implementación el usuario pidió entrega local; posteriormente autorizó commit, push y una única PR con excepción de tamaño. La entrega está en la PR #37 y el índice se actualizó con ese número, sin merge automático.
 
 ### Cómo probarlo
 
