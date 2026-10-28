@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# Gate de documentación del pre-push.
+#
+# Uso: check-docs <rama> <sha-local> [sha-remoto]
+#
+# Bloquea el push cuando la rama acumula cambios de código y no incluye ninguna
+# actualización de documentación. La comparación es acumulada contra el punto de partida
+# de la rama (merge-base con origin/main), no contra el último push: una vez que la rama
+# documentó el cambio, los pushes de seguimiento no vuelven a exigir otra edición.
+#
+# En ramas de step (<tipo>/NN-...) además exige que se haya actualizado el archivo del
+# step, docs/steps/NN-*.md, donde viven las "Notas de implementación" (ver AGENTS.md).
+#
+# Sale con 0 si el push puede continuar y con 1 si hay que completar la documentación.
+set -uo pipefail
+
+branch=${1:-}
+local_sha=${2:-}
+remote_sha=${3:-}
+
+[[ -n "$branch" && -n "$local_sha" ]] || exit 0
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$repo_root" || exit 0
+
+# Punto de partida de la rama. origin/main es la referencia normal; si no existe (clon
+# raro, CI, repo recién creado) caemos al remoto de la rama o al primer commit.
+base=""
+if git rev-parse --verify --quiet "origin/main^{commit}" >/dev/null 2>&1; then
+  base=$(git merge-base "$local_sha" origin/main 2>/dev/null) || base=""
+fi
+if [[ -z "$base" && -n "$remote_sha" && ! "$remote_sha" =~ ^0+$ ]]; then
+  base=$(git merge-base "$local_sha" "$remote_sha" 2>/dev/null) || base="$remote_sha"
+fi
+if [[ -z "$base" ]]; then
+  base=$(git rev-list --max-parents=0 "$local_sha" 2>/dev/null | tail -n 1) || base=""
+fi
+[[ -n "$base" ]] || exit 0
+
+# Solo archivos agregados, copiados, modificados o renombrados: borrar documentación no
+# cuenta como actualizarla.
+changed=$(git diff --name-only --diff-filter=ACMR "$base" "$local_sha" 2>/dev/null) || exit 0
+[[ -n "$changed" ]] || exit 0
+
+step=""
+if [[ "$branch" =~ ^(feat|fix|refactor|chore|docs|test)/([0-9]{2})- ]]; then
+  step="${BASH_REMATCH[2]}"
+fi
+
+has_code=0
+has_docs=0
+has_step_doc=0
+
+while IFS= read -r file; do
+  [[ -n "$file" ]] || continue
+
+  case "$file" in
+    src/*|prisma/*|scripts/*|supabase/*|public/*|.githooks/*|.github/*)
+      has_code=1
+      ;;
+    SPEC.md|README.md|AGENTS.md|DESIGN.md|CLAUDE.md|docs/*)
+      has_docs=1
+      ;;
+    package.json|pnpm-lock.yaml|pnpm-workspace.yaml|next.config.ts|prisma.config.ts|\
+tsconfig.json|vitest.config.mts|eslint.config.mjs|prettier.config.mjs|components.json|\
+next-env.d.ts|skills-lock.json|.nvmrc|.gitattributes)
+      has_code=1
+      ;;
+  esac
+
+  if [[ -n "$step" && "$file" == docs/steps/"${step}"-*.md ]]; then
+    has_step_doc=1
+  fi
+done <<< "$changed"
+
+# Rama solo de documentación: no hay nada que exigir.
+(( has_code == 1 )) || exit 0
+
+if (( has_docs == 0 )); then
+  cat >&2 <<EOF
+Bloqueado por el hook del repo: la rama '$branch' cambia código pero no actualiza la documentación.
+
+  Comparado contra: ${base:0:12}
+  Actualizá al menos uno de estos antes de pushear:
+    - docs/steps/NN-*.md (Notas de implementación, si es un step)
+    - docs/decisiones/NNNN-*.md (si tomaste una decisión técnica)
+    - SPEC.md, README.md o AGENTS.md
+
+  La comparación es acumulada por rama: alcanza con que la documentación viaje en algún
+  commit de esta rama, no hace falta repetirla en cada push.
+EOF
+  exit 1
+fi
+
+if [[ -n "$step" ]] && (( has_step_doc == 0 )); then
+  cat >&2 <<EOF
+Bloqueado por el hook del repo: la rama '$branch' es del step $step pero no actualizaste
+docs/steps/${step}-*.md.
+
+  Completá la sección "Notas de implementación" (qué se hizo, archivos clave, decisiones,
+  desvíos, cómo probarlo y pendientes) antes de pushear. Ver AGENTS.md, "Cierre de un step".
+EOF
+  exit 1
+fi
+
+exit 0

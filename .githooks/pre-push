@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Hook pre-push de git: bloquea cualquier push que escriba sobre una rama protegida.
+# Hook pre-push de git: bloquea cualquier push que escriba sobre una rama protegida,
+# exige documentación actualizada cuando la rama cambia código y sincroniza engram.
 # Enforza AGENTS.md: "Nunca se trabaja ni se pushea directo a main".
 #
 # Este hook es independiente del hook de agente (.claude/hooks/block-push-to-protected.sh):
@@ -16,6 +17,8 @@
 # esto cubre gratis los casos `git push --all` y `git push --mirror`: no hace falta
 # parsear flags, solo mirar remote_ref línea por línea.
 set -euo pipefail
+
+repo_root=$(git rev-parse --show-toplevel)
 
 # Ramas protegidas. Para agregar o quitar una, editá este array.
 PROTECTED=("main" "master")
@@ -124,7 +127,13 @@ while read -r local_ref local_sha remote_ref remote_sha || [[ -n "${remote_ref:-
     # Solo validamos el nombre cuando se crea o actualiza la rama. Un borrado
     # (local_sha en ceros) tiene que poder pasar: si quedó una rama vieja mal
     # nombrada en el remoto, el hook no puede ser lo que impide limpiarla.
-    check_branch_name "$branch" || blocked=1
+    if check_branch_name "$branch"; then
+      # Gate de documentación: la rama tiene que traer la documentación del cambio.
+      # Ver .githooks/check-docs y docs/decisiones/0010-gate-de-documentacion-en-pre-push.md.
+      bash "$repo_root/.githooks/check-docs" "$branch" "$local_sha" "$remote_sha" || blocked=1
+    else
+      blocked=1
+    fi
   fi
 done
 
@@ -135,8 +144,6 @@ done
 # Claude Code, Codex o a mano.
 if [[ $blocked -eq 0 && $has_updates -eq 1 ]]; then
   if command -v engram >/dev/null 2>&1; then
-    repo_root=$(git rev-parse --show-toplevel)
-
     # Scope por directorio: exporta solo el proyecto de este repo.
     # NUNCA agregar --all (la base de engram es global y tiene otros proyectos)
     # ni --include-prompts (compartiría los prompts crudos en el repo).

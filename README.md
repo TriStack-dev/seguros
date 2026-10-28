@@ -102,14 +102,21 @@ git config core.hooksPath .githooks
 ```
 
 `core.hooksPath` vive en `.git/config`, que no se versiona, así que cada clon lo necesita.
-Los hooks de [`.githooks/`](.githooks) sincronizan la memoria y protegen las ramas:
+Los hooks de [`.githooks/`](.githooks) sincronizan la memoria, protegen las ramas y frenan
+los pushes sin documentación:
 
 - `pre-push` rechaza los pushes directos a `main` y `master`, los nombres de rama fuera de
-  la convención y los pushes con memoria de engram sin commitear.
+  la convención, las ramas con cambios de código sin documentación actualizada (en las
+  ramas de step, sin `docs/steps/NN-*.md`) y los pushes con memoria de engram sin commitear.
 - `post-merge` importa la memoria después de un pull con merge o fast-forward.
 - `post-rewrite` la importa después de un rebase (incluido `git pull --rebase`).
 - `post-checkout` la importa al cambiar de rama.
 - `pnpm install` activa los hooks e importa la memoria disponible.
+
+Si una rama cambia código y no toca documentación, el `pre-push` la bloquea. En una rama de
+step tiene que incluir `docs/steps/NN-*.md`; en el resto alcanza con `docs/**`, `SPEC.md`,
+`README.md` o `AGENTS.md`. La comparación es acumulada por rama. Detalle:
+[decisión 0010](docs/decisiones/0010-gate-de-documentacion-en-pre-push.md).
 
 ### Instalar e importar la memoria del proyecto (una vez después de clonar)
 
