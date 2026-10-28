@@ -3,7 +3,13 @@ import "server-only";
 import { db } from "@/lib/db";
 import { buildLeadWhere, type LeadListFilters } from "@/lib/leads/filters";
 import { requireAdmin } from "@/server/auth";
-import type { Lead, LeadStatus, LeadStatusChange, VehicleType } from "@/generated/prisma/client";
+import type {
+  Lead,
+  LeadNote,
+  LeadStatus,
+  LeadStatusChange,
+  VehicleType,
+} from "@/generated/prisma/client";
 
 const PAGE_SIZE = 25;
 
@@ -101,9 +107,12 @@ export async function countNewLeads(): Promise<number> {
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export type LeadDetail = Lead & { statusChanges: LeadStatusChange[] };
+export type LeadDetail = Lead & {
+  statusChanges: LeadStatusChange[];
+  notes: LeadNote[];
+};
 
-/** Lead con su historial de estados, o null si el id no existe. */
+/** Lead con su historial de estados y sus notas, o null si el id no existe. */
 export async function getLeadDetail(id: string): Promise<LeadDetail | null> {
   await requireAdmin();
 
@@ -113,6 +122,8 @@ export async function getLeadDetail(id: string): Promise<LeadDetail | null> {
     where: { id },
     include: {
       statusChanges: { orderBy: { createdAt: "asc" } },
+      // La más vieja arriba: las notas se leen como un registro cronológico.
+      notes: { orderBy: { createdAt: "asc" } },
     },
   });
 }
