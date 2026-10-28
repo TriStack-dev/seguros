@@ -97,7 +97,7 @@ Variables (cada step agrega las suyas a `.env.example`, con un comentario de qu�
 | `DATABASE_URL` | Conexión con pooler (app) | 02, 04 |
 | `DIRECT_URL` | Conexión directa (migraciones) | 02, 04 |
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | 01 |
-| `WHATSAPP_NUMBER` | Número real confirmado, solo dígitos; alternativa si falla el captcha y derivación posterior | 11, 14 |
+| `WHATSAPP_NUMBER` | Número de brokers, solo dígitos; alternativa si falla el captcha y link de derivación | 11, 14 |
 | `IP_HASH_SALT` | Sal privada aleatoria y estable por entorno para guardar sha256(IP + sal); obligatoria | 11 |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Captcha Turnstile: claves oficiales de prueba solo en desarrollo; secret solo servidor | 11 |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Auth (la clave publicable equivale a `anon`) | 02, 15 |

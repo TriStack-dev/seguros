@@ -28,6 +28,15 @@ const { checkRateLimit, verifyTurnstile, requestHeaders } = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/anti-spam/rate-limit", () => ({ checkRateLimit }));
 vi.mock("@/lib/anti-spam/turnstile", () => ({ verifyTurnstile }));
+vi.mock("@/lib/whatsapp/build-link", () => ({
+  buildWhatsappLink: vi.fn(
+    (phone: string, message: string) =>
+      `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+  ),
+}));
+vi.mock("@/lib/whatsapp/build-message", () => ({
+  buildWhatsappMessage: vi.fn(() => "WhatsApp message"),
+}));
 vi.mock("next/headers", () => ({
   headers: requestHeaders,
   cookies: vi.fn(async () => ({ get: () => undefined })),
@@ -65,7 +74,8 @@ beforeEach(() => {
   requestHeaders.mockResolvedValue(new Headers({ "x-forwarded-for": "203.0.113.8, 192.0.2.1" }));
   brandFindUnique.mockResolvedValue({ id: "brand-id", name: "Ford", vehicleType: "AUTO" });
   modelFindUnique.mockResolvedValue({ id: "model-id", name: "Ka", brandId: "brand-id" });
-  leadCreate.mockResolvedValue({ id: "lead-id", requestNumber: 123 });
+  leadCreate.mockResolvedValue({ id: "lead-id", requestNumber: 123, phone: "5493414123456" });
+  process.env.WHATSAPP_NUMBER = "5493794057190";
 });
 
 describe("submitLead", () => {
@@ -98,8 +108,23 @@ describe("submitLead", () => {
 
   it("creates a normalized lead and its initial status in one transaction", async () => {
     const result = await submitLead(validInput);
-    expect(result).toEqual({ ok: true, leadId: "lead-id", requestNumber: "MS-000123" });
+    expect(result).toEqual({
+      ok: true,
+      leadId: "lead-id",
+      requestNumber: "MS-000123",
+      whatsappUrl: "https://wa.me/5493794057190?text=WhatsApp%20message",
+    });
     expect(transaction).toHaveBeenCalledOnce();
+    expect(
+      (await import("@/lib/whatsapp/build-message")).buildWhatsappMessage,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        requestNumber: 123,
+        brandName: "Ford",
+        modelName: "Ka",
+        phone: "5493414123456",
+      }),
+    );
     expect(leadCreate).toHaveBeenCalledWith({
       data: expect.objectContaining({
         vehicleType: "AUTO",
@@ -124,6 +149,19 @@ describe("submitLead", () => {
         fromStatus: null,
         toStatus: "NEW",
       },
+    });
+  });
+
+  it("rejects missing WhatsApp configuration before persistence", async () => {
+    delete process.env.WHATSAPP_NUMBER;
+    expect(await submitLead(validInput)).toMatchObject({ ok: false });
+    expect(transaction).not.toHaveBeenCalled();
+  });
+
+  it("returns a safe WhatsApp link for honeypot fake success", async () => {
+    expect(await submitLead({ ...validInput, website: "bot" })).toMatchObject({
+      ok: true,
+      whatsappUrl: "https://wa.me/5493794057190?text=%C2%A1Hola!%20Quiero%20cotizar%20un%20seguro.",
     });
   });
 

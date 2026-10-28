@@ -1,5 +1,5 @@
 export type SubmitLeadResult =
-  | { ok: true; leadId: string; requestNumber: string }
+  | { ok: true; leadId: string; requestNumber: string; whatsappUrl: string }
   | { ok: false; fieldErrors?: Partial<Record<string, string[]>>; message: string };
 
 export const DATABASE_ERROR_MESSAGE =

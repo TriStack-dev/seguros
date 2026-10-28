@@ -16,6 +16,7 @@ import { submitLead } from "@/server/actions/submit-lead";
 import { DATABASE_ERROR_MESSAGE } from "@/lib/leads/submit-result";
 import { toast } from "sonner";
 import { TurnstileWidget } from "./turnstile-widget";
+import { LeadConfirmation } from "./lead-confirmation";
 
 export type VehicleBrandOption = CatalogOption & { vehicleType: VehicleType };
 type Props = {
@@ -52,6 +53,9 @@ export function LeadForm({
   } | null>(null);
   const [retry, setRetry] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [submittedLeadId, setSubmittedLeadId] = useState<string | null>(null);
+  const [submittedWhatsappUrl, setSubmittedWhatsappUrl] = useState<string | null>(null);
+  const returningToForm = useRef(false);
   const [requestNumber, setRequestNumber] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
@@ -89,6 +93,13 @@ export function LeadForm({
   const loadingModels = !!brandId && catalog?.brandId !== brandId;
   const modelError = !!brandId && catalog?.brandId === brandId && catalog.error;
   const models = catalog && catalog.brandId === brandId ? catalog.models : [];
+
+  useEffect(() => {
+    if (!submitted && returningToForm.current) {
+      form.setFocus("fullName");
+      returningToForm.current = false;
+    }
+  }, [form, submitted]);
 
   useEffect(() => {
     if (!brandId) return;
@@ -182,6 +193,8 @@ export function LeadForm({
         return;
       }
       setRequestNumber(result.requestNumber);
+      setSubmittedLeadId(result.leadId);
+      setSubmittedWhatsappUrl(result.whatsappUrl);
       setSubmitted(true);
     } catch {
       toast.error(DATABASE_ERROR_MESSAGE);
@@ -191,6 +204,33 @@ export function LeadForm({
       submitPending.current = false;
     }
   };
+
+  const startAnotherQuote = () => {
+    form.reset();
+    setOtherBrand(false);
+    setOtherModel(false);
+    setCatalog(null);
+    setTurnstileToken(null);
+    setTurnstileError(null);
+    setTurnstileResetKey((value) => value + 1);
+    setRequestNumber(null);
+    setSubmittedLeadId(null);
+    setSubmittedWhatsappUrl(null);
+    submitPending.current = false;
+    returningToForm.current = true;
+    setSubmitted(false);
+  };
+
+  if (submitted && requestNumber && submittedLeadId && submittedWhatsappUrl) {
+    return (
+      <LeadConfirmation
+        leadId={submittedLeadId}
+        requestNumber={requestNumber}
+        whatsappUrl={submittedWhatsappUrl}
+        onNewQuote={startAnotherQuote}
+      />
+    );
+  }
 
   return (
     <form
@@ -540,9 +580,7 @@ export function LeadForm({
           {form.formState.isSubmitting ? "Validando…" : "Iniciar cotización"}
         </Button>
         <p className="form-demo-note" role="status">
-          {submitted
-            ? `¡Listo! Recibimos tu solicitud. Tu número de solicitud es ${requestNumber}.`
-            : "Al enviar, vamos a registrar tu solicitud para que un asesor pueda contactarte."}
+          Al enviar, vamos a registrar tu solicitud para que un asesor pueda contactarte.
         </p>
       </FieldGroup>
     </form>
