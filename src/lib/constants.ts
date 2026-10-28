@@ -4,6 +4,11 @@ export type VehicleType = (typeof VEHICLE_TYPES)[number];
 export const USAGE_TYPES = ["PARTICULAR", "COMMERCIAL", "RIDE_HAILING", "DELIVERY"] as const;
 export type UsageType = (typeof USAGE_TYPES)[number];
 
+export const VEHICLE_TYPE_LABELS: Record<VehicleType, string> = {
+  AUTO: "Auto",
+  MOTO: "Moto",
+};
+
 export const USAGE_LABELS: Record<UsageType, string> = {
   PARTICULAR: "Particular",
   COMMERCIAL: "Comercial",

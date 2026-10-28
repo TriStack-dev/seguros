@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { VEHICLE_TYPE_LABELS } from "@/lib/constants";
 import { formatDateTimeAr } from "@/lib/format";
 import { buildLeadDetailHref } from "@/lib/leads/list-query";
 import { formatRequestNumber } from "@/lib/leads/request-number";
@@ -64,7 +65,7 @@ export function LeadsTable({ items, backQuery }: { items: LeadListItem[]; backQu
                   {formatPhoneForDisplay(item.phone)}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {item.vehicleType === "AUTO" ? "Auto" : "Moto"}
+                  {VEHICLE_TYPE_LABELS[item.vehicleType]}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
                   {item.brandName} {item.modelName}
