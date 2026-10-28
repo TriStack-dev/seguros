@@ -16,6 +16,7 @@ import { submitLead } from "@/server/actions/submit-lead";
 import { DATABASE_ERROR_MESSAGE } from "@/lib/leads/submit-result";
 import { toast } from "sonner";
 import { TurnstileWidget } from "./turnstile-widget";
+import { track } from "@/lib/analytics/track";
 import { LeadConfirmation } from "./lead-confirmation";
 
 export type VehicleBrandOption = CatalogOption & { vehicleType: VehicleType };
@@ -44,6 +45,14 @@ export function LeadForm({
   whatsappUrl,
 }: Props) {
   const prefix = useId();
+  const viewed = useRef(false);
+  const started = useRef(false);
+  const [confirmedVehicleType, setConfirmedVehicleType] = useState(initialVehicleType);
+  useEffect(() => {
+    if (viewed.current) return;
+    viewed.current = true;
+    track("form_view", { vehicle_type: initialVehicleType });
+  }, [initialVehicleType]);
   const [otherBrand, setOtherBrand] = useState(false);
   const [otherModel, setOtherModel] = useState(false);
   const [catalog, setCatalog] = useState<{
@@ -192,6 +201,12 @@ export function LeadForm({
         if (!result.fieldErrors) toast.error(result.message || DATABASE_ERROR_MESSAGE);
         return;
       }
+      track("generate_lead", {
+        vehicle_type: data.vehicleType,
+        usage: data.usage,
+        request_number: result.requestNumber,
+      });
+      setConfirmedVehicleType(data.vehicleType);
       setRequestNumber(result.requestNumber);
       setSubmittedLeadId(result.leadId);
       setSubmittedWhatsappUrl(result.whatsappUrl);
@@ -224,6 +239,7 @@ export function LeadForm({
   if (submitted && requestNumber && submittedLeadId && submittedWhatsappUrl) {
     return (
       <LeadConfirmation
+        vehicleType={confirmedVehicleType}
         leadId={submittedLeadId}
         requestNumber={requestNumber}
         whatsappUrl={submittedWhatsappUrl}
@@ -235,6 +251,11 @@ export function LeadForm({
   return (
     <form
       className="lead-form"
+      onChangeCapture={() => {
+        if (started.current) return;
+        started.current = true;
+        track("form_start", { vehicle_type: form.getValues("vehicleType") });
+      }}
       noValidate
       aria-label="Formulario de cotización"
       onSubmit={(event) => {

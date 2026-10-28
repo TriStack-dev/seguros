@@ -1,3 +1,4 @@
+import { PublicTagManager } from "@/components/public/public-tag-manager";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/logo";
@@ -8,6 +9,9 @@ import { landingContent as content } from "@/content/landing";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="public-site">
+      {process.env.NEXT_PUBLIC_GTM_ID && (
+        <PublicTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
+      )}
       <a className="skip-link" href="#contenido">
         {content.skipLink}
       </a>

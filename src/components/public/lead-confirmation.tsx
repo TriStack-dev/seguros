@@ -3,7 +3,11 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
+import { track } from "@/lib/analytics/track";
+import type { VehicleType } from "@/lib/constants";
+
 type Props = {
+  vehicleType: VehicleType;
   leadId: string;
   requestNumber: string;
   whatsappUrl: string;
@@ -19,7 +23,13 @@ function formatBrokerPhone(whatsappUrl: string) {
   return `+${digits}`;
 }
 
-export function LeadConfirmation({ leadId, requestNumber, whatsappUrl, onNewQuote }: Props) {
+export function LeadConfirmation({
+  vehicleType,
+  leadId,
+  requestNumber,
+  whatsappUrl,
+  onNewQuote,
+}: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const phone = formatBrokerPhone(whatsappUrl);
 
@@ -34,6 +44,7 @@ export function LeadConfirmation({ leadId, requestNumber, whatsappUrl, onNewQuot
   }, []);
 
   const trackClick = () => {
+    track("whatsapp_click", { vehicle_type: vehicleType, request_number: requestNumber });
     try {
       navigator.sendBeacon(`/api/leads/${encodeURIComponent(leadId)}/whatsapp`);
     } catch {
