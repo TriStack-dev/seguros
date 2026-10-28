@@ -49,7 +49,7 @@ Dejar las páginas públicas listas para que Google las indexe bien desde el lan
 2. `/robots.txt` responde `Disallow: /` fuera de producción; `/sitemap.xml` lista las cuatro páginas públicas; `/opengraph-image` devuelve un PNG de 1200x630.
 3. `/cotizar/auto` y `/cotizar/moto` llevan su título corto con la marca, canonical propio y `BreadcrumbList`; `/cotizar/barco` da 404.
 4. Con `VERCEL_ENV=production` y `NEXT_PUBLIC_SITE_URL=https://miseguro.com.ar`, `pnpm build` deja `Allow: /`, `Disallow: /admin` y `Disallow: /api`, sitemap y `Host` absolutos, y `index, follow` en el HTML.
-5. Tests: `pnpm test src/lib/seo.test.ts src/components/public/json-ld.test.tsx`.
+5. Tests: `pnpm test src/lib/seo.test.ts src/app/(public)/seo-metadata.test.tsx src/components/public/json-ld.test.tsx`. Los de `seo-metadata` verifican el cableado (cada página declara canonical y `og:image`, `/admin` queda `noindex`, sitemap y robots responden), no solo las funciones puras.
 
 **Lighthouse (mobile, build de producción servido en local, Lighthouse 13.5):** SEO 100, accesibilidad 100, buenas prácticas 100, performance 92, CLS 0, TBT 40 ms, LCP 3,4 s. El LCP es la imagen del hero, que ya va con `preload` y `quality={80}`; el valor queda apenas arriba de 2,5 s en laboratorio y se vuelve a medir con CDN y datos de campo al desplegar (step 26).
 
