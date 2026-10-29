@@ -57,6 +57,17 @@ export function allowedTransitions(from: LeadStatus): LeadStatus[] {
 }
 
 /**
+ * `true` cuando el cambio baja un escalón (p. ej. EMITIDO → COTIZADO).
+ * Reabrir un lead perdido (LOST → CONTACTED) no cuenta como retroceso.
+ */
+export function isStatusRollback(from: LeadStatus, to: LeadStatus): boolean {
+  const fromIndex = ADVANCE_ORDER.indexOf(from);
+  const toIndex = ADVANCE_ORDER.indexOf(to);
+  if (fromIndex === -1 || toIndex === -1) return false;
+  return toIndex === fromIndex - 1;
+}
+
+/**
  * `firstContactedAt` se completa la primera vez que el lead pasa a CONTACTED, QUOTED o ISSUED.
  * Una vez seteado no se vuelve a tocar.
  */
