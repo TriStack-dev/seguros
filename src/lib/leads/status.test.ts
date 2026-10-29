@@ -4,6 +4,7 @@ import {
   LEAD_STATUS_LABELS,
   allowedTransitions,
   canTransition,
+  isStatusRollback,
   shouldSetFirstContactedAt,
 } from "./status";
 import { LEAD_STATUSES } from "@/lib/constants";
@@ -46,6 +47,36 @@ describe("allowedTransitions", () => {
   it("never includes the current status", () => {
     for (const status of LEAD_STATUSES) {
       expect(allowedTransitions(status)).not.toContain(status);
+    }
+  });
+});
+
+describe("isStatusRollback", () => {
+  it.each([
+    ["CONTACTED", "NEW"],
+    ["QUOTED", "CONTACTED"],
+    ["ISSUED", "QUOTED"],
+  ] as const)("%s → %s is a rollback", (from, to) => {
+    expect(isStatusRollback(from, to)).toBe(true);
+  });
+
+  it.each([
+    ["NEW", "CONTACTED"],
+    ["NEW", "ISSUED"],
+    ["QUOTED", "ISSUED"],
+    ["QUOTED", "LOST"],
+    ["LOST", "CONTACTED"],
+  ] as const)("%s → %s is not a rollback", (from, to) => {
+    expect(isStatusRollback(from, to)).toBe(false);
+  });
+
+  it("never flags a transition that is not allowed", () => {
+    for (const from of LEAD_STATUSES) {
+      for (const to of LEAD_STATUSES) {
+        if (!canTransition(from, to)) {
+          expect(isStatusRollback(from, to)).toBe(false);
+        }
+      }
     }
   });
 });

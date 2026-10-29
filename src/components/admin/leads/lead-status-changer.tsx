@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LOST_REASONS, LOST_REASON_LABELS, type LostReason } from "@/lib/constants";
-import { LEAD_STATUS_LABELS, allowedTransitions } from "@/lib/leads/status";
+import { LEAD_STATUS_LABELS, allowedTransitions, isStatusRollback } from "@/lib/leads/status";
 import type { LeadStatus } from "@/generated/prisma/client";
 import { changeLeadStatus } from "@/server/actions/lead-status";
 
@@ -28,11 +28,21 @@ export function LeadStatusChanger({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const transitions = allowedTransitions(currentStatus);
-  const [toStatus, setToStatus] = useState<LeadStatus | "">(transitions[0] ?? "");
+  // Arranca vacío a propósito: preseleccionar la primera opción hacía que un clic en
+  // "Guardar cambio" revirtiera el estado sin que el usuario lo hubiera elegido.
+  const [toStatus, setToStatus] = useState<LeadStatus | undefined>(undefined);
   const [lostReason, setLostReason] = useState<LostReason | "none">("none");
 
   function submit() {
     if (!toStatus) return;
+
+    // Bajar de estado casi siempre es un error: se pide confirmación antes de guardar.
+    if (isStatusRollback(currentStatus, toStatus)) {
+      const confirmed = window.confirm(
+        `Vas a volver de ${LEAD_STATUS_LABELS[currentStatus]} a ${LEAD_STATUS_LABELS[toStatus]}. ¿Confirmás el retroceso?`,
+      );
+      if (!confirmed) return;
+    }
 
     startTransition(async () => {
       const result = await changeLeadStatus({
@@ -49,7 +59,7 @@ export function LeadStatusChanger({
       }
 
       toast.success(`Estado actualizado a ${LEAD_STATUS_LABELS[toStatus]}.`);
-      setToStatus("");
+      setToStatus(undefined);
       setLostReason("none");
       router.refresh();
     });

@@ -8,7 +8,7 @@ El panel conserva sus flujos y datos actuales, con una jerarquía más clara par
 | --- | --- | --- |
 | Navegación protegida | `requireAdmin()` y `signOut` | Sección activa, contador accesible y enlace para saltar al contenido |
 | Leads | Búsqueda, filtros, paginación y enlaces con filtros de retorno | Acción visible «Ver detalle», fila activable sin reemplazar los enlaces y tabla desplazable por teclado |
-| Detalle | Datos, atribución, acciones rápidas y transiciones existentes | La persona encabeza la ficha; contacto, vehículo y gestión quedan separados; atribución usa un disclosure nativo |
+| Detalle | Datos, atribución, acciones rápidas y transiciones existentes | La persona encabeza la ficha; contacto, vehículo y gestión quedan separados; atribución usa un disclosure nativo. El selector de estado arranca vacío y pide confirmación antes de retroceder, para no revertir un lead por accidente |
 | Carga y error | Reintento de la ruta | Esqueleto de carga y mensaje con acción de recuperación |
 | Estadísticas | Placeholder del step futuro | Se mantiene explícito; no se inventan métricas |
 
