@@ -155,7 +155,7 @@ Estado: `PENDIENTE` o `DONE · AAAA-MM-DD · quién · #PR`.
 | 17 | [Detalle del lead y estados](docs/steps/17-panel-detalle-estados.md) | 4. Panel | 12, 16 | DONE · 2026-10-28 · Walter · #35 |
 | 18 | [Notas del lead](docs/steps/18-panel-notas.md) | 4. Panel | 17 | DONE · 2026-10-28 · franc · #PR |
 | 19 | [Exportación a CSV](docs/steps/19-panel-csv.md) | 4. Panel | 16 | DONE · 2026-10-28 · franc · #PR |
-| 20 | [Estadísticas](docs/steps/20-panel-estadisticas.md) | 4. Panel | 17 | PENDIENTE |
+| 20 | [Estadísticas](docs/steps/20-panel-estadisticas.md) | 4. Panel | 17 | DONE · 2026-10-29 · franc · #PR |
 | 21 | [Analítica con GTM y GA4](docs/steps/21-analitica-ga4.md) | 5. Lanzamiento | 09, 14 | DONE · 2026-10-28 · Teo · #40 |
 | 22 | [SEO técnico](docs/steps/22-seo-tecnico.md) | 5. Lanzamiento | 07, 08 | DONE · 2026-10-28 · franc · #PR |
 | 23 | [Monitoreo de errores con Sentry](docs/steps/23-sentry.md) | 5. Lanzamiento | 01, 26 | PENDIENTE |
