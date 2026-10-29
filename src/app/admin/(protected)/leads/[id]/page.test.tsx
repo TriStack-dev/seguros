@@ -34,6 +34,14 @@ const { lead, useRouter } = vi.hoisted(() => ({
     gclid: "gclid-fixture-123",
     landingPage: "/cotizar/auto",
     referrer: "https://example.test/",
+    notes: [
+      {
+        id: "note-fixture-1",
+        body: "Nota de prueba preservada",
+        authorEmail: "admin@example.test",
+        createdAt: new Date("2026-10-29T12:00:00Z"),
+      },
+    ],
     statusChanges: [
       {
         id: "change-fixture-1",
@@ -68,6 +76,7 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("@/server/queries/leads", () => ({ getLeadDetail: async () => lead }));
 vi.mock("@/server/actions/lead-status", () => ({ changeLeadStatus: vi.fn() }));
+vi.mock("@/server/actions/lead-note", () => ({ addLeadNote: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 beforeEach(() => {
@@ -138,4 +147,10 @@ it("keeps attribution available in a native disclosure without losing its fields
   expect(disclosure.getByText("busqueda")).toBeInTheDocument();
   expect(disclosure.getByText("organico")).toBeInTheDocument();
   expect(disclosure.getByText("cobertura-auto")).toBeInTheDocument();
+});
+
+it("preserves lead notes alongside the refined detail sections", async () => {
+  await renderDetail();
+  expect(screen.getByRole("heading", { name: "Notas", level: 2 })).toBeInTheDocument();
+  expect(screen.getByText("Nota de prueba preservada")).toBeInTheDocument();
 });

@@ -12,6 +12,8 @@ import { formatRequestNumber } from "@/lib/leads/request-number";
 import { LEAD_STATUS_BADGE_VARIANTS, LEAD_STATUS_LABELS } from "@/lib/leads/status";
 import { buildLeadSummary } from "@/lib/leads/summary";
 import { formatPhoneForDisplay } from "@/lib/validation/normalizers";
+import { LeadNoteForm } from "@/components/admin/leads/lead-note-form";
+import { LeadNoteList } from "@/components/admin/leads/lead-note-list";
 import { LeadQuickActions } from "@/components/admin/leads/lead-quick-actions";
 import { LeadStatusChanger } from "@/components/admin/leads/lead-status-changer";
 import { getLeadDetail } from "@/server/queries/leads";
@@ -146,6 +148,14 @@ export default async function LeadDetailPage({
               <DetailItem label="Tipo de uso">{USAGE_LABELS[lead.usage]}</DetailItem>
               <DetailItem label="Código postal">{lead.postalCode}</DetailItem>
             </dl>
+          </section>
+
+          <section className="admin-detail-panel" aria-labelledby="notes-title">
+            <h2 id="notes-title">Notas</h2>
+            <div className="flex flex-col gap-6">
+              <LeadNoteForm leadId={lead.id} />
+              <LeadNoteList notes={lead.notes} />
+            </div>
           </section>
 
           <section className="admin-detail-consent" aria-labelledby="consent-title">

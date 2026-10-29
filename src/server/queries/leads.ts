@@ -1,13 +1,13 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { parseRequestNumber } from "@/lib/leads/request-number";
+import { buildLeadWhere, type LeadListFilters } from "@/lib/leads/filters";
 import { requireAdmin } from "@/server/auth";
 import type {
   Lead,
+  LeadNote,
   LeadStatus,
   LeadStatusChange,
-  Prisma,
   VehicleType,
 } from "@/generated/prisma/client";
 
@@ -38,83 +38,13 @@ export type LeadListResult = {
   totalPages: number;
 };
 
-export async function listLeads(params: {
-  search?: string;
-  from?: string;
-  to?: string;
-  vehicleType?: VehicleType | "";
-  status?: LeadStatus | "";
-  page?: number;
-}): Promise<LeadListResult> {
+export async function listLeads(
+  params: LeadListFilters & { page?: number },
+): Promise<LeadListResult> {
   await requireAdmin();
 
   const page = Math.max(1, params.page ?? 1);
-  const search = params.search?.trim() ?? "";
-  const vehicleType = params.vehicleType || undefined;
-  const status = params.status || undefined;
-
-  const where: Prisma.LeadWhereInput = {};
-
-  if (vehicleType) {
-    where.vehicleType = vehicleType;
-  }
-  if (status) {
-    where.status = status;
-  }
-
-  // Date range in Argentina context - filter by UTC boundaries from local dates
-  // The requirement says "rango de fechas (en hora de Argentina)"; we interpret as local calendar dates
-  // For simplicity and correctness in filtering, we convert Argentina start/end of day to UTC
-  // Argentina is UTC-3 (no DST in general) - use fixed offset for filtering
-  if (params.from || params.to) {
-    where.createdAt = {};
-    if (params.from) {
-      // start of day in America/Argentina/Buenos_Aires (UTC-3)
-      const fromDate = new Date(`${params.from}T00:00:00-03:00`);
-      if (!Number.isNaN(fromDate.getTime())) {
-        where.createdAt.gte = fromDate;
-      }
-    }
-    if (params.to) {
-      // end of day
-      const toDate = new Date(`${params.to}T23:59:59.999-03:00`);
-      if (!Number.isNaN(toDate.getTime())) {
-        where.createdAt.lte = toDate;
-      }
-    }
-  }
-
-  // Build search conditions
-  if (search) {
-    const conditions: Prisma.LeadWhereInput[] = [];
-
-    // Try request number
-    const reqNum = parseRequestNumber(search);
-    if (reqNum) {
-      conditions.push({ requestNumber: reqNum });
-    }
-
-    // Text searches (case-insensitive via contains)
-    conditions.push({ fullName: { contains: search, mode: "insensitive" } });
-    conditions.push({ dni: { contains: search.replace(/[.\s]/g, ""), mode: "insensitive" } });
-    conditions.push({ email: { contains: search, mode: "insensitive" } });
-
-    // Phone normalized search - search for digits
-    const phoneDigits = search.replace(/\D/g, "");
-    if (phoneDigits) {
-      conditions.push({ phone: { contains: phoneDigits } });
-    }
-
-    // Plate normalized search
-    const plateNorm = search.toUpperCase().replace(/[\s\-]/g, "");
-    if (plateNorm) {
-      conditions.push({ plate: { contains: plateNorm, mode: "insensitive" } });
-    }
-
-    if (conditions.length > 0) {
-      where.OR = conditions;
-    }
-  }
+  const where = buildLeadWhere(params);
 
   const [total, items] = await Promise.all([
     db.lead.count({ where }),
@@ -177,9 +107,12 @@ export async function countNewLeads(): Promise<number> {
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export type LeadDetail = Lead & { statusChanges: LeadStatusChange[] };
+export type LeadDetail = Lead & {
+  statusChanges: LeadStatusChange[];
+  notes: LeadNote[];
+};
 
-/** Lead con su historial de estados, o null si el id no existe. */
+/** Lead con su historial de estados y sus notas, o null si el id no existe. */
 export async function getLeadDetail(id: string): Promise<LeadDetail | null> {
   await requireAdmin();
 
@@ -189,6 +122,8 @@ export async function getLeadDetail(id: string): Promise<LeadDetail | null> {
     where: { id },
     include: {
       statusChanges: { orderBy: { createdAt: "asc" } },
+      // La más vieja arriba: las notas se leen como un registro cronológico.
+      notes: { orderBy: { createdAt: "asc" } },
     },
   });
 }
