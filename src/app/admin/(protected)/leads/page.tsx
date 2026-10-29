@@ -56,13 +56,17 @@ export default async function LeadsPage({
 
   return (
     <>
-      <h1 className="text-2xl font-semibold">Leads</h1>
-      <p className="mt-1 text-muted-foreground">Listado de solicitudes de cotización</p>
-      <div className="mt-6">
+      <header className="admin-page-heading">
+        <div>
+          <h1>Leads</h1>
+          <p>Solicitudes de cotización recibidas</p>
+        </div>
+      </header>
+      <section className="admin-leads-toolbar" aria-label="Listado de solicitudes">
         <LeadsFilters />
         <LeadsTable items={result.items} backQuery={backQuery} />
         <LeadsPagination page={result.page} totalPages={result.totalPages} />
-      </div>
+      </section>
     </>
   );
 }
