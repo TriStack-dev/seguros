@@ -60,7 +60,7 @@ export function LeadsFilters() {
   return (
     <form
       action={updateParams}
-      className="mb-6 grid gap-3 rounded-md border p-4 md:grid-cols-2 lg:grid-cols-6"
+      className="admin-filter-form mb-6 grid gap-3 rounded-md border p-4 md:grid-cols-2 lg:grid-cols-6"
     >
       <div className="lg:col-span-2">
         <Label htmlFor="search">Buscar</Label>
@@ -108,7 +108,7 @@ export function LeadsFilters() {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-end gap-2 lg:col-span-6">
+      <div className="admin-filter-form__actions flex items-end gap-2 lg:col-span-6">
         <Button type="submit" disabled={isPending}>
           Aplicar filtros
         </Button>

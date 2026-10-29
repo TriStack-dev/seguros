@@ -49,9 +49,13 @@ export default function LandingPage() {
               </a>
             </div>
           </div>
-          <section id="cotizar" className="quote-placeholder" aria-labelledby="quote-title">
-            <h2 id="quote-title">{content.quote.title}</h2>
-            <QuoteFormSection />
+          <section
+            id="cotizar"
+            className="quote-placeholder quote-form-panel hero-quote"
+            aria-labelledby="quote-title"
+          >
+            <h2 id="quote-title">Cotizá tu seguro</h2>
+            <QuoteFormSection compact />
           </section>
           <ul className="hero-highlights">
             {content.hero.highlights.map((text) => (

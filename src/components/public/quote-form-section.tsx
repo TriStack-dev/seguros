@@ -4,8 +4,10 @@ import { getVehicleBrands } from "@/server/queries/vehicles";
 import type { VehicleType } from "@/lib/constants";
 
 export async function QuoteFormSection({
+  compact = false,
   initialVehicleType = "AUTO",
 }: {
+  compact?: boolean;
   initialVehicleType?: VehicleType;
 }) {
   let brands: VehicleBrandOption[] = [];
@@ -23,6 +25,7 @@ export async function QuoteFormSection({
   return (
     <LeadForm
       brands={brands}
+      compact={compact}
       whatsappUrl={whatsappUrl}
       initialVehicleType={initialVehicleType}
       catalogUnavailable={catalogUnavailable}
