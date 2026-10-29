@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { LeadForm } from "./lead-form";
@@ -87,6 +87,108 @@ describe("LeadForm", () => {
     expect(screen.queryByLabelText("Versión (opcional)")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Teléfono", { exact: true })).toHaveAttribute("type", "tel");
     expect(screen.getByRole("checkbox", { name: /Acepto la política/ })).toBeInTheDocument();
+  });
+  it("groups contact and vehicle fields with accessible legends", () => {
+    render(<LeadForm brands={brands} />);
+
+    expect(screen.getByRole("group", { name: "Tus datos" })).toContainElement(
+      screen.getByLabelText("Nombre y apellido", { exact: true }),
+    );
+    expect(screen.getByRole("group", { name: "Datos del vehículo" })).toContainElement(
+      screen.getByLabelText("Patente", { exact: true }),
+    );
+  });
+  it("names the compact stages and identifies the current stage", () => {
+    render(<LeadForm brands={brands} compact />);
+    const progress = screen.getByRole("list", { name: "Etapas de la cotización" });
+    const stages = within(progress).getAllByRole("listitem");
+    expect(stages).toHaveLength(3);
+    expect(stages[0]).toHaveAttribute("aria-current", "step");
+    expect(stages[0]).toHaveTextContent("Tus datos");
+    expect(stages[1]).toHaveTextContent("Vehículo");
+    expect(stages[2]).toHaveTextContent("Envío");
+    expect(screen.getByLabelText("Nombre y apellido", { exact: true })).toBeVisible();
+    expect(screen.getByRole("status")).toHaveTextContent("Paso 1 de 3");
+  });
+  it("validates the compact contact stage before revealing vehicle fields", async () => {
+    const user = userEvent.setup();
+    render(<LeadForm brands={brands} compact />);
+
+    await user.click(screen.getByRole("button", { name: "Continuar a tu vehículo" }));
+
+    expect(await screen.findByText(/Ingresá nombre y apellido válidos/)).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Tus datos" })).toBeVisible();
+    expect(screen.getByLabelText("Patente", { exact: true })).not.toBeVisible();
+    expect(submitLead).not.toHaveBeenCalled();
+  });
+  it("preserves contact values when going back and Enter cannot submit early", async () => {
+    const user = userEvent.setup();
+    submitLead.mockClear();
+    render(<LeadForm brands={brands} compact />);
+
+    const name = screen.getByLabelText("Nombre y apellido", { exact: true });
+    const email = screen.getByLabelText("Email", { exact: true });
+    await user.type(name, "Ana Pérez");
+    await user.type(screen.getByLabelText("Teléfono", { exact: true }), "3414123456");
+    await user.type(email, "ana@example.com");
+    await user.type(screen.getByLabelText("DNI", { exact: true }), "12345678");
+    await user.click(screen.getByRole("button", { name: "Continuar a tu vehículo" }));
+    const vehicleGroup = screen.getByRole("group", { name: "Datos del vehículo" });
+    expect(vehicleGroup).toBeVisible();
+    expect(vehicleGroup).toHaveFocus();
+
+    await user.click(screen.getByRole("button", { name: "Volver a tus datos" }));
+    expect(screen.getByRole("group", { name: "Tus datos" })).toHaveFocus();
+    expect(name).toHaveValue("Ana Pérez");
+    await user.click(email);
+    await user.keyboard("{Enter}");
+
+    expect(screen.getByRole("group", { name: "Datos del vehículo" })).toBeVisible();
+    expect(submitLead).not.toHaveBeenCalled();
+    const plate = screen.getByLabelText("Patente", { exact: true });
+    await user.click(plate);
+    await user.keyboard("{Enter}");
+    expect(await screen.findByText("Ingresá la patente")).toBeInTheDocument();
+    expect(submitLead).not.toHaveBeenCalled();
+  });
+  it("reveals the correct stage when final submission returns an earlier field error", async () => {
+    const user = userEvent.setup();
+    submitLead.mockReset().mockResolvedValue({
+      ok: false,
+      fieldErrors: { email: ["Ese email ya está registrado"] },
+    });
+    render(<LeadForm brands={brands} initialVehicleType="MOTO" compact />);
+
+    const email = screen.getByLabelText("Email", { exact: true });
+    await user.type(screen.getByLabelText("Nombre y apellido", { exact: true }), "Ana Pérez");
+    await user.type(screen.getByLabelText("Teléfono", { exact: true }), "3414123456");
+    await user.type(email, "ana@example.com");
+    await user.type(screen.getByLabelText("DNI", { exact: true }), "12345678");
+    await user.click(screen.getByRole("button", { name: "Continuar a tu vehículo" }));
+    await user.type(screen.getByLabelText("Patente", { exact: true }), "A123BCD");
+    await user.click(screen.getByRole("combobox", { name: "Marca" }));
+    await user.click(screen.getByRole("option", { name: "Otro" }));
+    await user.type(screen.getByLabelText("Otra marca", { exact: true }), "Zanella");
+    await user.type(screen.getByLabelText("Modelo", { exact: true }), "ZB 110");
+    await user.type(screen.getByLabelText("Año del vehículo", { exact: true }), "2020");
+    const postalCode = screen.getByLabelText("Código postal", { exact: true });
+    expect(postalCode).not.toBeVisible();
+    expect(screen.getByLabelText("Tipo de uso", { exact: true })).not.toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Continuar a uso y envío" }));
+    expect(screen.getByRole("group", { name: "Uso y envío" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Iniciar cotización" }));
+    expect(await screen.findByText("Ingresá un código postal válido")).toBeInTheDocument();
+    expect(postalCode).toHaveFocus();
+
+    await user.type(postalCode, "2000");
+    await user.selectOptions(screen.getByLabelText("Tipo de uso", { exact: true }), "DELIVERY");
+    await user.click(screen.getByRole("checkbox", { name: /Acepto la política/ }));
+    await user.click(screen.getByRole("button", { name: "Iniciar cotización" }));
+
+    await waitFor(() => expect(screen.getByRole("group", { name: "Tus datos" })).toBeVisible());
+    await waitFor(() => expect(email).toHaveFocus());
+    expect(screen.getByText("Ese email ya está registrado")).toBeInTheDocument();
+    expect(submitLead).toHaveBeenCalledOnce();
   });
   it("resets vehicle-dependent values", async () => {
     const user = userEvent.setup();

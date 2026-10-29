@@ -1,5 +1,7 @@
 "use client";
 
+import { CheckCircle2, MessageCircle, RotateCcw, ArrowUpRight } from "lucide-react";
+
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -54,23 +56,30 @@ export function LeadConfirmation({
 
   return (
     <section className="lead-form lead-confirmation" aria-labelledby="lead-confirmation-heading">
+      <CheckCircle2 className="confirmation-mark" size={32} aria-hidden="true" />
       <h2 id="lead-confirmation-heading" ref={headingRef} tabIndex={-1}>
         ¡Listo! Recibimos tu solicitud
       </h2>
-      <p>
-        Tu número de solicitud es <strong>{requestNumber}</strong>.
+      <p className="confirmation-request">
+        <span>Tu número de solicitud</span>
+        <strong>{requestNumber}</strong>
       </p>
       <a
-        className="quote-button inline-flex w-full items-center justify-center"
+        className="quote-button confirmation-whatsapp"
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
         onClick={trackClick}
       >
+        <MessageCircle size={20} aria-hidden="true" />
         Abrir WhatsApp
+        <ArrowUpRight size={18} aria-hidden="true" />
       </a>
-      <p>Si WhatsApp no se abre, escribinos al {phone} e indicá tu número de solicitud.</p>
-      <Button type="button" variant="outline" onClick={onNewQuote}>
+      <p className="confirmation-help">
+        Si WhatsApp no se abre, escribinos al {phone} e indicá tu número de solicitud.
+      </p>
+      <Button type="button" variant="outline" className="confirmation-another" onClick={onNewQuote}>
+        <RotateCcw size={16} aria-hidden="true" />
         Cargar otra cotización
       </Button>
     </section>
