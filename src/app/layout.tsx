@@ -11,7 +11,7 @@ export const metadata: Metadata = buildSiteMetadata();
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es-AR" className={cn("font-sans", geist.variable)}>
+    <html lang="es-AR" data-scroll-behavior="smooth" className={cn("font-sans", geist.variable)}>
       <body>
         {children}
         <Toaster />
