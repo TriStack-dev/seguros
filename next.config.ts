@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    agentUpgrade: "security",
+  },
   // Next.js genera y sobreescribe su propio AGENTS.md en cada `next dev`. El AGENTS.md de
   // este repo son las reglas de trabajo del equipo, así que apagamos esa generación.
   agentRules: false,
